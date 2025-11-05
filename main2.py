@@ -17,6 +17,11 @@ TEMPLATE_PATH = os.path.join(TEMPLATES_DIR, TEMPLATE_FILENAME)
 
 # --- Definisi Placeholders & Input Fields ---
 FIELD_DEFINITIONS = {
+    # Header fields
+    "NO_TEST": {"placeholder": "[NO_TEST]", "label": "Nº de Test Plan", "type": "text"},
+    "REV": {"placeholder": "[REV]", "label": "Revisión", "type": "text"},
+    "DATE": {"placeholder": "[DATE]", "label": "Fecha de emisión (DD/MM/YYYY)", "type": "text"},
+    
     # 0. INFORMACIÓN DEL SOLICITANTE DEL ENSAYO
     "TEXT1": {"placeholder": "[TEXT1]", "label": "Solicitante", "type": "text"},
     "TEXT4": {"placeholder": "[TEXT4]", "label": "Operario del ensayo", "type": "text"},
@@ -201,6 +206,11 @@ class DocumentGeneratorApp(QWidget):
         content_widget = QWidget()
         form_layout = QVBoxLayout(content_widget)
         form_layout.setSpacing(15)
+
+        # Group Header: Encabezado
+        self.create_input_group(form_layout, "Encabezado - Información del documento", [
+            "NO_TEST", "REV", "DATE"
+        ])
 
         # Group 0: INFORMACIÓN DEL SOLICITANTE DEL ENSAYO
         self.create_input_group(form_layout, "0. INFORMACIÓN DEL SOLICITANTE DEL ENSAYO", [
