@@ -6,9 +6,10 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtCore import Qt
 from docx import Document
+from docx.shared import Inches
 from datetime import date
 import os
-import re 
+import re
 
 # --- Konfigurasi File ---
 TEMPLATES_DIR = os.path.join(os.path.dirname(__file__), "templates")
@@ -445,7 +446,7 @@ class DocumentGeneratorApp(QWidget):
         
     def browse_file(self, field):
         """Browse file untuk input gambar."""
-        file_path, _ = QFileDialog.getOpenFileName(self, "Select Image", "", "Image Files (*.png *.jpg *.jpeg *.gif)")
+        file_path, _ = QFileDialog.getOpenFileName(self, "Select Image", "", "Image Files (*.png *.jpg *.jpeg *.gif *.bmp *.tiff *.tif *.webp *.jfif)")
         if file_path:
             field.setText(file_path)
 
@@ -503,7 +504,13 @@ class DocumentGeneratorApp(QWidget):
                 image_path = replacement_data[placeholder]
                 if os.path.exists(image_path):
                     paragraph.clear()
-                    paragraph.add_run().add_picture(image_path)
+                    # Check if it's a photography image (IMAGE3 to IMAGE8) for vertical orientation
+                    if placeholder in ["[IMAGE3]", "[IMAGE4]", "[IMAGE5]", "[IMAGE6]", "[IMAGE7]", "[IMAGE8]"]:
+                        # Vertical photo from phone: height 4 inches, width 3 inches
+                        paragraph.add_run().add_picture(image_path, width=Inches(3), height=Inches(4))
+                    else:
+                        # Other images: default size
+                        paragraph.add_run().add_picture(image_path)
 
         # Replace in tables
         for table in document.tables:
@@ -515,7 +522,13 @@ class DocumentGeneratorApp(QWidget):
                             image_path = replacement_data[placeholder]
                             if os.path.exists(image_path):
                                 paragraph.clear()
-                                paragraph.add_run().add_picture(image_path)
+                                # Check if it's a photography image (IMAGE3 to IMAGE8) for vertical orientation
+                                if placeholder in ["[IMAGE3]", "[IMAGE4]", "[IMAGE5]", "[IMAGE6]", "[IMAGE7]", "[IMAGE8]"]:
+                                    # Vertical photo from phone: height 4 inches, width 3 inches
+                                    paragraph.add_run().add_picture(image_path, width=Inches(3), height=Inches(4))
+                                else:
+                                    # Other images: default size
+                                    paragraph.add_run().add_picture(image_path)
 
         # Replace in headers
         for section in document.sections:
@@ -526,7 +539,13 @@ class DocumentGeneratorApp(QWidget):
                     image_path = replacement_data[placeholder]
                     if os.path.exists(image_path):
                         paragraph.clear()
-                        paragraph.add_run().add_picture(image_path)
+                        # Check if it's a photography image (IMAGE3 to IMAGE8) for vertical orientation
+                        if placeholder in ["[IMAGE3]", "[IMAGE4]", "[IMAGE5]", "[IMAGE6]", "[IMAGE7]", "[IMAGE8]"]:
+                            # Vertical photo from phone: height 4 inches, width 3 inches
+                            paragraph.add_run().add_picture(image_path, width=Inches(3), height=Inches(4))
+                        else:
+                            # Other images: default size
+                            paragraph.add_run().add_picture(image_path)
             for table in header.tables:
                 for row in table.rows:
                     for cell in row.cells:
@@ -536,7 +555,13 @@ class DocumentGeneratorApp(QWidget):
                                 image_path = replacement_data[placeholder]
                                 if os.path.exists(image_path):
                                     paragraph.clear()
-                                    paragraph.add_run().add_picture(image_path)
+                                    # Check if it's a photography image (IMAGE3 to IMAGE8) for vertical orientation
+                                    if placeholder in ["[IMAGE3]", "[IMAGE4]", "[IMAGE5]", "[IMAGE6]", "[IMAGE7]", "[IMAGE8]"]:
+                                        # Vertical photo from phone: height 4 inches, width 3 inches
+                                        paragraph.add_run().add_picture(image_path, width=Inches(3), height=Inches(4))
+                                    else:
+                                        # Other images: default size
+                                        paragraph.add_run().add_picture(image_path)
 
         # Replace in footers
         for section in document.sections:
@@ -547,7 +572,13 @@ class DocumentGeneratorApp(QWidget):
                     image_path = replacement_data[placeholder]
                     if os.path.exists(image_path):
                         paragraph.clear()
-                        paragraph.add_run().add_picture(image_path)
+                        # Check if it's a photography image (IMAGE3 to IMAGE8) for vertical orientation
+                        if placeholder in ["[IMAGE3]", "[IMAGE4]", "[IMAGE5]", "[IMAGE6]", "[IMAGE7]", "[IMAGE8]"]:
+                            # Vertical photo from phone: height 4 inches, width 3 inches
+                            paragraph.add_run().add_picture(image_path, width=Inches(3), height=Inches(4))
+                        else:
+                            # Other images: default size
+                            paragraph.add_run().add_picture(image_path)
             for table in footer.tables:
                 for row in table.rows:
                     for cell in row.cells:
@@ -557,7 +588,13 @@ class DocumentGeneratorApp(QWidget):
                                 image_path = replacement_data[placeholder]
                                 if os.path.exists(image_path):
                                     paragraph.clear()
-                                    paragraph.add_run().add_picture(image_path)
+                                    # Check if it's a photography image (IMAGE3 to IMAGE8) for vertical orientation
+                                    if placeholder in ["[IMAGE3]", "[IMAGE4]", "[IMAGE5]", "[IMAGE6]", "[IMAGE7]", "[IMAGE8]"]:
+                                        # Vertical photo from phone: height 4 inches, width 3 inches
+                                        paragraph.add_run().add_picture(image_path, width=Inches(3), height=Inches(4))
+                                    else:
+                                        # Other images: default size
+                                        paragraph.add_run().add_picture(image_path)
 
     def generate_document(self):
         """Logika utama untuk membaca input, memuat template, mengganti placeholder, dan menyimpan file."""
