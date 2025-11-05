@@ -235,7 +235,11 @@ class DocumentGeneratorApp(QWidget):
             "EQUIPO4", "MARCA4", "TIPO4", "FECHA4", "OBSER4",
             "EQUIPO5", "MARCA5", "TIPO5", "FECHA5", "OBSER5",
             "EQUIPO6", "MARCA6", "TIPO6", "FECHA6", "OBSER6",
-            "EQUIPO7", "MARCA7", "TIPO7", "FECHA7", "OBSER7",
+            "EQUIPO7", "MARCA7", "TIPO7", "FECHA7", "OBSER7"
+        ])
+
+        # Group 2.1: MÉTODO DE ENSAYO
+        self.create_input_group(form_layout, "MÉTODO DE ENSAYO", [
             "TEXT12"
         ])
 
@@ -278,10 +282,14 @@ class DocumentGeneratorApp(QWidget):
             "TEXT15"
         ])
 
-        # Group 7: FOTOGRAFIAS
-        self.create_input_group(form_layout, "7. FOTOGRAFIAS", [
-            "TITLE3", "IMAGE3", "TITLE4", "IMAGE4", "TITLE5", "IMAGE5",
-            "TITLE6", "IMAGE6", "TITLE7", "IMAGE7", "TITLE8", "IMAGE8"
+        # Group 7.1: Títulos de Fotografías
+        self.create_input_group(form_layout, "7.1. Títulos de Fotografías", [
+            "TITLE3", "TITLE4", "TITLE5", "TITLE6", "TITLE7", "TITLE8"
+        ])
+
+        # Group 7.2: Imágenes de Fotografías
+        self.create_input_group(form_layout, "7.2. Imágenes de Fotografías", [
+            "IMAGE3", "IMAGE4", "IMAGE5", "IMAGE6", "IMAGE7", "IMAGE8"
         ])
 
         scroll.setWidget(content_widget)
@@ -361,7 +369,7 @@ class DocumentGeneratorApp(QWidget):
 
     def replace_in_paragraph(self, paragraph, placeholder, value):
         """Mengganti placeholder di dalam paragraf."""
-        if placeholder in paragraph.text:
+        if placeholder in paragraph.text and 'IMAGE' not in placeholder:
             paragraph.text = paragraph.text.replace(placeholder, value)
             for run in paragraph.runs:
                 run.font.name = "Gordita Light"
@@ -406,13 +414,68 @@ class DocumentGeneratorApp(QWidget):
 
     def replace_images(self, document, replacement_data):
         """Mengganti placeholder gambar dengan gambar yang dipilih."""
+        # Replace in main paragraphs
         for paragraph in document.paragraphs:
-            for run in paragraph.runs:
-                if run.text in replacement_data:
-                    image_path = replacement_data[run.text]
+            placeholder = paragraph.text.strip()
+            if placeholder in replacement_data:
+                image_path = replacement_data[placeholder]
+                if os.path.exists(image_path):
+                    paragraph.clear()
+                    paragraph.add_run().add_picture(image_path)
+
+        # Replace in tables
+        for table in document.tables:
+            for row in table.rows:
+                for cell in row.cells:
+                    for paragraph in cell.paragraphs:
+                        placeholder = paragraph.text.strip()
+                        if placeholder in replacement_data:
+                            image_path = replacement_data[placeholder]
+                            if os.path.exists(image_path):
+                                paragraph.clear()
+                                paragraph.add_run().add_picture(image_path)
+
+        # Replace in headers
+        for section in document.sections:
+            header = section.header
+            for paragraph in header.paragraphs:
+                placeholder = paragraph.text.strip()
+                if placeholder in replacement_data:
+                    image_path = replacement_data[placeholder]
                     if os.path.exists(image_path):
-                        run.text = ""
+                        paragraph.clear()
                         paragraph.add_run().add_picture(image_path)
+            for table in header.tables:
+                for row in table.rows:
+                    for cell in row.cells:
+                        for paragraph in cell.paragraphs:
+                            placeholder = paragraph.text.strip()
+                            if placeholder in replacement_data:
+                                image_path = replacement_data[placeholder]
+                                if os.path.exists(image_path):
+                                    paragraph.clear()
+                                    paragraph.add_run().add_picture(image_path)
+
+        # Replace in footers
+        for section in document.sections:
+            footer = section.footer
+            for paragraph in footer.paragraphs:
+                placeholder = paragraph.text.strip()
+                if placeholder in replacement_data:
+                    image_path = replacement_data[placeholder]
+                    if os.path.exists(image_path):
+                        paragraph.clear()
+                        paragraph.add_run().add_picture(image_path)
+            for table in footer.tables:
+                for row in table.rows:
+                    for cell in row.cells:
+                        for paragraph in cell.paragraphs:
+                            placeholder = paragraph.text.strip()
+                            if placeholder in replacement_data:
+                                image_path = replacement_data[placeholder]
+                                if os.path.exists(image_path):
+                                    paragraph.clear()
+                                    paragraph.add_run().add_picture(image_path)
 
     def generate_document(self):
         """Logika utama untuk membaca input, memuat template, mengganti placeholder, dan menyimpan file."""
