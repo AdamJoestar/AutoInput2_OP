@@ -166,18 +166,18 @@ FIELD_DEFINITIONS = {
     "TEXT15": {"placeholder": "[TEXT15]", "label": "Conclusiones del laboratorio", "type": "text"},
     
     # 7. FOTOGRAFIAS
-    "TITLE3": {"placeholder": "[TITLE3]", "label": "Título 3", "type": "text"},
-    "IMAGE3": {"placeholder": "[IMAGE3]", "label": "Imagen 3", "type": "file"},
-    "TITLE4": {"placeholder": "[TITLE4]", "label": "Título 4", "type": "text"},
-    "IMAGE4": {"placeholder": "[IMAGE4]", "label": "Imagen 4", "type": "file"},
-    "TITLE5": {"placeholder": "[TITLE5]", "label": "Título 5", "type": "text"},
-    "IMAGE5": {"placeholder": "[IMAGE5]", "label": "Imagen 5", "type": "file"},
-    "TITLE6": {"placeholder": "[TITLE6]", "label": "Título 6", "type": "text"},
-    "IMAGE6": {"placeholder": "[IMAGE6]", "label": "Imagen 6", "type": "file"},
-    "TITLE7": {"placeholder": "[TITLE7]", "label": "Título 7", "type": "text"},
-    "IMAGE7": {"placeholder": "[IMAGE7]", "label": "Imagen 7", "type": "file"},
-    "TITLE8": {"placeholder": "[TITLE8]", "label": "Título 8", "type": "text"},
-    "IMAGE8": {"placeholder": "[IMAGE8]", "label": "Imagen 8", "type": "file"},
+    "TITLE3": {"placeholder": "[TITLE3]", "label": "Título 1", "type": "text"},
+    "IMAGE3": {"placeholder": "[IMAGE3]", "label": "Imagen 1", "type": "file"},
+    "TITLE4": {"placeholder": "[TITLE4]", "label": "Título 2", "type": "text"},
+    "IMAGE4": {"placeholder": "[IMAGE4]", "label": "Imagen 2", "type": "file"},
+    "TITLE5": {"placeholder": "[TITLE5]", "label": "Título 3", "type": "text"},
+    "IMAGE5": {"placeholder": "[IMAGE5]", "label": "Imagen 3", "type": "file"},
+    "TITLE6": {"placeholder": "[TITLE6]", "label": "Título 4", "type": "text"},
+    "IMAGE6": {"placeholder": "[IMAGE6]", "label": "Imagen 4", "type": "file"},
+    "TITLE7": {"placeholder": "[TITLE7]", "label": "Título 5", "type": "text"},
+    "IMAGE7": {"placeholder": "[IMAGE7]", "label": "Imagen 5", "type": "file"},
+    "TITLE8": {"placeholder": "[TITLE8]", "label": "Título 6", "type": "text"},
+    "IMAGE8": {"placeholder": "[IMAGE8]", "label": "Imagen 6", "type": "file"},
 }
 
 
@@ -208,16 +208,25 @@ class DocumentGeneratorApp(QWidget):
         form_layout.setSpacing(15)
 
         # Group Header: Encabezado
+        title_label = QLabel("Encabezado - Información del documento")
+        title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
+        form_layout.addWidget(title_label)
         self.create_input_group(form_layout, "Encabezado - Información del documento", [
             "NO_TEST", "REV", "DATE"
         ])
 
         # Group 0: INFORMACIÓN DEL SOLICITANTE DEL ENSAYO
+        title_label = QLabel("0. INFORMACIÓN DEL SOLICITANTE DEL ENSAYO")
+        title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
+        form_layout.addWidget(title_label)
         self.create_input_group(form_layout, "0. INFORMACIÓN DEL SOLICITANTE DEL ENSAYO", [
             "TEXT1", "TEXT4", "TEXT2", "TEXT5", "TEXT3"
         ])
 
         # Group 1: INFORMACIÓN GENERAL DEL PRODUCTO
+        title_label = QLabel("1. INFORMACIÓN GENERAL DEL PRODUCTO")
+        title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
+        form_layout.addWidget(title_label)
         self.create_input_group(form_layout, "1. INFORMACIÓN GENERAL DEL PRODUCTO", [
             "TEXT6", "TEXT7", "TEXT8"
         ])
@@ -228,15 +237,23 @@ class DocumentGeneratorApp(QWidget):
         ])
 
         # Group 2: EQUIPOS Y MÉTODOS UTILIZADOS
-        self.create_input_group(form_layout, "2. EQUIPOS Y MÉTODOS UTILIZADOS", [
-            "EQUIPO1", "MARCA1", "TIPO1", "FECHA1", "OBSER1",
-            "EQUIPO2", "MARCA2", "TIPO2", "FECHA2", "OBSER2",
-            "EQUIPO3", "MARCA3", "TIPO3", "FECHA3", "OBSER3",
-            "EQUIPO4", "MARCA4", "TIPO4", "FECHA4", "OBSER4",
-            "EQUIPO5", "MARCA5", "TIPO5", "FECHA5", "OBSER5",
-            "EQUIPO6", "MARCA6", "TIPO6", "FECHA6", "OBSER6",
-            "EQUIPO7", "MARCA7", "TIPO7", "FECHA7", "OBSER7"
-        ])
+        title_label = QLabel("2. EQUIPOS Y MÉTODOS UTILIZADOS")
+        title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
+        form_layout.addWidget(title_label)
+        self.create_input_group(form_layout, "Row 1" , [
+            "EQUIPO1", "MARCA1", "TIPO1", "FECHA1", "OBSER1"])
+        self.create_input_group(form_layout, "Row 2" , [
+            "EQUIPO2", "MARCA2", "TIPO2", "FECHA2", "OBSER2"])
+        self.create_input_group(form_layout, "Row 3" , [
+            "EQUIPO3", "MARCA3", "TIPO3", "FECHA3", "OBSER3"])
+        self.create_input_group(form_layout, "Row 4" , [
+            "EQUIPO4", "MARCA4", "TIPO4", "FECHA4", "OBSER4"])
+        self.create_input_group(form_layout, "Row 5" , [
+            "EQUIPO5", "MARCA5", "TIPO5", "FECHA5", "OBSER5"])
+        self.create_input_group(form_layout, "Row 6" , [
+            "EQUIPO6", "MARCA6", "TIPO6", "FECHA6", "OBSER6"])
+        self.create_input_group(form_layout, "Row 7" , [
+            "EQUIPO7", "MARCA7", "TIPO7", "FECHA7", "OBSER7"])
 
         # Group 2.1: MÉTODO DE ENSAYO
         self.create_input_group(form_layout, "MÉTODO DE ENSAYO", [
@@ -244,13 +261,21 @@ class DocumentGeneratorApp(QWidget):
         ])
 
         # Group 3: TEMPERATURAS REGISTRADAS
-        self.create_input_group(form_layout, "3. TEMPERATURAS REGISTRADAS", [
-            "PUNTO1", "UNIDAD1", "LIMITE1", "TEMP1",
-            "PUNTO2", "UNIDAD2", "LIMITE2", "TEMP2",
-            "PUNTO3", "UNIDAD3", "LIMITE3", "TEMP3",
-            "PUNTO4", "UNIDAD4", "LIMITE4", "TEMP4",
-            "PUNTO5", "UNIDAD5", "LIMITE5", "TEMP5",
-            "TEXT13"
+        title_label = QLabel("3. TEMPERATURAS REGISTRADAS")
+        title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
+        form_layout.addWidget(title_label)
+        self.create_input_group(form_layout, "Row 1 ", [
+             "PUNTO1", "UNIDAD1", "LIMITE1", "TEMP1"])
+        self.create_input_group(form_layout, "Row 2 ", [
+             "PUNTO2", "UNIDAD2", "LIMITE2", "TEMP2"])
+        self.create_input_group(form_layout, "Row 3 ", [
+             "PUNTO3", "UNIDAD3", "LIMITE3", "TEMP3"])
+        self.create_input_group(form_layout, "Row 4 ", [
+             "PUNTO4", "UNIDAD4", "LIMITE4", "TEMP4"])
+        self.create_input_group(form_layout, "Row 5 ", [
+             "PUNTO5", "UNIDAD5", "LIMITE5", "TEMP5"])
+        self.create_input_group(form_layout, "NOTA", [
+             "TEXT13"
         ])
 
         # Group 3.1: GRÁFICA GENERADA
@@ -259,37 +284,95 @@ class DocumentGeneratorApp(QWidget):
         ])
 
         # Group 4: ESTABILIZACIÓN TÉRMICA
-        self.create_input_group(form_layout, "4. ESTABILIZACIÓN TÉRMICA", [
-            "TEXT14",
-            "MEDICI1", "UNI1", "VALMIN1", "VALMAX1", "DESVI1",
-            "MEDICI2", "UNI2", "VALMIN2", "VALMAX2", "DESVI2",
-            "MEDICI3", "UNI3", "VALMIN3", "VALMAX3", "DESVI3",
-            "MEDICI4", "UNI4", "VALMIN4", "VALMAX4", "DESVI4",
+        title_label = QLabel("4. ESTABILIZACIÓN TÉRMICA")
+        title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
+        form_layout.addWidget(title_label)
+        self.create_input_group(form_layout, "Description", [
+            "TEXT14"
+        ])
+        self.create_input_group(form_layout, "Row 1", [
+            "MEDICI1", "UNI1", "VALMIN1", "VALMAX1", "DESVI1"
+        ])
+        self.create_input_group(form_layout, "Row 2", [
+            "MEDICI2", "UNI2", "VALMIN2", "VALMAX2", "DESVI2"
+        ])
+        self.create_input_group(form_layout, "Row 3", [
+            "MEDICI3", "UNI3", "VALMIN3", "VALMAX3", "DESVI3"
+        ])
+        self.create_input_group(form_layout, "Row 4", [
+            "MEDICI4", "UNI4", "VALMIN4", "VALMAX4", "DESVI4"
+        ])
+        self.create_input_group(form_layout, "Row 5", [
             "MEDICI5", "UNI5", "VALMIN5", "VALMAX5", "DESVI5"
         ])
 
         # Group 5: RESULTADOS
-        self.create_input_group(form_layout, "5. RESULTADOS", [
-            "PUNTODE1", "UNIC1", "LIMITE1", "TEMPE1", "RESULT1",
-            "PUNTODE2", "UNIC2", "LIMITE2", "TEMPE2", "RESULT2",
-            "PUNTODE3", "UNIC3", "LIMITE3", "TEMPE3", "RESULT3",
-            "PUNTODE4", "UNIC4", "LIMITE4", "TEMPE4", "RESULT4",
+        title_label = QLabel("5. RESULTADOS")
+        title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
+        form_layout.addWidget(title_label)
+        self.create_input_group(form_layout, "Row 1", [
+            "PUNTODE1", "UNIC1", "LIMITE1", "TEMPE1", "RESULT1"
+        ])
+        self.create_input_group(form_layout, "Row 2", [
+            "PUNTODE2", "UNIC2", "LIMITE2", "TEMPE2", "RESULT2"
+        ])
+        self.create_input_group(form_layout, "Row 3", [
+            "PUNTODE3", "UNIC3", "LIMITE3", "TEMPE3", "RESULT3"
+        ])
+        self.create_input_group(form_layout, "Row 4", [
+            "PUNTODE4", "UNIC4", "LIMITE4", "TEMPE4", "RESULT4"
+        ])
+        self.create_input_group(form_layout, "Row 5", [
             "PUNTODE5", "UNIC5", "LIMITE5", "TEMPE5", "RESULT5"
         ])
 
         # Group 6: CONCLUSIONES DEL LABORATORIO
-        self.create_input_group(form_layout, "6. CONCLUSIONES DEL LABORATORIO", [
+        title_label = QLabel("6. CONCLUSIONES DEL LABORATORIO")
+        title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
+        form_layout.addWidget(title_label)
+        self.create_input_group(form_layout, "CONCLUSIONES", [
             "TEXT15"
         ])
 
         # Group 7.1: Títulos de Fotografías
-        self.create_input_group(form_layout, "7.1. Títulos de Fotografías", [
-            "TITLE3", "TITLE4", "TITLE5", "TITLE6", "TITLE7", "TITLE8"
+        title_label = QLabel("7. FOTOGRAFIAS")
+        title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
+        form_layout.addWidget(title_label)
+        self.create_input_group(form_layout, "Fotografía 1", [
+             "IMAGE3"
         ])
-
-        # Group 7.2: Imágenes de Fotografías
-        self.create_input_group(form_layout, "7.2. Imágenes de Fotografías", [
-            "IMAGE3", "IMAGE4", "IMAGE5", "IMAGE6", "IMAGE7", "IMAGE8"
+        self.create_input_group(form_layout, "Titulo 1", [
+                "TITLE3"
+        ])
+        self.create_input_group(form_layout, "Fotografía 2", [
+             "IMAGE4"
+        ])
+        self.create_input_group(form_layout, "Titulo 2", [
+                "TITLE4"
+        ])
+        self.create_input_group(form_layout, "Fotografía 3", [
+             "IMAGE5"
+        ])
+        self.create_input_group(form_layout, "Titulo 3", [
+                "TITLE5"
+        ])
+        self.create_input_group(form_layout, "Fotografía 4", [
+             "IMAGE6"
+        ])
+        self.create_input_group(form_layout, "Titulo 4", [
+                "TITLE6"
+        ])
+        self.create_input_group(form_layout, "Fotografía 5", [
+             "IMAGE7"
+        ])
+        self.create_input_group(form_layout, "Titulo 5", [
+                "TITLE7"
+        ])
+        self.create_input_group(form_layout, "Fotografía 6", [
+             "IMAGE8"
+        ])
+        self.create_input_group(form_layout, "Titulo 6", [
+                "TITLE8"
         ])
 
         scroll.setWidget(content_widget)
