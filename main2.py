@@ -374,7 +374,6 @@ class DocumentGeneratorApp(QWidget):
         self.create_input_group(form_layout, "Titulo 6", [
                 "TITLE8"
         ])
-
         scroll.setWidget(content_widget)
         main_layout.addWidget(scroll)
 
