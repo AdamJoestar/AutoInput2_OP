@@ -284,6 +284,14 @@ class DocumentGeneratorApp(QWidget):
         self.setStyleSheet("font-size: 14px; font-family: Arial;")
         self.init_ui()
 
+    def closeEvent(self, event):
+        """Menampilkan popup konfirmasi sebelum menutup aplikasi."""
+        reply = QMessageBox.question(self, 'Confirmar salida', '¿Estás seguro de que quieres salir?', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if reply == QMessageBox.Yes:
+            event.accept()
+        else:
+            event.ignore()
+
     def init_ui(self):
         """Membangun antarmuka pengguna."""
         main_layout = QVBoxLayout(self)
@@ -324,6 +332,13 @@ class DocumentGeneratorApp(QWidget):
         self.spin_results.valueChanged.connect(self.rebuild_form)
         spin_layout.addWidget(self.spin_results)
 
+        spin_layout.addWidget(QLabel("FOTOGRAFIAS (max 10):"))
+        self.spin_photos = QSpinBox()
+        self.spin_photos.setRange(1, 10)
+        self.spin_photos.setValue(10)
+        self.spin_photos.valueChanged.connect(self.rebuild_form)
+        spin_layout.addWidget(self.spin_photos)
+
         main_layout.addLayout(spin_layout)
 
         # --- Scroll Area untuk banyak input ---
@@ -356,6 +371,14 @@ class DocumentGeneratorApp(QWidget):
         self.rebuild_form()
 
     def rebuild_form(self):
+        # Save current input values before clearing
+        current_values = {}
+        for key, widget in self.input_widgets.items():
+            if isinstance(widget, QLineEdit):
+                current_values[key] = widget.text()
+            elif isinstance(widget, QTextEdit):
+                current_values[key] = widget.toPlainText()
+
         # Clear existing widgets from form_layout
         for i in reversed(range(self.form_layout.count())):
             item = self.form_layout.itemAt(i)
@@ -469,13 +492,23 @@ class DocumentGeneratorApp(QWidget):
         title_label = QLabel("7. FOTOGRAFIAS")
         title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
         self.form_layout.addWidget(title_label)
-        for i in range(3, 13):  # IMAGE3 to IMAGE12, TITLE3 to TITLE12
+        num_photos = self.spin_photos.value()
+        for i in range(3, 3 + num_photos):  # IMAGE3 to IMAGE{2+num_photos}, TITLE3 to TITLE{2+num_photos}
             self.create_input_group(self.form_layout, f"Fotografía {i-2}", [
                 f"IMAGE{i}"
             ])
             self.create_input_group(self.form_layout, f"Titulo {i-2}", [
                 f"TITLE{i}"
             ])
+
+        # Restore saved values
+        for key, value in current_values.items():
+            if key in self.input_widgets:
+                widget = self.input_widgets[key]
+                if isinstance(widget, QLineEdit):
+                    widget.setText(value)
+                elif isinstance(widget, QTextEdit):
+                    widget.setPlainText(value)
 
     def create_input_group(self, parent_layout, title, keys):
         """Membuat group box untuk input yang terorganisir."""
@@ -577,104 +610,54 @@ class DocumentGeneratorApp(QWidget):
 
     def replace_images(self, document, replacement_data):
         """Mengganti placeholder gambar dengan gambar yang dipilih."""
-        # Replace in main paragraphs
-        for paragraph in document.paragraphs:
+        def process_paragraph(paragraph):
             placeholder = paragraph.text.strip()
             if placeholder in replacement_data:
                 image_path = replacement_data[placeholder]
-                if os.path.exists(image_path):
+                if image_path and os.path.exists(image_path):
                     paragraph.clear()
-                    # Check if it's a photography image (IMAGE3 to IMAGE8) for vertical orientation
-                    if placeholder in ["[IMAGE3]", "[IMAGE4]", "[IMAGE5]", "[IMAGE6]", "[IMAGE7]", "[IMAGE8]"]:
-                        # Vertical photo from phone: height 4 inches, width 3 inches
-                        paragraph.add_run().add_picture(image_path, width=Inches(3), height=Inches(4))
+                    # Check if it's a photography image (IMAGE3 to IMAGE12) for vertical orientation
+                    if placeholder in ["[IMAGE3]", "[IMAGE4]", "[IMAGE5]", "[IMAGE6]", "[IMAGE7]", "[IMAGE8]", "[IMAGE9]", "[IMAGE10]", "[IMAGE11]", "[IMAGE12]"]:
+                        # Smaller size for fitting 4 images on one page: height 3 inches, width 2 inches
+                        paragraph.add_run().add_picture(image_path, width=Inches(2), height=Inches(3))
                     else:
                         # Other images: default size
                         paragraph.add_run().add_picture(image_path)
+                else:
+                    paragraph.clear()  # Remove placeholder if no valid image
+
+        # Replace in main paragraphs
+        for paragraph in document.paragraphs:
+            process_paragraph(paragraph)
 
         # Replace in tables
         for table in document.tables:
             for row in table.rows:
                 for cell in row.cells:
                     for paragraph in cell.paragraphs:
-                        placeholder = paragraph.text.strip()
-                        if placeholder in replacement_data:
-                            image_path = replacement_data[placeholder]
-                            if os.path.exists(image_path):
-                                paragraph.clear()
-                                # Check if it's a photography image (IMAGE3 to IMAGE8) for vertical orientation
-                                if placeholder in ["[IMAGE3]", "[IMAGE4]", "[IMAGE5]", "[IMAGE6]", "[IMAGE7]", "[IMAGE8]"]:
-                                    # Vertical photo from phone: height 4 inches, width 3 inches
-                                    paragraph.add_run().add_picture(image_path, width=Inches(3), height=Inches(4))
-                                else:
-                                    # Other images: default size
-                                    paragraph.add_run().add_picture(image_path)
+                        process_paragraph(paragraph)
 
         # Replace in headers
         for section in document.sections:
             header = section.header
             for paragraph in header.paragraphs:
-                placeholder = paragraph.text.strip()
-                if placeholder in replacement_data:
-                    image_path = replacement_data[placeholder]
-                    if os.path.exists(image_path):
-                        paragraph.clear()
-                        # Check if it's a photography image (IMAGE3 to IMAGE8) for vertical orientation
-                        if placeholder in ["[IMAGE3]", "[IMAGE4]", "[IMAGE5]", "[IMAGE6]", "[IMAGE7]", "[IMAGE8]"]:
-                            # Vertical photo from phone: height 4 inches, width 3 inches
-                            paragraph.add_run().add_picture(image_path, width=Inches(3), height=Inches(4))
-                        else:
-                            # Other images: default size
-                            paragraph.add_run().add_picture(image_path)
+                process_paragraph(paragraph)
             for table in header.tables:
                 for row in table.rows:
                     for cell in row.cells:
                         for paragraph in cell.paragraphs:
-                            placeholder = paragraph.text.strip()
-                            if placeholder in replacement_data:
-                                image_path = replacement_data[placeholder]
-                                if os.path.exists(image_path):
-                                    paragraph.clear()
-                                    # Check if it's a photography image (IMAGE3 to IMAGE8) for vertical orientation
-                                    if placeholder in ["[IMAGE3]", "[IMAGE4]", "[IMAGE5]", "[IMAGE6]", "[IMAGE7]", "[IMAGE8]"]:
-                                        # Vertical photo from phone: height 4 inches, width 3 inches
-                                        paragraph.add_run().add_picture(image_path, width=Inches(3), height=Inches(4))
-                                    else:
-                                        # Other images: default size
-                                        paragraph.add_run().add_picture(image_path)
+                            process_paragraph(paragraph)
 
         # Replace in footers
         for section in document.sections:
             footer = section.footer
             for paragraph in footer.paragraphs:
-                placeholder = paragraph.text.strip()
-                if placeholder in replacement_data:
-                    image_path = replacement_data[placeholder]
-                    if os.path.exists(image_path):
-                        paragraph.clear()
-                        # Check if it's a photography image (IMAGE3 to IMAGE8) for vertical orientation
-                        if placeholder in ["[IMAGE3]", "[IMAGE4]", "[IMAGE5]", "[IMAGE6]", "[IMAGE7]", "[IMAGE8]"]:
-                            # Vertical photo from phone: height 4 inches, width 3 inches
-                            paragraph.add_run().add_picture(image_path, width=Inches(3), height=Inches(4))
-                        else:
-                            # Other images: default size
-                            paragraph.add_run().add_picture(image_path)
+                process_paragraph(paragraph)
             for table in footer.tables:
                 for row in table.rows:
                     for cell in row.cells:
                         for paragraph in cell.paragraphs:
-                            placeholder = paragraph.text.strip()
-                            if placeholder in replacement_data:
-                                image_path = replacement_data[placeholder]
-                                if os.path.exists(image_path):
-                                    paragraph.clear()
-                                    # Check if it's a photography image (IMAGE3 to IMAGE8) for vertical orientation
-                                    if placeholder in ["[IMAGE3]", "[IMAGE4]", "[IMAGE5]", "[IMAGE6]", "[IMAGE7]", "[IMAGE8]"]:
-                                        # Vertical photo from phone: height 4 inches, width 3 inches
-                                        paragraph.add_run().add_picture(image_path, width=Inches(3), height=Inches(4))
-                                    else:
-                                        # Other images: default size
-                                        paragraph.add_run().add_picture(image_path)
+                            process_paragraph(paragraph)
 
     def generate_document(self):
         """Logika utama untuk membaca input, memuat template, mengganti placeholder, dan menyimpan file."""
