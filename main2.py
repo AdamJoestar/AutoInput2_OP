@@ -1,10 +1,12 @@
 import sys
+import tempfile
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QHBoxLayout,
     QLabel, QLineEdit, QPushButton, QMessageBox,
-    QScrollArea, QGridLayout, QTextEdit, QGroupBox, QFileDialog, QSpinBox
+    QScrollArea, QGridLayout, QTextEdit, QGroupBox, QFileDialog, QSpinBox, QRubberBand, QDialog
 )
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QPoint, QRect
+from PyQt5.QtGui import QPixmap, QScreen, QPainter, QPen, QColor
 from docx import Document
 from docx.shared import Inches
 from datetime import date
@@ -271,6 +273,64 @@ FIELD_DEFINITIONS = {
     "TITLE12": {"placeholder": "[TITLE12]", "label": "Título 12", "type": "text"},
     "IMAGE12": {"placeholder": "[IMAGE12]", "label": "Imagen 12", "type": "file"},
 }
+
+
+class ScreenshotDialog(QDialog):
+    def __init__(self, screenshot=None, parent=None):
+        super().__init__(parent)
+        self.screenshot = screenshot
+        self.rubber_band = QRubberBand(QRubberBand.Rectangle, self)
+        self.origin = QPoint()
+        self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
+        self.setModal(True)
+        self.showFullScreen()
+        self.setCursor(Qt.CrossCursor)
+
+        # Display the screenshot as background
+        if self.screenshot:
+            self.background_label = QLabel(self)
+            self.background_label.setPixmap(self.screenshot)
+            self.background_label.setScaledContents(True)
+            self.background_label.resize(self.size())
+            self.background_label.setCursor(Qt.CrossCursor)
+            self.background_label.lower()  # Ensure it's behind other widgets
+
+        # Add OK and Cancel buttons at the top
+        button_layout = QHBoxLayout()
+        button_layout.setContentsMargins(10, 10, 10, 10)
+        self.ok_button = QPushButton("OK")
+        self.ok_button.clicked.connect(self.accept)
+        self.cancel_button = QPushButton("Cancel")
+        self.cancel_button.clicked.connect(self.reject)
+        button_layout.addWidget(self.ok_button)
+        button_layout.addWidget(self.cancel_button)
+        button_layout.addStretch()
+
+        main_layout = QVBoxLayout()
+        main_layout.addLayout(button_layout)
+        main_layout.addStretch()
+        self.setLayout(main_layout)
+
+    def mousePressEvent(self, event):
+        self.origin = event.pos()
+        self.rubber_band.setGeometry(QRect(self.origin, QSize()))
+        self.rubber_band.show()
+
+    def mouseMoveEvent(self, event):
+        if not self.origin.isNull():
+            self.rubber_band.setGeometry(QRect(self.origin, event.pos()).normalized())
+
+    def mouseReleaseEvent(self, event):
+        pass
+
+    def get_selected_pixmap(self):
+        rect = self.rubber_band.geometry()
+        if rect.isValid() and rect.width() > 0 and rect.height() > 0:
+            ratio = self.screenshot.devicePixelRatio()
+            scaled_rect = QRect(int(rect.x() * ratio), int(rect.y() * ratio), int(rect.width() * ratio), int(rect.height() * ratio))
+            return self.screenshot.copy(scaled_rect)
+        else:
+            return self.screenshot  # Return full screenshot if no selection
 
 
 class DocumentGeneratorApp(QWidget):
@@ -546,9 +606,12 @@ class DocumentGeneratorApp(QWidget):
                 input_field.setMinimumHeight(30)
                 browse_button = QPushButton("Browse")
                 browse_button.clicked.connect(lambda _, field=input_field: self.browse_file(field))
-                grid_layout.addWidget(label, row, 0)
-                grid_layout.addWidget(input_field, row + 1, 0)
-                grid_layout.addWidget(browse_button, row + 1, 1)
+                screenshot_button = QPushButton("Screenshot")
+                screenshot_button.clicked.connect(lambda _, field=input_field: self.take_screenshot(field))
+                grid_layout.addWidget(label, row, 0, 1, 4)
+                grid_layout.addWidget(input_field, row + 1, 0, 1, 2)
+                grid_layout.addWidget(browse_button, row + 1, 2)
+                grid_layout.addWidget(screenshot_button, row + 1, 3)
                 row += 2
                 col = 0
             
@@ -562,6 +625,17 @@ class DocumentGeneratorApp(QWidget):
         file_path, _ = QFileDialog.getOpenFileName(self, "Select Image", "", "Image Files (*.png *.jpg *.jpeg *.gif *.bmp *.tiff *.tif *.webp *.jfif)")
         if file_path:
             field.setText(file_path)
+
+    def take_screenshot(self, field):
+        """Take screenshot and allow area selection like snipping tool."""
+        screen = QApplication.primaryScreen()
+        screenshot = screen.grabWindow(0)  # Capture full screen
+        dialog = ScreenshotDialog(screenshot=screenshot, parent=self)
+        if dialog.exec_() == QDialog.Accepted:
+            selected_pixmap = dialog.get_selected_pixmap()
+            temp_file = tempfile.NamedTemporaryFile(suffix='.png', delete=False)
+            selected_pixmap.save(temp_file.name, 'PNG')
+            field.setText(temp_file.name)
 
     def replace_in_paragraph(self, paragraph, placeholder, value):
         """Mengganti placeholder di dalam paragraf."""
