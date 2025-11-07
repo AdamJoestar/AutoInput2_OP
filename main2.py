@@ -678,12 +678,14 @@ class DocumentGeneratorApp(QWidget):
 
     def generate_document(self):
         """Logika utama untuk membaca input, memuat template, mengganti placeholder, dan menyimpan file."""
-        
+
         replacement_data = {}
         all_required_filled = True
-        
-        for key, definition in FIELD_DEFINITIONS.items():
-            input_widget = self.input_widgets.get(key)
+
+        # Collect data from used widgets
+        for key in self.input_widgets:
+            definition = FIELD_DEFINITIONS[key]
+            input_widget = self.input_widgets[key]
             if isinstance(input_widget, QLineEdit):
                 value = input_widget.text().strip()
             elif isinstance(input_widget, QTextEdit):
@@ -697,6 +699,11 @@ class DocumentGeneratorApp(QWidget):
                 return
 
             replacement_data[definition['placeholder']] = value
+
+        # Replace unused placeholders with empty strings to remove them
+        for key, definition in FIELD_DEFINITIONS.items():
+            if key not in self.input_widgets:
+                replacement_data[definition['placeholder']] = ""
         
         if not all_required_filled:
             return
@@ -722,6 +729,23 @@ class DocumentGeneratorApp(QWidget):
         self.replace_in_headers(document, replacement_data)
         self.replace_in_footers(document, replacement_data)
         self.replace_images(document, replacement_data)
+
+        # Remove empty table rows
+        for table in document.tables:
+            rows_to_remove = []
+            for i, row in enumerate(table.rows):
+                is_empty = True
+                for cell in row.cells:
+                    for paragraph in cell.paragraphs:
+                        if paragraph.text.strip():
+                            is_empty = False
+                            break
+                    if not is_empty:
+                        break
+                if is_empty:
+                    rows_to_remove.append(i)
+            for i in reversed(rows_to_remove):
+                table._tbl.remove(table.rows[i]._tr)
 
         try:
             output_filename = f"Generated_Anexo_II_{date.today().strftime('%d_%m_%Y')}.docx"
