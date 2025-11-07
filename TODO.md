@@ -1,0 +1,5 @@
+- [x] Add QSpinBox widgets for each dynamic section in init_ui
+- [x] Create rebuild_form method to dynamically build form based on spin box values
+- [x] Connect spin boxes to rebuild_form
+- [x] Test GUI with different row selections
+- [x] Verify document generation with varying rows
