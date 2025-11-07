@@ -1,8 +1,8 @@
 import sys
 from PyQt5.QtWidgets import (
-    QApplication, QWidget, QVBoxLayout, QHBoxLayout, 
-    QLabel, QLineEdit, QPushButton, QMessageBox, 
-    QScrollArea, QGridLayout, QTextEdit, QGroupBox, QFileDialog
+    QApplication, QWidget, QVBoxLayout, QHBoxLayout,
+    QLabel, QLineEdit, QPushButton, QMessageBox,
+    QScrollArea, QGridLayout, QTextEdit, QGroupBox, QFileDialog, QSpinBox
 )
 from PyQt5.QtCore import Qt
 from docx import Document
@@ -22,25 +22,25 @@ FIELD_DEFINITIONS = {
     "NO_TEST": {"placeholder": "[NO_TEST]", "label": "Nº de Test Plan", "type": "text"},
     "REV": {"placeholder": "[REV]", "label": "Revisión", "type": "text"},
     "DATE": {"placeholder": "[DATE]", "label": "Fecha de emisión (DD/MM/YYYY)", "type": "text"},
-    
+
     # 0. INFORMACIÓN DEL SOLICITANTE DEL ENSAYO
     "TEXT1": {"placeholder": "[TEXT1]", "label": "Solicitante", "type": "text"},
     "TEXT4": {"placeholder": "[TEXT4]", "label": "Operario del ensayo", "type": "text"},
     "TEXT2": {"placeholder": "[TEXT2]", "label": "Departamento", "type": "text"},
     "TEXT5": {"placeholder": "[TEXT5]", "label": "Responsable del ensayo", "type": "text"},
     "TEXT3": {"placeholder": "[TEXT3]", "label": "Fecha de solicitud (DD/MM/YYYY)", "type": "text"},
-    
+
     # 1. INFORMACIÓN GENERAL DEL PRODUCTO
     "TEXT6": {"placeholder": "[TEXT6]", "label": "Referencia del modelo ensayado", "type": "text"},
     "TEXT7": {"placeholder": "[TEXT7]", "label": "Aplicación", "type": "text"},
     "TEXT8": {"placeholder": "[TEXT8]", "label": "Fuente de luz", "type": "text"},
-    
+
     # 1.1. CONDICIONES DEL ENSAYO
     "TEXT9": {"placeholder": "[TEXT9]", "label": "Ensayo térmico realizado en", "type": "text"},
     "TEXT10": {"placeholder": "[TEXT10]", "label": "Temperatura de color ensayada (CCT)", "type": "text"},
     "TEXT11": {"placeholder": "[TEXT11]", "label": "Luminaria alimentada a", "type": "text"},
-    
-    # 2. EQUIPOS Y MÉTODOS UTILIZADOS
+
+    # 2. EQUIPOS Y MÉTODOS UTILIZADOS (up to 12)
     "EQUIPO1": {"placeholder": "[EQUIPO1]", "label": "Equipo 1", "type": "text"},
     "MARCA1": {"placeholder": "[MARCA1]", "label": "Marca/Modelo 1", "type": "text"},
     "TIPO1": {"placeholder": "[TIPO1]", "label": "Tipo/Aplicación 1", "type": "text"},
@@ -76,9 +76,34 @@ FIELD_DEFINITIONS = {
     "TIPO7": {"placeholder": "[TIPO7]", "label": "Tipo/Aplicación 7", "type": "text"},
     "FECHA7": {"placeholder": "[FECHA7]", "label": "Fecha de calibración 7", "type": "text"},
     "OBSER7": {"placeholder": "[OBSER7]", "label": "Observaciones 7", "type": "text"},
+    "EQUIPO8": {"placeholder": "[EQUIPO8]", "label": "Equipo 8", "type": "text"},
+    "MARCA8": {"placeholder": "[MARCA8]", "label": "Marca/Modelo 8", "type": "text"},
+    "TIPO8": {"placeholder": "[TIPO8]", "label": "Tipo/Aplicación 8", "type": "text"},
+    "FECHA8": {"placeholder": "[FECHA8]", "label": "Fecha de calibración 8", "type": "text"},
+    "OBSER8": {"placeholder": "[OBSER8]", "label": "Observaciones 8", "type": "text"},
+    "EQUIPO9": {"placeholder": "[EQUIPO9]", "label": "Equipo 9", "type": "text"},
+    "MARCA9": {"placeholder": "[MARCA9]", "label": "Marca/Modelo 9", "type": "text"},
+    "TIPO9": {"placeholder": "[TIPO9]", "label": "Tipo/Aplicación 9", "type": "text"},
+    "FECHA9": {"placeholder": "[FECHA9]", "label": "Fecha de calibración 9", "type": "text"},
+    "OBSER9": {"placeholder": "[OBSER9]", "label": "Observaciones 9", "type": "text"},
+    "EQUIPO10": {"placeholder": "[EQUIPO10]", "label": "Equipo 10", "type": "text"},
+    "MARCA10": {"placeholder": "[MARCA10]", "label": "Marca/Modelo 10", "type": "text"},
+    "TIPO10": {"placeholder": "[TIPO10]", "label": "Tipo/Aplicación 10", "type": "text"},
+    "FECHA10": {"placeholder": "[FECHA10]", "label": "Fecha de calibración 10", "type": "text"},
+    "OBSER10": {"placeholder": "[OBSER10]", "label": "Observaciones 10", "type": "text"},
+    "EQUIPO11": {"placeholder": "[EQUIPO11]", "label": "Equipo 11", "type": "text"},
+    "MARCA11": {"placeholder": "[MARCA11]", "label": "Marca/Modelo 11", "type": "text"},
+    "TIPO11": {"placeholder": "[TIPO11]", "label": "Tipo/Aplicación 11", "type": "text"},
+    "FECHA11": {"placeholder": "[FECHA11]", "label": "Fecha de calibración 11", "type": "text"},
+    "OBSER11": {"placeholder": "[OBSER11]", "label": "Observaciones 11", "type": "text"},
+    "EQUIPO12": {"placeholder": "[EQUIPO12]", "label": "Equipo 12", "type": "text"},
+    "MARCA12": {"placeholder": "[MARCA12]", "label": "Marca/Modelo 12", "type": "text"},
+    "TIPO12": {"placeholder": "[TIPO12]", "label": "Tipo/Aplicación 12", "type": "text"},
+    "FECHA12": {"placeholder": "[FECHA12]", "label": "Fecha de calibración 12", "type": "text"},
+    "OBSER12": {"placeholder": "[OBSER12]", "label": "Observaciones 12", "type": "text"},
     "TEXT12": {"placeholder": "[TEXT12]", "label": "Método de ensayo", "type": "text"},
-    
-    # 3. TEMPERATURAS REGISTRADAS
+
+    # 3. TEMPERATURAS REGISTRADAS (up to 10)
     "PUNTO1": {"placeholder": "[PUNTO1]", "label": "Punto de Medición 1", "type": "text"},
     "UNIDAD1": {"placeholder": "[UNIDAD1]", "label": "Unidad 1", "type": "text"},
     "LIMITE1": {"placeholder": "[LIMITE1]", "label": "Límite Máximo 1", "type": "text"},
@@ -99,17 +124,38 @@ FIELD_DEFINITIONS = {
     "UNIDAD5": {"placeholder": "[UNIDAD5]", "label": "Unidad 5", "type": "text"},
     "LIMITE5": {"placeholder": "[LIMITE5]", "label": "Límite Máximo 5", "type": "text"},
     "TEMP5": {"placeholder": "[TEMP5]", "label": "Temperatura Medida 5", "type": "text"},
+    "PUNTO6": {"placeholder": "[PUNTO6]", "label": "Punto de Medición 6", "type": "text"},
+    "UNIDAD6": {"placeholder": "[UNIDAD6]", "label": "Unidad 6", "type": "text"},
+    "LIMITE6": {"placeholder": "[LIMITE6]", "label": "Límite Máximo 6", "type": "text"},
+    "TEMP6": {"placeholder": "[TEMP6]", "label": "Temperatura Medida 6", "type": "text"},
+    "PUNTO7": {"placeholder": "[PUNTO7]", "label": "Punto de Medición 7", "type": "text"},
+    "UNIDAD7": {"placeholder": "[UNIDAD7]", "label": "Unidad 7", "type": "text"},
+    "LIMITE7": {"placeholder": "[LIMITE7]", "label": "Límite Máximo 7", "type": "text"},
+    "TEMP7": {"placeholder": "[TEMP7]", "label": "Temperatura Medida 7", "type": "text"},
+    "PUNTO8": {"placeholder": "[PUNTO8]", "label": "Punto de Medición 8", "type": "text"},
+    "UNIDAD8": {"placeholder": "[UNIDAD8]", "label": "Unidad 8", "type": "text"},
+    "LIMITE8": {"placeholder": "[LIMITE8]", "label": "Límite Máximo 8", "type": "text"},
+    "TEMP8": {"placeholder": "[TEMP8]", "label": "Temperatura Medida 8", "type": "text"},
+    "PUNTO9": {"placeholder": "[PUNTO9]", "label": "Punto de Medición 9", "type": "text"},
+    "UNIDAD9": {"placeholder": "[UNIDAD9]", "label": "Unidad 9", "type": "text"},
+    "LIMITE9": {"placeholder": "[LIMITE9]", "label": "Límite Máximo 9", "type": "text"},
+    "TEMP9": {"placeholder": "[TEMP9]", "label": "Temperatura Medida 9", "type": "text"},
+    "PUNTO10": {"placeholder": "[PUNTO10]", "label": "Punto de Medición 10", "type": "text"},
+    "UNIDAD10": {"placeholder": "[UNIDAD10]", "label": "Unidad 10", "type": "text"},
+    "LIMITE10": {"placeholder": "[LIMITE10]", "label": "Límite Máximo 10", "type": "text"},
+    "TEMP10": {"placeholder": "[TEMP10]", "label": "Temperatura Medida 10", "type": "text"},
     "TEXT13": {"placeholder": "[TEXT13]", "label": "NOTA", "type": "text"},
-    
+    "TEXT14": {"placeholder": "[TEXT14]", "label": "Description", "type": "text"},
+    "TEXT15": {"placeholder": "[TEXT15]", "label": "Conclusions", "type": "text"},
+
     # 3.1. GRÁFICA GENERADA
     "IMAGE1": {"placeholder": "[IMAGE1]", "label": "Imagen 1", "type": "file"},
     "TITLE1": {"placeholder": "[TITLE1]", "label": "Título 1", "type": "text"},
     "DESC1": {"placeholder": "[DESC1]", "label": "Descripción 1", "type": "text"},
     "IMAGE2": {"placeholder": "[IMAGE2]", "label": "Imagen 2", "type": "file"},
     "DESC2": {"placeholder": "[DESC2]", "label": "Descripción 2", "type": "text"},
-    
-    # 4. ESTABILIZACIÓN TÉRMICA
-    "TEXT14": {"placeholder": "[TEXT14]", "label": "Estabilización térmica", "type": "text"},
+
+    # 4. ESTABILIZACIÓN TÉRMICA (up to 10)
     "MEDICI1": {"placeholder": "[MEDICI1]", "label": "Punto de Medición 1", "type": "text"},
     "UNI1": {"placeholder": "[UNI1]", "label": "Unidad 1", "type": "text"},
     "VALMIN1": {"placeholder": "[VALMIN1]", "label": "Valor Mínimo 1", "type": "text"},
@@ -135,50 +181,95 @@ FIELD_DEFINITIONS = {
     "VALMIN5": {"placeholder": "[VALMIN5]", "label": "Valor Mínimo 5", "type": "text"},
     "VALMAX5": {"placeholder": "[VALMAX5]", "label": "Valor Máximo 5", "type": "text"},
     "DESVI5": {"placeholder": "[DESVI5]", "label": "Desviación 5", "type": "text"},
-    
-    # 5. RESULTADOS
+    "MEDICI6": {"placeholder": "[MEDICI6]", "label": "Punto de Medición 6", "type": "text"},
+    "UNI6": {"placeholder": "[UNI6]", "label": "Unidad 6", "type": "text"},
+    "VALMIN6": {"placeholder": "[VALMIN6]", "label": "Valor Mínimo 6", "type": "text"},
+    "VALMAX6": {"placeholder": "[VALMAX6]", "label": "Valor Máximo 6", "type": "text"},
+    "DESVI6": {"placeholder": "[DESVI6]", "label": "Desviación 6", "type": "text"},
+    "MEDICI7": {"placeholder": "[MEDICI7]", "label": "Punto de Medición 7", "type": "text"},
+    "UNI7": {"placeholder": "[UNI7]", "label": "Unidad 7", "type": "text"},
+    "VALMIN7": {"placeholder": "[VALMIN7]", "label": "Valor Mínimo 7", "type": "text"},
+    "VALMAX7": {"placeholder": "[VALMAX7]", "label": "Valor Máximo 7", "type": "text"},
+    "DESVI7": {"placeholder": "[DESVI7]", "label": "Desviación 7", "type": "text"},
+    "MEDICI8": {"placeholder": "[MEDICI8]", "label": "Punto de Medición 8", "type": "text"},
+    "UNI8": {"placeholder": "[UNI8]", "label": "Unidad 8", "type": "text"},
+    "VALMIN8": {"placeholder": "[VALMIN8]", "label": "Valor Mínimo 8", "type": "text"},
+    "VALMAX8": {"placeholder": "[VALMAX8]", "label": "Valor Máximo 8", "type": "text"},
+    "DESVI8": {"placeholder": "[DESVI8]", "label": "Desviación 8", "type": "text"},
+    "MEDICI9": {"placeholder": "[MEDICI9]", "label": "Punto de Medición 9", "type": "text"},
+    "UNI9": {"placeholder": "[UNI9]", "label": "Unidad 9", "type": "text"},
+    "VALMIN9": {"placeholder": "[VALMIN9]", "label": "Valor Mínimo 9", "type": "text"},
+    "VALMAX9": {"placeholder": "[VALMAX9]", "label": "Valor Máximo 9", "type": "text"},
+    "DESVI9": {"placeholder": "[DESVI9]", "label": "Desviación 9", "type": "text"},
+    "MEDICI10": {"placeholder": "[MEDICI10]", "label": "Punto de Medición 10", "type": "text"},
+    "UNI10": {"placeholder": "[UNI10]", "label": "Unidad 10", "type": "text"},
+    "VALMIN10": {"placeholder": "[VALMIN10]", "label": "Valor Mínimo 10", "type": "text"},
+    "VALMAX10": {"placeholder": "[VALMAX10]", "label": "Valor Máximo 10", "type": "text"},
+    "DESVI10": {"placeholder": "[DESVI10]", "label": "Desviación 10", "type": "text"},
+
+    # 5. RESULTADOS (up to 10)
     "PUNTODE1": {"placeholder": "[PUNTODE1]", "label": "Punto de Medición 1", "type": "text"},
     "UNIC1": {"placeholder": "[UNIC1]", "label": "Unidad 1", "type": "text"},
-    "LIMITE1": {"placeholder": "[LIMITE1]", "label": "Límite Máximo 1", "type": "text"},
     "TEMPE1": {"placeholder": "[TEMPE1]", "label": "Temperatura final 1", "type": "text"},
     "RESULT1": {"placeholder": "[RESULT1]", "label": "Resultado 1", "type": "text"},
     "PUNTODE2": {"placeholder": "[PUNTODE2]", "label": "Punto de Medición 2", "type": "text"},
     "UNIC2": {"placeholder": "[UNIC2]", "label": "Unidad 2", "type": "text"},
-    "LIMITE2": {"placeholder": "[LIMITE2]", "label": "Límite Máximo 2", "type": "text"},
     "TEMPE2": {"placeholder": "[TEMPE2]", "label": "Temperatura final 2", "type": "text"},
     "RESULT2": {"placeholder": "[RESULT2]", "label": "Resultado 2", "type": "text"},
     "PUNTODE3": {"placeholder": "[PUNTODE3]", "label": "Punto de Medición 3", "type": "text"},
     "UNIC3": {"placeholder": "[UNIC3]", "label": "Unidad 3", "type": "text"},
-    "LIMITE3": {"placeholder": "[LIMITE3]", "label": "Límite Máximo 3", "type": "text"},
     "TEMPE3": {"placeholder": "[TEMPE3]", "label": "Temperatura final 3", "type": "text"},
     "RESULT3": {"placeholder": "[RESULT3]", "label": "Resultado 3", "type": "text"},
     "PUNTODE4": {"placeholder": "[PUNTODE4]", "label": "Punto de Medición 4", "type": "text"},
     "UNIC4": {"placeholder": "[UNIC4]", "label": "Unidad 4", "type": "text"},
-    "LIMITE4": {"placeholder": "[LIMITE4]", "label": "Límite Máximo 4", "type": "text"},
     "TEMPE4": {"placeholder": "[TEMPE4]", "label": "Temperatura final 4", "type": "text"},
     "RESULT4": {"placeholder": "[RESULT4]", "label": "Resultado 4", "type": "text"},
     "PUNTODE5": {"placeholder": "[PUNTODE5]", "label": "Punto de Medición 5", "type": "text"},
     "UNIC5": {"placeholder": "[UNIC5]", "label": "Unidad 5", "type": "text"},
-    "LIMITE5": {"placeholder": "[LIMITE5]", "label": "Límite Máximo 5", "type": "text"},
     "TEMPE5": {"placeholder": "[TEMPE5]", "label": "Temperatura final 5", "type": "text"},
     "RESULT5": {"placeholder": "[RESULT5]", "label": "Resultado 5", "type": "text"},
-    
-    # 6. CONCLUSIONES DEL LABORATORIO
-    "TEXT15": {"placeholder": "[TEXT15]", "label": "Conclusiones del laboratorio", "type": "text"},
-    
-    # 7. FOTOGRAFIAS
-    "TITLE3": {"placeholder": "[TITLE3]", "label": "Título 1", "type": "text"},
-    "IMAGE3": {"placeholder": "[IMAGE3]", "label": "Imagen 1", "type": "file"},
-    "TITLE4": {"placeholder": "[TITLE4]", "label": "Título 2", "type": "text"},
-    "IMAGE4": {"placeholder": "[IMAGE4]", "label": "Imagen 2", "type": "file"},
-    "TITLE5": {"placeholder": "[TITLE5]", "label": "Título 3", "type": "text"},
-    "IMAGE5": {"placeholder": "[IMAGE5]", "label": "Imagen 3", "type": "file"},
-    "TITLE6": {"placeholder": "[TITLE6]", "label": "Título 4", "type": "text"},
-    "IMAGE6": {"placeholder": "[IMAGE6]", "label": "Imagen 4", "type": "file"},
-    "TITLE7": {"placeholder": "[TITLE7]", "label": "Título 5", "type": "text"},
-    "IMAGE7": {"placeholder": "[IMAGE7]", "label": "Imagen 5", "type": "file"},
-    "TITLE8": {"placeholder": "[TITLE8]", "label": "Título 6", "type": "text"},
-    "IMAGE8": {"placeholder": "[IMAGE8]", "label": "Imagen 6", "type": "file"},
+    "PUNTODE6": {"placeholder": "[PUNTODE6]", "label": "Punto de Medición 6", "type": "text"},
+    "UNIC6": {"placeholder": "[UNIC6]", "label": "Unidad 6", "type": "text"},
+    "TEMPE6": {"placeholder": "[TEMPE6]", "label": "Temperatura final 6", "type": "text"},
+    "RESULT6": {"placeholder": "[RESULT6]", "label": "Resultado 6", "type": "text"},
+    "PUNTODE7": {"placeholder": "[PUNTODE7]", "label": "Punto de Medición 7", "type": "text"},
+    "UNIC7": {"placeholder": "[UNIC7]", "label": "Unidad 7", "type": "text"},
+    "TEMPE7": {"placeholder": "[TEMPE7]", "label": "Temperatura final 7", "type": "text"},
+    "RESULT7": {"placeholder": "[RESULT7]", "label": "Resultado 7", "type": "text"},
+    "PUNTODE8": {"placeholder": "[PUNTODE8]", "label": "Punto de Medición 8", "type": "text"},
+    "UNIC8": {"placeholder": "[UNIC8]", "label": "Unidad 8", "type": "text"},
+    "TEMPE8": {"placeholder": "[TEMPE8]", "label": "Temperatura final 8", "type": "text"},
+    "RESULT8": {"placeholder": "[RESULT8]", "label": "Resultado 8", "type": "text"},
+    "PUNTODE9": {"placeholder": "[PUNTODE9]", "label": "Punto de Medición 9", "type": "text"},
+    "UNIC9": {"placeholder": "[UNIC9]", "label": "Unidad 9", "type": "text"},
+    "TEMPE9": {"placeholder": "[TEMPE9]", "label": "Temperatura final 9", "type": "text"},
+    "RESULT9": {"placeholder": "[RESULT9]", "label": "Resultado 9", "type": "text"},
+    "PUNTODE10": {"placeholder": "[PUNTODE10]", "label": "Punto de Medición 10", "type": "text"},
+    "UNIC10": {"placeholder": "[UNIC10]", "label": "Unidad 10", "type": "text"},
+    "TEMPE10": {"placeholder": "[TEMPE10]", "label": "Temperatura final 10", "type": "text"},
+    "RESULT10": {"placeholder": "[RESULT10]", "label": "Resultado 10", "type": "text"},
+
+    # 7. FOTOGRAFIAS (up to 10)
+    "IMAGE3": {"placeholder": "[IMAGE3]", "label": "Imagen 3", "type": "file"},
+    "TITLE3": {"placeholder": "[TITLE3]", "label": "Título 3", "type": "text"},
+    "IMAGE4": {"placeholder": "[IMAGE4]", "label": "Imagen 4", "type": "file"},
+    "TITLE4": {"placeholder": "[TITLE4]", "label": "Título 4", "type": "text"},
+    "IMAGE5": {"placeholder": "[IMAGE5]", "label": "Imagen 5", "type": "file"},
+    "TITLE5": {"placeholder": "[TITLE5]", "label": "Título 5", "type": "text"},
+    "IMAGE6": {"placeholder": "[IMAGE6]", "label": "Imagen 6", "type": "file"},
+    "TITLE6": {"placeholder": "[TITLE6]", "label": "Título 6", "type": "text"},
+    "IMAGE7": {"placeholder": "[IMAGE7]", "label": "Imagen 7", "type": "file"},
+    "TITLE7": {"placeholder": "[TITLE7]", "label": "Título 7", "type": "text"},
+    "IMAGE8": {"placeholder": "[IMAGE8]", "label": "Imagen 8", "type": "file"},
+    "TITLE8": {"placeholder": "[TITLE8]", "label": "Título 8", "type": "text"},
+    "TITLE9": {"placeholder": "[TITLE9]", "label": "Título 9", "type": "text"},
+    "IMAGE9": {"placeholder": "[IMAGE9]", "label": "Imagen 9", "type": "file"},
+    "TITLE10": {"placeholder": "[TITLE10]", "label": "Título 10", "type": "text"},
+    "IMAGE10": {"placeholder": "[IMAGE10]", "label": "Imagen 10", "type": "file"},
+    "TITLE11": {"placeholder": "[TITLE11]", "label": "Título 11", "type": "text"},
+    "IMAGE11": {"placeholder": "[IMAGE11]", "label": "Imagen 11", "type": "file"},
+    "TITLE12": {"placeholder": "[TITLE12]", "label": "Título 12", "type": "text"},
+    "IMAGE12": {"placeholder": "[IMAGE12]", "label": "Imagen 12", "type": "file"},
 }
 
 
@@ -186,7 +277,9 @@ class DocumentGeneratorApp(QWidget):
     """Aplikasi untuk menginput data dan menghasilkan dokumen Word dari template."""
     def __init__(self):
         super().__init__()
-        self.input_widgets = {} 
+        self.input_widgets = {}
+        self.equipment_groups = []
+        self.spin_boxes = {}
         self.setWindowTitle("Generador de Anexo II al Informe")
         self.setStyleSheet("font-size: 14px; font-family: Arial;")
         self.init_ui()
@@ -200,183 +293,47 @@ class DocumentGeneratorApp(QWidget):
         title.setAlignment(Qt.AlignCenter)
         title.setStyleSheet("font-size: 20px; font-weight: bold; margin-bottom: 10px; color: #2C3E50;")
         main_layout.addWidget(title)
-        
+
+        # --- Spin Boxes for Row Selection ---
+        spin_layout = QHBoxLayout()
+        spin_layout.addWidget(QLabel("EQUIPOS Y MÉTODOS UTILIZADOS (max 12):"))
+        self.spin_equipment = QSpinBox()
+        self.spin_equipment.setRange(1, 12)
+        self.spin_equipment.setValue(12)
+        self.spin_equipment.valueChanged.connect(self.rebuild_form)
+        spin_layout.addWidget(self.spin_equipment)
+
+        spin_layout.addWidget(QLabel("TEMPERATURAS REGISTRADAS (max 10):"))
+        self.spin_temperatures = QSpinBox()
+        self.spin_temperatures.setRange(1, 10)
+        self.spin_temperatures.setValue(10)
+        self.spin_temperatures.valueChanged.connect(self.rebuild_form)
+        spin_layout.addWidget(self.spin_temperatures)
+
+        spin_layout.addWidget(QLabel("ESTABILIZACIÓN TÉRMICA (max 10):"))
+        self.spin_stabilization = QSpinBox()
+        self.spin_stabilization.setRange(1, 10)
+        self.spin_stabilization.setValue(10)
+        self.spin_stabilization.valueChanged.connect(self.rebuild_form)
+        spin_layout.addWidget(self.spin_stabilization)
+
+        spin_layout.addWidget(QLabel("RESULTADOS (max 10):"))
+        self.spin_results = QSpinBox()
+        self.spin_results.setRange(1, 10)
+        self.spin_results.setValue(10)
+        self.spin_results.valueChanged.connect(self.rebuild_form)
+        spin_layout.addWidget(self.spin_results)
+
+        main_layout.addLayout(spin_layout)
+
         # --- Scroll Area untuk banyak input ---
-        scroll = QScrollArea()
-        scroll.setWidgetResizable(True)
-        content_widget = QWidget()
-        form_layout = QVBoxLayout(content_widget)
-        form_layout.setSpacing(15)
-
-        # Group Header: Encabezado
-        title_label = QLabel("Encabezado - Información del documento")
-        title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
-        form_layout.addWidget(title_label)
-        self.create_input_group(form_layout, "Encabezado - Información del documento", [
-            "NO_TEST", "REV", "DATE"
-        ])
-
-        # Group 0: INFORMACIÓN DEL SOLICITANTE DEL ENSAYO
-        title_label = QLabel("0. INFORMACIÓN DEL SOLICITANTE DEL ENSAYO")
-        title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
-        form_layout.addWidget(title_label)
-        self.create_input_group(form_layout, "0. INFORMACIÓN DEL SOLICITANTE DEL ENSAYO", [
-            "TEXT1", "TEXT4", "TEXT2", "TEXT5", "TEXT3"
-        ])
-
-        # Group 1: INFORMACIÓN GENERAL DEL PRODUCTO
-        title_label = QLabel("1. INFORMACIÓN GENERAL DEL PRODUCTO")
-        title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
-        form_layout.addWidget(title_label)
-        self.create_input_group(form_layout, "1. INFORMACIÓN GENERAL DEL PRODUCTO", [
-            "TEXT6", "TEXT7", "TEXT8"
-        ])
-
-        # Group 1.1: CONDICIONES DEL ENSAYO
-        self.create_input_group(form_layout, "1.1. CONDICIONES DEL ENSAYO", [
-            "TEXT9", "TEXT10", "TEXT11"
-        ])
-
-        # Group 2: EQUIPOS Y MÉTODOS UTILIZADOS
-        title_label = QLabel("2. EQUIPOS Y MÉTODOS UTILIZADOS")
-        title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
-        form_layout.addWidget(title_label)
-        self.create_input_group(form_layout, "Row 1" , [
-            "EQUIPO1", "MARCA1", "TIPO1", "FECHA1", "OBSER1"])
-        self.create_input_group(form_layout, "Row 2" , [
-            "EQUIPO2", "MARCA2", "TIPO2", "FECHA2", "OBSER2"])
-        self.create_input_group(form_layout, "Row 3" , [
-            "EQUIPO3", "MARCA3", "TIPO3", "FECHA3", "OBSER3"])
-        self.create_input_group(form_layout, "Row 4" , [
-            "EQUIPO4", "MARCA4", "TIPO4", "FECHA4", "OBSER4"])
-        self.create_input_group(form_layout, "Row 5" , [
-            "EQUIPO5", "MARCA5", "TIPO5", "FECHA5", "OBSER5"])
-        self.create_input_group(form_layout, "Row 6" , [
-            "EQUIPO6", "MARCA6", "TIPO6", "FECHA6", "OBSER6"])
-        self.create_input_group(form_layout, "Row 7" , [
-            "EQUIPO7", "MARCA7", "TIPO7", "FECHA7", "OBSER7"])
-
-        # Group 2.1: MÉTODO DE ENSAYO
-        self.create_input_group(form_layout, "MÉTODO DE ENSAYO", [
-            "TEXT12"
-        ])
-
-        # Group 3: TEMPERATURAS REGISTRADAS
-        title_label = QLabel("3. TEMPERATURAS REGISTRADAS")
-        title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
-        form_layout.addWidget(title_label)
-        self.create_input_group(form_layout, "Row 1 ", [
-             "PUNTO1", "UNIDAD1", "LIMITE1", "TEMP1"])
-        self.create_input_group(form_layout, "Row 2 ", [
-             "PUNTO2", "UNIDAD2", "LIMITE2", "TEMP2"])
-        self.create_input_group(form_layout, "Row 3 ", [
-             "PUNTO3", "UNIDAD3", "LIMITE3", "TEMP3"])
-        self.create_input_group(form_layout, "Row 4 ", [
-             "PUNTO4", "UNIDAD4", "LIMITE4", "TEMP4"])
-        self.create_input_group(form_layout, "Row 5 ", [
-             "PUNTO5", "UNIDAD5", "LIMITE5", "TEMP5"])
-        self.create_input_group(form_layout, "NOTA", [
-             "TEXT13"
-        ])
-
-        # Group 3.1: GRÁFICA GENERADA
-        self.create_input_group(form_layout, "3.1. GRÁFICA GENERADA", [
-            "IMAGE1", "TITLE1", "DESC1", "IMAGE2", "DESC2"
-        ])
-
-        # Group 4: ESTABILIZACIÓN TÉRMICA
-        title_label = QLabel("4. ESTABILIZACIÓN TÉRMICA")
-        title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
-        form_layout.addWidget(title_label)
-        self.create_input_group(form_layout, "Description", [
-            "TEXT14"
-        ])
-        self.create_input_group(form_layout, "Row 1", [
-            "MEDICI1", "UNI1", "VALMIN1", "VALMAX1", "DESVI1"
-        ])
-        self.create_input_group(form_layout, "Row 2", [
-            "MEDICI2", "UNI2", "VALMIN2", "VALMAX2", "DESVI2"
-        ])
-        self.create_input_group(form_layout, "Row 3", [
-            "MEDICI3", "UNI3", "VALMIN3", "VALMAX3", "DESVI3"
-        ])
-        self.create_input_group(form_layout, "Row 4", [
-            "MEDICI4", "UNI4", "VALMIN4", "VALMAX4", "DESVI4"
-        ])
-        self.create_input_group(form_layout, "Row 5", [
-            "MEDICI5", "UNI5", "VALMIN5", "VALMAX5", "DESVI5"
-        ])
-
-        # Group 5: RESULTADOS
-        title_label = QLabel("5. RESULTADOS")
-        title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
-        form_layout.addWidget(title_label)
-        self.create_input_group(form_layout, "Row 1", [
-            "PUNTODE1", "UNIC1", "LIMITE1", "TEMPE1", "RESULT1"
-        ])
-        self.create_input_group(form_layout, "Row 2", [
-            "PUNTODE2", "UNIC2", "LIMITE2", "TEMPE2", "RESULT2"
-        ])
-        self.create_input_group(form_layout, "Row 3", [
-            "PUNTODE3", "UNIC3", "LIMITE3", "TEMPE3", "RESULT3"
-        ])
-        self.create_input_group(form_layout, "Row 4", [
-            "PUNTODE4", "UNIC4", "LIMITE4", "TEMPE4", "RESULT4"
-        ])
-        self.create_input_group(form_layout, "Row 5", [
-            "PUNTODE5", "UNIC5", "LIMITE5", "TEMPE5", "RESULT5"
-        ])
-
-        # Group 6: CONCLUSIONES DEL LABORATORIO
-        title_label = QLabel("6. CONCLUSIONES DEL LABORATORIO")
-        title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
-        form_layout.addWidget(title_label)
-        self.create_input_group(form_layout, "CONCLUSIONES", [
-            "TEXT15"
-        ])
-
-        # Group 7.1: Títulos de Fotografías
-        title_label = QLabel("7. FOTOGRAFIAS")
-        title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
-        form_layout.addWidget(title_label)
-        self.create_input_group(form_layout, "Fotografía 1", [
-             "IMAGE3"
-        ])
-        self.create_input_group(form_layout, "Titulo 1", [
-                "TITLE3"
-        ])
-        self.create_input_group(form_layout, "Fotografía 2", [
-             "IMAGE4"
-        ])
-        self.create_input_group(form_layout, "Titulo 2", [
-                "TITLE4"
-        ])
-        self.create_input_group(form_layout, "Fotografía 3", [
-             "IMAGE5"
-        ])
-        self.create_input_group(form_layout, "Titulo 3", [
-                "TITLE5"
-        ])
-        self.create_input_group(form_layout, "Fotografía 4", [
-             "IMAGE6"
-        ])
-        self.create_input_group(form_layout, "Titulo 4", [
-                "TITLE6"
-        ])
-        self.create_input_group(form_layout, "Fotografía 5", [
-             "IMAGE7"
-        ])
-        self.create_input_group(form_layout, "Titulo 5", [
-                "TITLE7"
-        ])
-        self.create_input_group(form_layout, "Fotografía 6", [
-             "IMAGE8"
-        ])
-        self.create_input_group(form_layout, "Titulo 6", [
-                "TITLE8"
-        ])
-        scroll.setWidget(content_widget)
-        main_layout.addWidget(scroll)
+        self.scroll = QScrollArea()
+        self.scroll.setWidgetResizable(True)
+        self.content_widget = QWidget()
+        self.form_layout = QVBoxLayout(self.content_widget)
+        self.form_layout.setSpacing(15)
+        self.scroll.setWidget(self.content_widget)
+        main_layout.addWidget(self.scroll)
 
         # --- Tombol Generate ---
         self.generate_button = QPushButton("GENERAR DOCUMENTO DE WORD (.docx)")
@@ -396,6 +353,129 @@ class DocumentGeneratorApp(QWidget):
 
         self.setLayout(main_layout)
         self.resize(600, 700)
+        self.rebuild_form()
+
+    def rebuild_form(self):
+        # Clear existing widgets from form_layout
+        for i in reversed(range(self.form_layout.count())):
+            item = self.form_layout.itemAt(i)
+            if item.widget():
+                item.widget().setParent(None)
+            elif item.layout():
+                # If it's a layout, remove it
+                sub_layout = item.layout()
+                while sub_layout.count():
+                    sub_item = sub_layout.takeAt(0)
+                    if sub_item.widget():
+                        sub_item.widget().setParent(None)
+                self.form_layout.removeItem(item)
+
+        self.input_widgets = {}
+
+        # Header
+        title_label = QLabel("Encabezado - Información del documento")
+        title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
+        self.form_layout.addWidget(title_label)
+        self.create_input_group(self.form_layout, "Encabezado - Información del documento", [
+            "NO_TEST", "REV", "DATE"
+        ])
+
+        # 0. INFORMACIÓN DEL SOLICITANTE DEL ENSAYO
+        title_label = QLabel("0. INFORMACIÓN DEL SOLICITANTE DEL ENSAYO")
+        title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
+        self.form_layout.addWidget(title_label)
+        self.create_input_group(self.form_layout, "0. INFORMACIÓN DEL SOLICITANTE DEL ENSAYO", [
+            "TEXT1", "TEXT4", "TEXT2", "TEXT5", "TEXT3"
+        ])
+
+        # 1. INFORMACIÓN GENERAL DEL PRODUCTO
+        title_label = QLabel("1. INFORMACIÓN GENERAL DEL PRODUCTO")
+        title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
+        self.form_layout.addWidget(title_label)
+        self.create_input_group(self.form_layout, "1. INFORMACIÓN GENERAL DEL PRODUCTO", [
+            "TEXT6", "TEXT7", "TEXT8"
+        ])
+
+        # 1.1. CONDICIONES DEL ENSAYO
+        self.create_input_group(self.form_layout, "1.1. CONDICIONES DEL ENSAYO", [
+            "TEXT9", "TEXT10", "TEXT11"
+        ])
+
+        # 2. EQUIPOS Y MÉTODOS UTILIZADOS
+        title_label = QLabel("2. EQUIPOS Y MÉTODOS UTILIZADOS")
+        title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
+        self.form_layout.addWidget(title_label)
+        num_equip = self.spin_equipment.value()
+        for i in range(1, num_equip + 1):
+            self.create_input_group(self.form_layout, f"Row {i}", [
+                f"EQUIPO{i}", f"MARCA{i}", f"TIPO{i}", f"FECHA{i}", f"OBSER{i}"
+            ])
+
+        # 2.1. MÉTODO DE ENSAYO
+        self.create_input_group(self.form_layout, "MÉTODO DE ENSAYO", [
+            "TEXT12"
+        ])
+
+        # 3. TEMPERATURAS REGISTRADAS
+        title_label = QLabel("3. TEMPERATURAS REGISTRADAS")
+        title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
+        self.form_layout.addWidget(title_label)
+        num_temp = self.spin_temperatures.value()
+        for i in range(1, num_temp + 1):
+            self.create_input_group(self.form_layout, f"Row {i} ", [
+                f"PUNTO{i}", f"UNIDAD{i}", f"LIMITE{i}", f"TEMP{i}"
+            ])
+        self.create_input_group(self.form_layout, "NOTA", [
+            "TEXT13"
+        ])
+
+        # 3.1. GRÁFICA GENERADA
+        self.create_input_group(self.form_layout, "3.1. GRÁFICA GENERADA", [
+            "IMAGE1", "TITLE1", "DESC1", "IMAGE2", "DESC2"
+        ])
+
+        # 4. ESTABILIZACIÓN TÉRMICA
+        title_label = QLabel("4. ESTABILIZACIÓN TÉRMICA")
+        title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
+        self.form_layout.addWidget(title_label)
+        self.create_input_group(self.form_layout, "Description", [
+            "TEXT14"
+        ])
+        num_stab = self.spin_stabilization.value()
+        for i in range(1, num_stab + 1):
+            self.create_input_group(self.form_layout, f"Row {i}", [
+                f"MEDICI{i}", f"UNI{i}", f"VALMIN{i}", f"VALMAX{i}", f"DESVI{i}"
+            ])
+
+        # 5. RESULTADOS
+        title_label = QLabel("5. RESULTADOS")
+        title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
+        self.form_layout.addWidget(title_label)
+        num_res = self.spin_results.value()
+        for i in range(1, num_res + 1):
+            self.create_input_group(self.form_layout, f"Row {i}", [
+                f"PUNTODE{i}", f"UNIC{i}", f"TEMPE{i}", f"RESULT{i}"
+            ])
+
+        # 6. CONCLUSIONES DEL LABORATORIO
+        title_label = QLabel("6. CONCLUSIONES DEL LABORATORIO")
+        title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
+        self.form_layout.addWidget(title_label)
+        self.create_input_group(self.form_layout, "CONCLUSIONES", [
+            "TEXT15"
+        ])
+
+        # 7. FOTOGRAFIAS
+        title_label = QLabel("7. FOTOGRAFIAS")
+        title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
+        self.form_layout.addWidget(title_label)
+        for i in range(3, 13):  # IMAGE3 to IMAGE12, TITLE3 to TITLE12
+            self.create_input_group(self.form_layout, f"Fotografía {i-2}", [
+                f"IMAGE{i}"
+            ])
+            self.create_input_group(self.form_layout, f"Titulo {i-2}", [
+                f"TITLE{i}"
+            ])
 
     def create_input_group(self, parent_layout, title, keys):
         """Membuat group box untuk input yang terorganisir."""
