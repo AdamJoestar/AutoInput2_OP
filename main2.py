@@ -3,15 +3,17 @@ import tempfile
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QHBoxLayout,
     QLabel, QLineEdit, QPushButton, QMessageBox,
-    QScrollArea, QGridLayout, QTextEdit, QGroupBox, QFileDialog, QSpinBox, QRubberBand, QDialog
+    QScrollArea, QGridLayout, QTextEdit, QGroupBox, QFileDialog, QSpinBox, QDialog
 )
 from PyQt5.QtCore import Qt, QPoint, QRect
-from PyQt5.QtGui import QPixmap, QScreen, QPainter, QPen, QColor
+from PyQt5.QtGui import QPixmap, QPainter, QPen, QColor, QImage
+from PIL import ImageGrab, Image
 from docx import Document
 from docx.shared import Inches
 from datetime import date
 import os
 import re
+import time
 
 # --- Konfigurasi File ---
 TEMPLATES_DIR = os.path.join(os.path.dirname(__file__), "templates")
@@ -275,25 +277,24 @@ FIELD_DEFINITIONS = {
 }
 
 
-class ScreenshotDialog(QDialog):
-    def __init__(self, screenshot=None, parent=None):
+class ScreenshotSelector(QDialog):
+    def __init__(self, parent=None):
         super().__init__(parent)
-        self.screenshot = screenshot
-        self.rubber_band = QRubberBand(QRubberBand.Rectangle, self)
-        self.origin = QPoint()
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
         self.setModal(True)
         self.showFullScreen()
         self.setCursor(Qt.CrossCursor)
 
-        # Display the screenshot as background
-        if self.screenshot:
-            self.background_label = QLabel(self)
-            self.background_label.setPixmap(self.screenshot)
-            self.background_label.setScaledContents(True)
-            self.background_label.resize(self.size())
-            self.background_label.setCursor(Qt.CrossCursor)
-            self.background_label.lower()  # Ensure it's behind other widgets
+        # Grab screenshot with PIL
+        self.screenshot_pil = ImageGrab.grab()
+        # Convert to QPixmap
+        self.screenshot_qimage = QImage(self.screenshot_pil.tobytes(), self.screenshot_pil.width, self.screenshot_pil.height, QImage.Format_RGB888)
+        self.screenshot_pixmap = QPixmap.fromImage(self.screenshot_qimage)
+
+        # Selection rect
+        self.selection_rect = QRect()
+        self.start_point = QPoint()
+        self.selecting = False
 
         # Add OK and Cancel buttons at the top
         button_layout = QHBoxLayout()
@@ -312,25 +313,40 @@ class ScreenshotDialog(QDialog):
         self.setLayout(main_layout)
 
     def mousePressEvent(self, event):
-        self.origin = event.pos()
-        self.rubber_band.setGeometry(QRect(self.origin, QSize()))
-        self.rubber_band.show()
+        if event.button() == Qt.LeftButton:
+            self.start_point = event.pos()
+            self.selection_rect = QRect(self.start_point, QSize())
+            self.selecting = True
+            self.update()
 
     def mouseMoveEvent(self, event):
-        if not self.origin.isNull():
-            self.rubber_band.setGeometry(QRect(self.origin, event.pos()).normalized())
+        if self.selecting:
+            self.selection_rect = QRect(self.start_point, event.pos()).normalized()
+            self.update()
 
     def mouseReleaseEvent(self, event):
-        pass
+        if event.button() == Qt.LeftButton:
+            self.selecting = False
 
-    def get_selected_pixmap(self):
-        rect = self.rubber_band.geometry()
-        if rect.isValid() and rect.width() > 0 and rect.height() > 0:
-            ratio = self.screenshot.devicePixelRatio()
-            scaled_rect = QRect(int(rect.x() * ratio), int(rect.y() * ratio), int(rect.width() * ratio), int(rect.height() * ratio))
-            return self.screenshot.copy(scaled_rect)
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        painter.drawPixmap(0, 0, self.screenshot_pixmap)
+        if self.selection_rect.isValid():
+            pen = QPen(QColor(255, 0, 0), 2, Qt.SolidLine)
+            painter.setPen(pen)
+            painter.drawRect(self.selection_rect)
+
+    def get_selected_image(self):
+        if self.selection_rect.isValid():
+            # Crop the PIL image
+            left = self.selection_rect.left()
+            top = self.selection_rect.top()
+            width = self.selection_rect.width()
+            height = self.selection_rect.height()
+            cropped = self.screenshot_pil.crop((left, top, left + width, top + height))
+            return cropped
         else:
-            return self.screenshot  # Return full screenshot if no selection
+            return self.screenshot_pil  # Return full screenshot if no selection
 
 
 class DocumentGeneratorApp(QWidget):
@@ -628,13 +644,11 @@ class DocumentGeneratorApp(QWidget):
 
     def take_screenshot(self, field):
         """Take screenshot and allow area selection like snipping tool."""
-        screen = QApplication.primaryScreen()
-        screenshot = screen.grabWindow(0)  # Capture full screen
-        dialog = ScreenshotDialog(screenshot=screenshot, parent=self)
+        dialog = ScreenshotSelector(parent=self)
         if dialog.exec_() == QDialog.Accepted:
-            selected_pixmap = dialog.get_selected_pixmap()
+            selected_image = dialog.get_selected_image()
             temp_file = tempfile.NamedTemporaryFile(suffix='.png', delete=False)
-            selected_pixmap.save(temp_file.name, 'PNG')
+            selected_image.save(temp_file.name, 'PNG')
             field.setText(temp_file.name)
 
     def replace_in_paragraph(self, paragraph, placeholder, value):
