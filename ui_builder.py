@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import (
-    QLabel, QLineEdit, QPushButton, QScrollArea, QGridLayout, QGroupBox, QFileDialog, QSpinBox, QTextEdit, QHBoxLayout, QWidget, QVBoxLayout, QDateEdit
+    QLabel, QLineEdit, QPushButton, QScrollArea, QGridLayout, QGroupBox, QFileDialog, QSpinBox, QTextEdit, QHBoxLayout, QWidget, QVBoxLayout, QDateEdit, QComboBox
 )
 from PyQt5.QtCore import Qt, QDate
 from fields import FIELD_DEFINITIONS
@@ -79,6 +79,8 @@ class UIBuilder:
                 current_values[key] = widget.toPlainText()
             elif isinstance(widget, QDateEdit):
                 current_values[key] = widget.date().toString("dd/MM/yyyy")
+            elif isinstance(widget, QComboBox):
+                current_values[key] = widget.currentText()
 
         # Clear existing widgets from form_layout
         for i in reversed(range(self.form_layout.count())):
@@ -136,9 +138,7 @@ class UIBuilder:
             ])
 
         # 2.1. MÉTODO DE ENSAYO
-        self.create_input_group(self.form_layout, "MÉTODO DE ENSAYO", [
-            "TEXT12"
-        ])
+        # Removed as per user request
 
         # 3. TEMPERATURAS REGISTRADAS
         title_label = QLabel("3. TEMPERATURAS REGISTRADAS")
@@ -162,9 +162,7 @@ class UIBuilder:
         title_label = QLabel("4. ESTABILIZACIÓN TÉRMICA")
         title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
         self.form_layout.addWidget(title_label)
-        self.create_input_group(self.form_layout, "Description", [
-            "TEXT14"
-        ])
+        # Removed TEXT14 as per user request
         for i in range(1, num_sonda + 1):
             self.create_input_group(self.form_layout, f"Row {i}", [
                 f"MEDICI{i}", f"UNI{i}", f"VALMIN{i}", f"VALMAX{i}", f"DESVI{i}"
@@ -205,12 +203,22 @@ class UIBuilder:
                 widget = self.input_widgets[key]
                 if isinstance(widget, QLineEdit):
                     widget.setText(value)
+                    # Set default for OBSER fields if empty
+                    if key.startswith("OBSER") and not value.strip():
+                        widget.setText("-")
                 elif isinstance(widget, QTextEdit):
                     widget.setPlainText(value)
+                    # Set default template for TEXT_EST if empty
+                    if key == "TEXT_EST" and not value.strip():
+                        widget.setPlainText(self.parent_app.stabilization_template)
                 elif isinstance(widget, QDateEdit):
                     from PyQt5.QtCore import QDate
                     date = QDate.fromString(value, "dd/MM/yyyy")
                     widget.setDate(date)
+                elif isinstance(widget, QComboBox):
+                    index = widget.findText(value)
+                    if index >= 0:
+                        widget.setCurrentIndex(index)
 
     def create_input_group(self, parent_layout, title, keys):
         """Membuat group box untuk input yang terorganisir."""
@@ -228,7 +236,7 @@ class UIBuilder:
             label = QLabel(f"{definition['label']}:")
             
             if definition['type'] == "text":
-                if key in ["TEXT1", "TEXT4", "TEXT2", "TEXT5", "TEXT3", "TEXT6", "TEXT7", "TEXT8", "TEXT9", "TEXT10", "TEXT11", "TEXT12", "TEXT13", "TEXT14", "TEXT15"]:
+                if key in ["TEXT1", "TEXT4", "TEXT2", "TEXT5", "TEXT3", "TEXT6", "TEXT7", "TEXT8", "TEXT9", "TEXT10", "TEXT11", "TEXT13", "TEXT15"]:
                     input_field = QTextEdit()
                     input_field.setMinimumHeight(60)
                     grid_layout.addWidget(label, row, 0, 1, 2)
@@ -248,6 +256,16 @@ class UIBuilder:
                 input_field.setCalendarPopup(True)
                 input_field.setMinimumHeight(30)
                 input_field.setDate(QDate.currentDate())  # Set default to today's date
+                grid_layout.addWidget(label, row, col)
+                grid_layout.addWidget(input_field, row + 1, col)
+                col = 1 - col
+                if col == 0:
+                    row += 2
+            elif definition['type'] == "dropdown":
+                input_field = QComboBox()
+                input_field.setMinimumHeight(30)
+                options = definition.get('options', [])
+                input_field.addItems(options)
                 grid_layout.addWidget(label, row, col)
                 grid_layout.addWidget(input_field, row + 1, col)
                 col = 1 - col
