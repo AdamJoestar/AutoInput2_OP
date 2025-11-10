@@ -6,6 +6,7 @@ from config import TEMPLATES_DIR, TEMPLATE_FILENAME, TEMPLATE_PATH
 from fields import FIELD_DEFINITIONS
 from ui_builder import UIBuilder
 from document_processor import DocumentProcessor
+import os
 
 
 class DocumentGeneratorApp(QWidget):
@@ -19,6 +20,7 @@ class DocumentGeneratorApp(QWidget):
         self.setStyleSheet("font-size: 14px; font-family: Arial;")
         self.ui_builder = UIBuilder(self)
         self.document_processor = DocumentProcessor(self)
+        self.load_stabilization_template()
         self.init_ui()
 
     def closeEvent(self, event):
@@ -34,6 +36,33 @@ class DocumentGeneratorApp(QWidget):
         main_layout = QVBoxLayout(self)
         self.setLayout(main_layout)
         self.ui_builder.init_ui()
+
+    def load_method_template(self):
+        """Load the method template and set it as default for TEXT12."""
+        template_path = os.path.join(os.getcwd(), 'method_template.txt')
+        if os.path.exists(template_path):
+            with open(template_path, 'r', encoding='utf-8') as f:
+                self.method_template = f.read()
+        else:
+            self.method_template = "Método de ensayo no disponible. Por favor, verifique el archivo method_template.txt."
+
+    def load_stabilization_template(self):
+        """Load the stabilization template and set it as default for TEXT_EST."""
+        template_path = os.path.join(os.getcwd(), 'stabilization_template.txt')
+        if os.path.exists(template_path):
+            with open(template_path, 'r', encoding='utf-8') as f:
+                self.stabilization_template = f.read()
+        else:
+            self.stabilization_template = "Descripción de estabilización térmica no disponible."
+
+    def load_description_template(self):
+        """Load the description template and set it as default for TEXT14."""
+        template_path = os.path.join(os.getcwd(), 'description_template.txt')
+        if os.path.exists(template_path):
+            with open(template_path, 'r', encoding='utf-8') as f:
+                self.description_template = f.read()
+        else:
+            self.description_template = "Descripción no disponible. Por favor, verifique el archivo description_template.txt."
 
     def generate_document(self):
         """Delegate to document processor."""
