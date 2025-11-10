@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import (
-    QLabel, QLineEdit, QPushButton, QScrollArea, QGridLayout, QGroupBox, QFileDialog, QSpinBox, QTextEdit, QHBoxLayout, QWidget, QVBoxLayout, QDateEdit, QComboBox
+    QLabel, QLineEdit, QPushButton, QScrollArea, QGridLayout, QGroupBox, QFileDialog, QSpinBox, QTextEdit, QHBoxLayout, QWidget, QVBoxLayout, QDateEdit, QComboBox, QDialog
 )
 from PyQt5.QtCore import Qt, QDate
 from fields import FIELD_DEFINITIONS
@@ -439,7 +439,7 @@ class UIBuilder:
 
     def take_screenshot(self, field):
         """Take screenshot and allow area selection like snipping tool."""
-        dialog = ScreenshotSelector(parent=self.parent_app)
+        dialog = ScreenshotSelector(parent=None)
         if dialog.exec_() == QDialog.Accepted:
             selected_image = dialog.get_selected_image()
             temp_file = tempfile.NamedTemporaryFile(suffix='.png', delete=False)

@@ -9,7 +9,7 @@ class ScreenshotSelector(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
-        self.setModal(True)
+        self.setWindowModality(Qt.ApplicationModal)
         self.showFullScreen()
         self.setCursor(Qt.CrossCursor)
 
@@ -40,6 +40,9 @@ class ScreenshotSelector(QDialog):
         main_layout.addStretch()
         self.setLayout(main_layout)
 
+        self.raise_()
+        self.activateWindow()
+
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
             self.start_point = event.pos()
@@ -50,7 +53,6 @@ class ScreenshotSelector(QDialog):
     def mouseMoveEvent(self, event):
         if self.selecting:
             self.selection_rect = QRect(self.start_point, event.pos()).normalized()
-            self.selecting = True
             self.update()
 
     def mouseReleaseEvent(self, event):
