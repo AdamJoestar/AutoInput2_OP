@@ -21,22 +21,37 @@ class UIBuilder:
         # --- Judul ---
         title = QLabel("Ingresar Datos Para el Anexo II")
         title.setAlignment(Qt.AlignCenter)
-        title.setStyleSheet("font-size: 20px; font-weight: bold; margin-bottom: 10px; color: #2C3E50;")
+        title.setStyleSheet("""
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #2c3e50;
+            background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #ffffff, stop:1 #f0f0f0);
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+        """)
         main_layout.addWidget(title)
 
         # --- Spin Boxes for Row Selection ---
         spin_layout = QHBoxLayout()
-        spin_layout.addWidget(QLabel("EQUIPOS Y MÉTODOS UTILIZADOS (max 12):"))
+        label1 = QLabel("EQUIPOS Y MÉTODOS UTILIZADOS (max 12):")
+        label1.setStyleSheet("font-weight: bold; color: #34495e; padding: 5px;")
+        spin_layout.addWidget(label1)
         self.spin_equipment = QSpinBox()
         self.spin_equipment.setRange(1, 12)
         self.spin_equipment.setValue(12)
+        self.spin_equipment.setStyleSheet("QSpinBox { border: 1px solid #bdc3c7; border-radius: 4px; padding: 5px; background-color: #ecf0f1; }")
         self.spin_equipment.valueChanged.connect(self.rebuild_form)
         spin_layout.addWidget(self.spin_equipment)
 
-        spin_layout.addWidget(QLabel("SONDA TOTAL (max 10):"))
+        label2 = QLabel("SONDA TOTAL (max 10):")
+        label2.setStyleSheet("font-weight: bold; color: #34495e; padding: 5px;")
+        spin_layout.addWidget(label2)
         self.spin_sonda = QSpinBox()
         self.spin_sonda.setRange(1, 10)
         self.spin_sonda.setValue(10)
+        self.spin_sonda.setStyleSheet("QSpinBox { border: 1px solid #bdc3c7; border-radius: 4px; padding: 5px; background-color: #ecf0f1; }")
         self.spin_sonda.valueChanged.connect(self.rebuild_form)
         spin_layout.addWidget(self.spin_sonda)
 
@@ -45,6 +60,16 @@ class UIBuilder:
         # --- Scroll Area untuk banyak input ---
         self.scroll = QScrollArea()
         self.scroll.setWidgetResizable(True)
+        self.scroll.setStyleSheet("""
+            QScrollArea {
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                background-color: #fafafa;
+            }
+            QScrollArea QWidget {
+                background-color: #fafafa;
+            }
+        """)
         self.content_widget = QWidget()
         self.form_layout = QVBoxLayout(self.content_widget)
         self.form_layout.setSpacing(15)
@@ -53,9 +78,22 @@ class UIBuilder:
 
         # --- Tombol Generate ---
         self.generate_button = QPushButton("GENERAR DOCUMENTO DE WORD (.docx)")
-        self.generate_button.setStyleSheet(
-            "background-color: #3498DB; color: white; padding: 12px; border-radius: 8px; font-weight: bold;"
-        )
+        self.generate_button.setStyleSheet("""
+            QPushButton {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #3498db, stop:1 #2980b9);
+                color: white;
+                padding: 12px;
+                border-radius: 8px;
+                font-weight: bold;
+                border: none;
+            }
+            QPushButton:hover {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #2980b9, stop:1 #21618c);
+            }
+            QPushButton:pressed {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #21618c, stop:1 #1b4f72);
+            }
+        """)
         self.generate_button.clicked.connect(self.parent_app.generate_document)
         main_layout.addWidget(self.generate_button)
 
@@ -64,7 +102,7 @@ class UIBuilder:
             f"**Plantilla utilizada:** '{self.parent_app.template_filename}'\n"
             f"Asegúrate de que este archivo esté en la carpeta: '{self.parent_app.templates_dir}'"
         )
-        info.setStyleSheet("font-size: 10px; color: gray; margin-top: 5px;")
+        info.setStyleSheet("font-size: 12px; color: #7f8c8d; margin-top: 10px; font-style: italic; background-color: #ecf0f1; padding: 5px; border-radius: 4px;")
         main_layout.addWidget(info)
 
         self.rebuild_form()
@@ -223,7 +261,23 @@ class UIBuilder:
     def create_input_group(self, parent_layout, title, keys):
         """Membuat group box untuk input yang terorganisir."""
         group_box = QGroupBox(title)
-        group_box.setStyleSheet("font-weight: bold; margin-top: 10px;")
+        group_box.setStyleSheet("""
+            QGroupBox {
+                font-weight: bold;
+                margin-top: 10px;
+                border: 2px solid #bdc3c7;
+                border-radius: 8px;
+                background-color: #ffffff;
+                padding: 10px;
+            }
+            QGroupBox::title {
+                subcontrol-origin: margin;
+                left: 10px;
+                padding: 0 5px 0 5px;
+                color: #34495e;
+                font-size: 14px;
+            }
+        """)
         grid_layout = QGridLayout()
         grid_layout.setSpacing(10)
         
@@ -234,11 +288,24 @@ class UIBuilder:
             definition = FIELD_DEFINITIONS[key]
             
             label = QLabel(f"{definition['label']}:")
-            
+            label.setStyleSheet("color: #34495e; font-weight: bold; font-size: 12px;")
+
             if definition['type'] == "text":
                 if key in ["TEXT1", "TEXT4", "TEXT2", "TEXT5", "TEXT3", "TEXT6", "TEXT7", "TEXT8", "TEXT9", "TEXT10", "TEXT11", "TEXT13", "TEXT15"]:
                     input_field = QTextEdit()
                     input_field.setMinimumHeight(60)
+                    input_field.setStyleSheet("""
+                        QTextEdit {
+                            border: 1px solid #bdc3c7;
+                            border-radius: 4px;
+                            padding: 5px;
+                            background-color: #ffffff;
+                            font-size: 12px;
+                        }
+                        QTextEdit:focus {
+                            border-color: #3498db;
+                        }
+                    """)
                     grid_layout.addWidget(label, row, 0, 1, 2)
                     grid_layout.addWidget(input_field, row + 1, 0, 1, 2)
                     row += 2
@@ -246,6 +313,18 @@ class UIBuilder:
                 else:
                     input_field = QLineEdit()
                     input_field.setMinimumHeight(30)
+                    input_field.setStyleSheet("""
+                        QLineEdit {
+                            border: 1px solid #bdc3c7;
+                            border-radius: 4px;
+                            padding: 5px;
+                            background-color: #ffffff;
+                            font-size: 12px;
+                        }
+                        QLineEdit:focus {
+                            border-color: #3498db;
+                        }
+                    """)
                     grid_layout.addWidget(label, row, col)
                     grid_layout.addWidget(input_field, row + 1, col)
                     col = 1 - col
@@ -256,6 +335,18 @@ class UIBuilder:
                 input_field.setCalendarPopup(True)
                 input_field.setMinimumHeight(30)
                 input_field.setDate(QDate.currentDate())  # Set default to today's date
+                input_field.setStyleSheet("""
+                    QDateEdit {
+                        border: 1px solid #bdc3c7;
+                        border-radius: 4px;
+                        padding: 5px;
+                        background-color: #ffffff;
+                        font-size: 12px;
+                    }
+                    QDateEdit:focus {
+                        border-color: #3498db;
+                    }
+                """)
                 grid_layout.addWidget(label, row, col)
                 grid_layout.addWidget(input_field, row + 1, col)
                 col = 1 - col
@@ -266,6 +357,18 @@ class UIBuilder:
                 input_field.setMinimumHeight(30)
                 options = definition.get('options', [])
                 input_field.addItems(options)
+                input_field.setStyleSheet("""
+                    QComboBox {
+                        border: 1px solid #bdc3c7;
+                        border-radius: 4px;
+                        padding: 5px;
+                        background-color: #ffffff;
+                        font-size: 12px;
+                    }
+                    QComboBox:focus {
+                        border-color: #3498db;
+                    }
+                """)
                 grid_layout.addWidget(label, row, col)
                 grid_layout.addWidget(input_field, row + 1, col)
                 col = 1 - col
@@ -274,9 +377,47 @@ class UIBuilder:
             elif definition['type'] == "file":
                 input_field = QLineEdit()
                 input_field.setMinimumHeight(30)
+                input_field.setStyleSheet("""
+                    QLineEdit {
+                        border: 1px solid #bdc3c7;
+                        border-radius: 4px;
+                        padding: 5px;
+                        background-color: #ffffff;
+                        font-size: 12px;
+                    }
+                    QLineEdit:focus {
+                        border-color: #3498db;
+                    }
+                """)
                 browse_button = QPushButton("Browse")
+                browse_button.setStyleSheet("""
+                    QPushButton {
+                        background-color: #95a5a6;
+                        color: white;
+                        border: none;
+                        border-radius: 4px;
+                        padding: 5px 10px;
+                        font-size: 10px;
+                    }
+                    QPushButton:hover {
+                        background-color: #7f8c8d;
+                    }
+                """)
                 browse_button.clicked.connect(lambda _, field=input_field: self.browse_file(field))
                 screenshot_button = QPushButton("Screenshot")
+                screenshot_button.setStyleSheet("""
+                    QPushButton {
+                        background-color: #3498db;
+                        color: white;
+                        border: none;
+                        border-radius: 4px;
+                        padding: 5px 10px;
+                        font-size: 10px;
+                    }
+                    QPushButton:hover {
+                        background-color: #2980b9;
+                    }
+                """)
                 screenshot_button.clicked.connect(lambda _, field=input_field: self.take_screenshot(field))
                 grid_layout.addWidget(label, row, 0, 1, 4)
                 grid_layout.addWidget(input_field, row + 1, 0, 1, 2)
