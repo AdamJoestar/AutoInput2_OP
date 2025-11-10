@@ -33,33 +33,12 @@ class UIBuilder:
         self.spin_equipment.valueChanged.connect(self.rebuild_form)
         spin_layout.addWidget(self.spin_equipment)
 
-        spin_layout.addWidget(QLabel("TEMPERATURAS REGISTRADAS (max 10):"))
-        self.spin_temperatures = QSpinBox()
-        self.spin_temperatures.setRange(1, 10)
-        self.spin_temperatures.setValue(10)
-        self.spin_temperatures.valueChanged.connect(self.rebuild_form)
-        spin_layout.addWidget(self.spin_temperatures)
-
-        spin_layout.addWidget(QLabel("ESTABILIZACIÓN TÉRMICA (max 10):"))
-        self.spin_stabilization = QSpinBox()
-        self.spin_stabilization.setRange(1, 10)
-        self.spin_stabilization.setValue(10)
-        self.spin_stabilization.valueChanged.connect(self.rebuild_form)
-        spin_layout.addWidget(self.spin_stabilization)
-
-        spin_layout.addWidget(QLabel("RESULTADOS (max 10):"))
-        self.spin_results = QSpinBox()
-        self.spin_results.setRange(1, 10)
-        self.spin_results.setValue(10)
-        self.spin_results.valueChanged.connect(self.rebuild_form)
-        spin_layout.addWidget(self.spin_results)
-
-        spin_layout.addWidget(QLabel("FOTOGRAFIAS (max 10):"))
-        self.spin_photos = QSpinBox()
-        self.spin_photos.setRange(1, 10)
-        self.spin_photos.setValue(10)
-        self.spin_photos.valueChanged.connect(self.rebuild_form)
-        spin_layout.addWidget(self.spin_photos)
+        spin_layout.addWidget(QLabel("SONDA TOTAL (max 10):"))
+        self.spin_sonda = QSpinBox()
+        self.spin_sonda.setRange(1, 10)
+        self.spin_sonda.setValue(10)
+        self.spin_sonda.valueChanged.connect(self.rebuild_form)
+        spin_layout.addWidget(self.spin_sonda)
 
         main_layout.addLayout(spin_layout)
 
@@ -163,8 +142,8 @@ class UIBuilder:
         title_label = QLabel("3. TEMPERATURAS REGISTRADAS")
         title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
         self.form_layout.addWidget(title_label)
-        num_temp = self.spin_temperatures.value()
-        for i in range(1, num_temp + 1):
+        num_sonda = self.spin_sonda.value()
+        for i in range(1, num_sonda + 1):
             self.create_input_group(self.form_layout, f"Row {i} ", [
                 f"PUNTO{i}", f"UNIDAD{i}", f"LIMITE{i}", f"TEMP{i}"
             ])
@@ -184,8 +163,7 @@ class UIBuilder:
         self.create_input_group(self.form_layout, "Description", [
             "TEXT14"
         ])
-        num_stab = self.spin_stabilization.value()
-        for i in range(1, num_stab + 1):
+        for i in range(1, num_sonda + 1):
             self.create_input_group(self.form_layout, f"Row {i}", [
                 f"MEDICI{i}", f"UNI{i}", f"VALMIN{i}", f"VALMAX{i}", f"DESVI{i}"
             ])
@@ -194,8 +172,7 @@ class UIBuilder:
         title_label = QLabel("5. RESULTADOS")
         title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
         self.form_layout.addWidget(title_label)
-        num_res = self.spin_results.value()
-        for i in range(1, num_res + 1):
+        for i in range(1, num_sonda + 1):
             self.create_input_group(self.form_layout, f"Row {i}", [
                 f"PUNTODE{i}", f"UNIC{i}", f"TEMPE{i}", f"RESULT{i}"
             ])
@@ -212,8 +189,7 @@ class UIBuilder:
         title_label = QLabel("7. FOTOGRAFIAS")
         title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
         self.form_layout.addWidget(title_label)
-        num_photos = self.spin_photos.value()
-        for i in range(3, 3 + num_photos):  # IMAGE3 to IMAGE{2+num_photos}, TITLE3 to TITLE{2+num_photos}
+        for i in range(3, 3 + num_sonda):  # IMAGE3 to IMAGE{2+num_sonda}, TITLE3 to TITLE{2+num_sonda}
             self.create_input_group(self.form_layout, f"Fotografía {i-2}", [
                 f"IMAGE{i}"
             ])
