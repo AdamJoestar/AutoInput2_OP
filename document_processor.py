@@ -1,5 +1,5 @@
 import os
-from PyQt5.QtWidgets import QMessageBox, QFileDialog
+from PyQt5.QtWidgets import QMessageBox, QFileDialog, QComboBox, QDateEdit
 from docx import Document
 from docx.shared import Inches
 from datetime import date
@@ -45,7 +45,11 @@ class DocumentProcessor:
         for key in input_widgets:
             definition = FIELD_DEFINITIONS[key]
             input_widget = input_widgets[key]
-            if hasattr(input_widget, 'text'):
+            if isinstance(input_widget, QComboBox):
+                value = input_widget.currentText().strip()
+            elif isinstance(input_widget, QDateEdit):
+                value = input_widget.date().toString("dd/MM/yyyy")
+            elif hasattr(input_widget, 'text'):
                 value = input_widget.text().strip()
             elif hasattr(input_widget, 'toPlainText'):
                 value = input_widget.toPlainText().strip()
