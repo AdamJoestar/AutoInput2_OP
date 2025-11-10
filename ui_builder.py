@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import (
-    QLabel, QLineEdit, QPushButton, QScrollArea, QGridLayout, QGroupBox, QFileDialog, QSpinBox, QTextEdit, QHBoxLayout, QWidget, QVBoxLayout
+    QLabel, QLineEdit, QPushButton, QScrollArea, QGridLayout, QGroupBox, QFileDialog, QSpinBox, QTextEdit, QHBoxLayout, QWidget, QVBoxLayout, QDateEdit
 )
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QDate
 from fields import FIELD_DEFINITIONS
 from screenshot import ScreenshotSelector
 import tempfile
@@ -77,6 +77,8 @@ class UIBuilder:
                 current_values[key] = widget.text()
             elif isinstance(widget, QTextEdit):
                 current_values[key] = widget.toPlainText()
+            elif isinstance(widget, QDateEdit):
+                current_values[key] = widget.date().toString("dd/MM/yyyy")
 
         # Clear existing widgets from form_layout
         for i in reversed(range(self.form_layout.count())):
@@ -205,6 +207,10 @@ class UIBuilder:
                     widget.setText(value)
                 elif isinstance(widget, QTextEdit):
                     widget.setPlainText(value)
+                elif isinstance(widget, QDateEdit):
+                    from PyQt5.QtCore import QDate
+                    date = QDate.fromString(value, "dd/MM/yyyy")
+                    widget.setDate(date)
 
     def create_input_group(self, parent_layout, title, keys):
         """Membuat group box untuk input yang terorganisir."""
@@ -237,6 +243,16 @@ class UIBuilder:
                     col = 1 - col
                     if col == 0:
                         row += 2
+            elif definition['type'] == "date":
+                input_field = QDateEdit()
+                input_field.setCalendarPopup(True)
+                input_field.setMinimumHeight(30)
+                input_field.setDate(QDate.currentDate())  # Set default to today's date
+                grid_layout.addWidget(label, row, col)
+                grid_layout.addWidget(input_field, row + 1, col)
+                col = 1 - col
+                if col == 0:
+                    row += 2
             elif definition['type'] == "file":
                 input_field = QLineEdit()
                 input_field.setMinimumHeight(30)

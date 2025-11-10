@@ -1,4 +1,4 @@
-1. []
-2. []
-3. []
-4. []
+- [ ] Change field types in fields.py for date fields to "date"
+- [ ] Update ui_builder.py to handle "date" type with QDateEdit widget
+- [ ] Update document_processor.py to collect data from QDateEdit widgets
+- [ ] Test the changes
