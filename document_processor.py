@@ -18,7 +18,7 @@ class DocumentProcessor:
         # Validate required fields
         is_valid, missing_field = validate_required_fields(input_widgets, FIELD_DEFINITIONS)
         if not is_valid:
-            QMessageBox.warning(self.parent_app, "Input Kosong", f"Campo obligatorio ('{missing_field}') no puede estar vacío.")
+            QMessageBox.warning(self.parent_app, "entrada vacía", f"Campo obligatorio ('{missing_field}') no puede estar vacío.")
             return
 
         replacement_data = self.collect_replacement_data(input_widgets)
