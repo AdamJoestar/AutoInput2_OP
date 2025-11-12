@@ -133,6 +133,9 @@ class DocumentProcessor:
                     if placeholder in ["[IMAGE3]", "[IMAGE4]", "[IMAGE5]", "[IMAGE6]", "[IMAGE7]", "[IMAGE8]", "[IMAGE9]", "[IMAGE10]", "[IMAGE11]", "[IMAGE12]"]:
                         # Smaller size for fitting 4 images on one page: height 3 inches, width 2 inches
                         paragraph.add_run().add_picture(image_path, width=Inches(2), height=Inches(3))
+                    elif placeholder in ["[IMAGE1]", "[IMAGE2]"]:
+                        # Horizontal rectangle size for IMAGE1 and IMAGE2: width 3 inches, height 2 inches
+                        paragraph.add_run().add_picture(image_path, width=Inches(3), height=Inches(2))
                     else:
                         # Other images: default size
                         paragraph.add_run().add_picture(image_path)

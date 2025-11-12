@@ -1,66 +1,56 @@
 # --- Dropdown Options ---
 # TODO: Add more equipment options here
 EQUIPMENT_OPTIONS = [
-    "Termómetro",
-    "Multímetro",
-    "Espectrómetro",
-    "Cámara térmica",
-    "Osciloscopio",
-    "Generador de señales",
-    "Analizador de potencia",
-    "Medidor de corriente",
-    "Sensor de temperatura",
-    "Equipo de calibración",
-    "Otro"  # Placeholder for additional options
+    "ALMEMO",
+    "TERMOHIGRÓMETRO",
+    "CAMARA ENDURANCIA",
+    "SONDA TIPO T",
 ]
 
 # TODO: Add more brand/model options here
 MARCA_OPTIONS = [
-    "Fluke",
-    "Agilent",
-    "Keysight",
-    "Tektronix",
-    "National Instruments",
-    "Omega",
-    "Testo",
-    "Extech",
-    "Rigol",
-    "Otro"  # Placeholder for additional options
+    "MA710",
+    "MA24702S",
+    "CET10/15312",
+    "2024103000",
+    "2024103001",
+    "2024103002",
+    "2024103003",
+    "2024103004",
+    "2024103005",
+    "2024103006",
+    "2024103007",
+    "2024103008",
+    "2024103009",
+    "2024103010",
+    "2024103011",
 ]
 
 # TODO: Add more type/application options here
 TIPO_OPTIONS = [
-    "Digital",
-    "Analógico",
-    "Infrarrojo",
-    "Contacto",
-    "No contacto",
-    "Portátil",
-    "De mesa",
-    "Automático",
-    "Manual",
-    "Otro"  # Placeholder for additional options
-]
-
-# TODO: Add more method options here
-METHOD_OPTIONS = [
-    "IEC 60598",
-    "EN 60598",
-    "UL 1993",
-    "IEC 61347",
-    "Otro"  # Placeholder for additional options
+    "Registrador de Temperatura",
+    "Medición Temperatura Ambiente",
+    "Dycometal",
+    "Carcasa int.",
+    "Carcasa ext.",
+    "Disipador",
+    "Difusor",
+    "PCB",
+    "Driver",
+    "Tc LED",
+    "T. Ambiente",
 ]
 
 # Temperature measurement point options
 PUNTO_OPTIONS = [
-    "Base del LED",
-    "Driver",
-    "Housing",
-    "Lens",
+    "Carcasa int.",
+    "Carcasa ext.",
+    "Disipador",
+    "Difusor",
     "PCB",
-    "Terminal",
-    "Cable",
-    "Otro"
+    "Driver",
+    "Tc LED",
+    "T. Ambiente",
 ]
 
 # Temperature unit options
@@ -72,12 +62,7 @@ UNIDAD_OPTIONS = [
 
 # Common temperature limits
 LIMITE_OPTIONS = [
-    "80°C",
-    "90°C",
-    "100°C",
-    "110°C",
-    "120°C",
-    "Otro"
+   "50", "55", "60", "70", "75", "80", "85", "90", "95", "100", "105", "115", "120", "125", "130", "135", "140", "165", "170", "200", "210", "225", "230", "250"
 ]
 
 # Result options
