@@ -175,6 +175,18 @@ class UIBuilder:
                 f"EQUIPO{i}", f"MARCA{i}", f"TIPO{i}", f"FECHA{i}", f"OBSER{i}"
             ])
 
+        # Auto-fill marca and tipo for all rows based on equipment selection
+        for i in range(1, num_equip + 1):
+            equipo_key = f"EQUIPO{i}"
+            marca_key = f"MARCA{i}"
+            tipo_key = f"TIPO{i}"
+            if equipo_key in self.input_widgets:
+                equipo_widget = self.input_widgets[equipo_key]
+                marca_widget = self.input_widgets.get(marca_key)
+                tipo_widget = self.input_widgets.get(tipo_key)
+                if marca_widget and tipo_widget:
+                    equipo_widget.currentTextChanged.connect(lambda text, mw=marca_widget, tw=tipo_widget: self.auto_fill_marca_tipo(text, mw, tw))
+
         # 2.1. MÉTODO DE ENSAYO
         # Removed as per user request
 
@@ -445,3 +457,19 @@ class UIBuilder:
             temp_file = tempfile.NamedTemporaryFile(suffix='.png', delete=False)
             selected_image.save(temp_file.name, 'PNG')
             field.setText(temp_file.name)
+
+    def auto_fill_marca_tipo(self, equipo_text, marca_widget, tipo_widget):
+        """Auto-fill marca and tipo based on equipment selection."""
+        if equipo_text == "ALMEMO":
+            marca_widget.setCurrentText("MA710")
+            tipo_widget.setCurrentText("Registrador de Temperatura")
+        elif equipo_text == "TERMOHIGRÓMETRO":
+            marca_widget.setCurrentText("MA24702S")
+            tipo_widget.setCurrentText("Medición Temperatura Ambiente")
+        elif equipo_text == "CAMARA ENDURANCIA":
+            marca_widget.setCurrentText("CET10/15312")
+            tipo_widget.setCurrentText("Dycometal")
+        else:
+            # Clear if not one of the auto-fill options
+            marca_widget.setCurrentIndex(0)
+            tipo_widget.setCurrentIndex(0)
