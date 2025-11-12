@@ -19,6 +19,7 @@ class UIBuilder:
         self.input_widgets = {}
         self.equipment_groups = []
         self.spin_boxes = {}
+        self.temp_files = []  # List untuk melacak file sementara
 
     def init_ui(self):
         """
@@ -496,8 +497,10 @@ class UIBuilder:
         dialog = ScreenshotSelector(parent=None)
         if dialog.exec_() == QDialog.Accepted:
             selected_image = dialog.get_selected_image()
+            # Tetap gunakan delete=False, tapi kita akan mengelola penghapusannya secara manual
             temp_file = tempfile.NamedTemporaryFile(suffix='.png', delete=False)
             selected_image.save(temp_file.name, 'PNG')
+            self.temp_files.append(temp_file.name)  # Tambahkan path ke daftar pelacakan
             field.setText(temp_file.name)
 
     def auto_fill_marca_tipo(self, equipo_text, marca_widget, tipo_widget):

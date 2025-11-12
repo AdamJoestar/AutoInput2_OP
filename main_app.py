@@ -83,6 +83,14 @@ class DocumentGeneratorApp(QWidget):
         """
         reply = QMessageBox.question(self, 'Confirmar salida', '¿Estás seguro de que quieres salir?', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         if reply == QMessageBox.Yes:
+            # Membersihkan file-file sementara sebelum keluar
+            if hasattr(self.ui_builder, 'temp_files'):
+                for temp_path in self.ui_builder.temp_files:
+                    try:
+                        os.remove(temp_path)
+                    except OSError:
+                        # Abaikan error jika file tidak ada atau tidak bisa dihapus
+                        pass
             event.accept()
         else:
             event.ignore()
