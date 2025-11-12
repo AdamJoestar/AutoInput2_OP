@@ -9,10 +9,21 @@ from utils import validate_required_fields
 
 class DocumentProcessor:
     def __init__(self, parent_app):
+        """
+        Initializes the DocumentProcessor.
+
+        Args:
+            parent_app (DocumentGeneratorApp): A reference to the main application instance.
+        """
         self.parent_app = parent_app
 
     def generate_document(self):
-        """Logika utama untuk membaca input, memuat template, mengganti placeholder, dan menyimpan file."""
+        """
+        Orchestrates the document generation process.
+
+        Handles input validation, data collection, template processing,
+        and saving the final document.
+        """
         input_widgets = self.parent_app.ui_builder.input_widgets
 
         # Validate required fields
@@ -41,6 +52,16 @@ class DocumentProcessor:
         self.save_document(document)
 
     def collect_replacement_data(self, input_widgets):
+        """
+        Collects all data from the UI input widgets.
+
+        Args:
+            input_widgets (dict): A dictionary of input widgets from the UIBuilder.
+
+        Returns:
+            dict: A dictionary mapping placeholders (e.g., '[TEXT1]') to the
+                  values entered by the user.
+        """
         replacement_data = {}
         for key in input_widgets:
             definition = FIELD_DEFINITIONS[key]
@@ -64,6 +85,13 @@ class DocumentProcessor:
         return replacement_data
 
     def process_document(self, document, replacement_data):
+        """
+        Processes the entire document to replace all placeholders.
+
+        Args:
+            document (docx.Document): The Word document object to process.
+            replacement_data (dict): The data to be used for replacements.
+        """
         for paragraph in document.paragraphs:
             for placeholder, value in replacement_data.items():
                 self.replace_in_paragraph(paragraph, placeholder, value)
@@ -77,7 +105,14 @@ class DocumentProcessor:
         self.remove_empty_table_rows(document)
 
     def replace_in_paragraph(self, paragraph, placeholder, value):
-        """Mengganti placeholder di dalam paragraf."""
+        """
+        Replaces a text placeholder within a single paragraph.
+
+        Args:
+            paragraph (docx.text.paragraph.Paragraph): The paragraph to process.
+            placeholder (str): The placeholder text to be replaced.
+            value (str): The replacement value.
+        """
         if placeholder in paragraph.text and 'IMAGE' not in placeholder:
             paragraph.text = paragraph.text.replace(placeholder, value)
             for run in paragraph.runs:
@@ -85,7 +120,13 @@ class DocumentProcessor:
                 run.font.size = 9 * 12700
 
     def replace_in_tables(self, document, replacement_data):
-        """Mengganti placeholder di dalam sel tabel."""
+        """
+        Replaces placeholders in all tables within the document.
+
+        Args:
+            document (docx.Document): The Word document object.
+            replacement_data (dict): The replacement data.
+        """
         for table in document.tables:
             for row in table.rows:
                 for cell in row.cells:
@@ -94,7 +135,13 @@ class DocumentProcessor:
                             self.replace_in_paragraph(paragraph, placeholder, value)
 
     def replace_in_headers(self, document, replacement_data):
-        """Mengganti placeholder di dalam header."""
+        """
+        Replaces placeholders in all headers within the document.
+
+        Args:
+            document (docx.Document): The Word document object.
+            replacement_data (dict): The replacement data.
+        """
         for section in document.sections:
             header = section.header
             for paragraph in header.paragraphs:
@@ -108,7 +155,13 @@ class DocumentProcessor:
                                 self.replace_in_paragraph(paragraph, placeholder, value)
 
     def replace_in_footers(self, document, replacement_data):
-        """Mengganti placeholder di dalam footer."""
+        """
+        Replaces placeholders in all footers within the document.
+
+        Args:
+            document (docx.Document): The Word document object.
+            replacement_data (dict): The replacement data.
+        """
         for section in document.sections:
             footer = section.footer
             for paragraph in footer.paragraphs:
@@ -122,7 +175,13 @@ class DocumentProcessor:
                                 self.replace_in_paragraph(paragraph, placeholder, value)
 
     def replace_images(self, document, replacement_data):
-        """Mengganti placeholder gambar dengan gambar yang dipilih."""
+        """
+        Replaces image placeholders with the actual image files.
+
+        Args:
+            document (docx.Document): The Word document object.
+            replacement_data (dict): The replacement data containing image paths.
+        """
         def process_paragraph(paragraph):
             placeholder = paragraph.text.strip()
             if placeholder in replacement_data:
@@ -176,6 +235,12 @@ class DocumentProcessor:
                             process_paragraph(paragraph)
 
     def remove_empty_table_rows(self, document):
+        """
+        Removes empty rows from all tables in the document.
+
+        Args:
+            document (docx.Document): The Word document object.
+        """
         for table in document.tables:
             rows_to_remove = []
             for i, row in enumerate(table.rows):
@@ -193,6 +258,12 @@ class DocumentProcessor:
                 table._tbl.remove(table.rows[i]._tr)
 
     def save_document(self, document):
+        """
+        Saves the document object to a .docx file.
+
+        Args:
+            document (docx.Document): The document object ready to be saved.
+        """
         output_filename = f"Generated_Anexo_II_{date.today().strftime('%d_%m_%Y')}.docx"
         file_path, _ = QFileDialog.getSaveFileName(self.parent_app, "Guardar documento como...", output_filename, "Word Documents (*.docx);;All Files (*)", options=QFileDialog.Options())
         if not file_path:

@@ -10,8 +10,15 @@ import os
 
 
 class DocumentGeneratorApp(QWidget):
-    """Aplikasi untuk menginput data dan menghasilkan dokumen Word dari template."""
+    """Application to input data and generate Word documents from a template."""
     def __init__(self):
+        """
+        Initializes the main application.
+
+        Sets window properties, stylesheet, and initializes main components
+        like UIBuilder and DocumentProcessor. Also loads default text templates
+        from external files.
+        """
         super().__init__()
         self.templates_dir = TEMPLATES_DIR
         self.template_filename = TEMPLATE_FILENAME
@@ -66,7 +73,14 @@ class DocumentGeneratorApp(QWidget):
         self.init_ui()
 
     def closeEvent(self, event):
-        """Menampilkan popup konfirmasi sebelum menutup aplikasi."""
+        """
+        Handles the application window's close event.
+
+        Displays a confirmation dialog to the user before exiting.
+
+        Args:
+            event (QCloseEvent): The event received when the window is about to close.
+        """
         reply = QMessageBox.question(self, 'Confirmar salida', '¿Estás seguro de que quieres salir?', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         if reply == QMessageBox.Yes:
             event.accept()
@@ -74,7 +88,7 @@ class DocumentGeneratorApp(QWidget):
             event.ignore()
 
     def init_ui(self):
-        """Membangun antarmuka pengguna."""
+        """Initializes and builds the main user interface."""
         main_layout = QVBoxLayout(self)
         self.setLayout(main_layout)
         self.ui_builder.init_ui()
@@ -107,7 +121,7 @@ class DocumentGeneratorApp(QWidget):
             self.description_template = "Descripción no disponible. Por favor, verifique el archivo description_template.txt."
 
     def generate_document(self):
-        """Delegate to document processor."""
+        """Delegates the document generation task to the document processor."""
         self.document_processor.generate_document()
 
 

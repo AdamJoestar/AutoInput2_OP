@@ -9,13 +9,23 @@ import tempfile
 
 class UIBuilder:
     def __init__(self, parent_app):
+        """
+        Initializes the UIBuilder.
+
+        Args:
+            parent_app (DocumentGeneratorApp): A reference to the main application instance.
+        """
         self.parent_app = parent_app
         self.input_widgets = {}
         self.equipment_groups = []
         self.spin_boxes = {}
 
     def init_ui(self):
-        """Membangun antarmuka pengguna."""
+        """
+        Initializes and builds the entire user interface (UI) for the application.
+
+        Creates the title, row selection spin boxes, scroll area, and main buttons.
+        """
         main_layout = self.parent_app.layout()
 
         # --- Judul ---
@@ -108,6 +118,14 @@ class UIBuilder:
         self.rebuild_form()
 
     def rebuild_form(self):
+        """
+        Rebuilds the dynamic input form based on the values from the spin boxes.
+
+        This function saves existing input values, clears all widgets from the form,
+        then rebuilds the input groups according to the selected number of rows for
+        "EQUIPOS" and "SONDA". Afterwards, it attempts to restore the saved values
+        to the corresponding widgets.
+        """
         # Save current input values before clearing
         current_values = {}
         for key, widget in self.input_widgets.items():
@@ -271,7 +289,15 @@ class UIBuilder:
                         widget.setCurrentIndex(index)
 
     def create_input_group(self, parent_layout, title, keys):
-        """Membuat group box untuk input yang terorganisir."""
+        """
+        Creates a QGroupBox containing several input fields.
+
+        Args:
+            parent_layout (QLayout): The parent layout to which the group box will be added.
+            title (str): The title for the QGroupBox.
+            keys (list): A list of keys (from FIELD_DEFINITIONS) for the fields
+                         to be created within this group.
+        """
         group_box = QGroupBox(title)
         group_box.setStyleSheet("""
             QGroupBox {
@@ -444,13 +470,29 @@ class UIBuilder:
         parent_layout.addWidget(group_box)
 
     def browse_file(self, field):
-        """Browse file untuk input gambar."""
+        """
+        Opens a file dialog to select an image file.
+
+        Args:
+            field (QLineEdit): The QLineEdit widget that will be populated with the
+                               selected file path.
+        """
         file_path, _ = QFileDialog.getOpenFileName(self.parent_app, "Select Image", "", "Image Files (*.png *.jpg *.jpeg *.gif *.bmp *.tiff *.tif *.webp *.jfif)")
         if file_path:
             field.setText(file_path)
 
     def take_screenshot(self, field):
-        """Take screenshot and allow area selection like snipping tool."""
+        """
+        Takes a screenshot of a specific area of the screen.
+
+        Opens the ScreenshotSelector dialog, allows the user to select an area,
+        and saves the selected image to a temporary file. The path to this
+        temporary file is then inserted into the input field.
+
+        Args:
+            field (QLineEdit): The QLineEdit widget that will be populated with the
+                               path to the temporary screenshot file.
+        """
         dialog = ScreenshotSelector(parent=None)
         if dialog.exec_() == QDialog.Accepted:
             selected_image = dialog.get_selected_image()
@@ -459,7 +501,7 @@ class UIBuilder:
             field.setText(temp_file.name)
 
     def auto_fill_marca_tipo(self, equipo_text, marca_widget, tipo_widget):
-        """Auto-fill marca and tipo based on equipment selection."""
+        """Auto-fill 'Marca/Modelo' and 'Tipo/Aplicación' fields based on 'Equipo' selection."""
         if equipo_text == "ALMEMO":
             marca_widget.setCurrentText("MA710")
             tipo_widget.setCurrentText("Registrador de Temperatura")
