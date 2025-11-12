@@ -1,11 +1,6 @@
-# UI Modernization Plan
+## FUTURE WORK
 
-- [x] Update overall app stylesheet in main_app.py for modern look (fonts, colors, background).
-- [x] Update title style in ui_builder.py (larger font, better color, shadow).
-- [x] Update spin box layout styles (labels, spin boxes).
-- [x] Update scroll area and form layout styles (background, padding).
-- [x] Update generate button style with modern effects (gradient, hover, rounded corners).
-- [x] Update info label style (better font, color).
-- [x] Update group box styles in create_input_group (borders, background, rounded corners).
-- [x] Update individual widget styles (labels, inputs, buttons in groups).
-- [x] Test the app by running it to verify the modern UI.
+1. [] Validasi input yang harus diperbaiki agar tipe data yang di input harus sesuai 
+2. [] Manajemen file sementara yang ternyata tidak temporart membuat jadi numpuk file 
+3. [] Fitur simpan / muat proyek takutnya sewaktu waktu tidak sengaja keluar dari aplikasi dan membutuhkan ulang 
+4. [] Pengambilan path template yang rapuh aplikasi harus dijalankan dari direktori yang benar
