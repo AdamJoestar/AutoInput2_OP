@@ -27,7 +27,7 @@ class UIBuilder:
 
         Creates the title, row selection spin boxes, scroll area, and main buttons.
         """
-        main_layout = self.parent_app.layout()
+        main_layout = self.parent_app.main_layout
 
         # --- Judul ---
         title = QLabel("Ingresar Datos Para el Anexo II")
