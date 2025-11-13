@@ -4,10 +4,15 @@ Chapter 1: Introduction
 
 What is this application?
 Who is this application for?
-Chapter 2: Installation (If you create an installer)
+Chapter 2: Installation
 
-If you use PyInstaller to create an .exe file, explain how to run it.
-System requirements (e.g., "For Windows 10/11 only").
+This application is provided as a single executable file (`.exe`) and does not require a formal installation process.
+
+1.  **Download the file:** Obtain the `AnexoIIGenerator.exe` file.
+2.  **Run the application:** Simply double-click the `AnexoIIGenerator.exe` file to start the program. No further installation is needed.
+
+**System Requirements:**
+*   Windows 10 or Windows 11.
 Chapter 3: Getting Started
 
 The main application window (include a screenshot).

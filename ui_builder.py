@@ -369,6 +369,9 @@ class UIBuilder:
                     col = 1 - col
                     if col == 0:
                         row += 2
+                    if key.startswith("TEMP") or key.startswith("VALMIN") or key.startswith("VALMAX") or key.startswith("DESVI") or key.startswith("TEMPE"):
+                        from PyQt5.QtGui import QDoubleValidator
+                        input_field.setValidator(QDoubleValidator(0.0, 9999.99, 2))
             elif definition['type'] == "date":
                 input_field = QDateEdit()
                 input_field.setCalendarPopup(True)

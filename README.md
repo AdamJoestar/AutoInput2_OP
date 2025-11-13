@@ -67,6 +67,27 @@ python-docx==1.1.0
     python main_app.py
     ```
 
+## Distribution (Creating a Standalone .exe)
+
+You can package the application into a single executable file using PyInstaller. This allows users to run the application without installing Python or any dependencies.
+
+1.  **Install PyInstaller:**
+    ```bash
+    pip install pyinstaller
+    ```
+
+2.  **Build the Executable:**
+    Run the following command from the project's root directory:
+    ```bash
+    pyinstaller --name "AnexoIIGenerator" --onefile --windowed --add-data "templates;templates" main_app.py
+    ```
+
+3.  **Find the Executable:**
+    The generated `AnexoIIGenerator.exe` file will be located in the `dist` folder. You can distribute this file to your users.
+
+### Running the .exe
+Simply double-click the `AnexoIIGenerator.exe` file to run the application. Make sure the user has permissions to run executables in their system.
+
 3.  **Fill in the Data:**
     Fill out all the fields in the application's interface.
 
