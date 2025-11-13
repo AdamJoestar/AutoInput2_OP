@@ -1,0 +1,25 @@
+# Python standard files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.ipynb_checkpoints
+
+# Virtual environment
+venv/
+env/
+.virtual_documents/
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+htmlcov/
+
+# Logs and databases (if applicable)
+*.log
+*.sqlite3
+
+# OS/IDE files
+.DS_Store
+.vscode/
