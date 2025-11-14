@@ -7,6 +7,17 @@ from fields import FIELD_DEFINITIONS
 from screenshot import ScreenshotSelector
 import tempfile
 import os
+import sys
+
+def resource_path(relative_path):
+    """ Mendapatkan path absolut ke resource, berfungsi untuk dev dan PyInstaller """
+    try:
+        # PyInstaller membuat folder sementara dan menyimpan path di _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
 
 
 class UIBuilder:
@@ -33,7 +44,8 @@ class UIBuilder:
 
         # --- Logo ---
         logo = QLabel()
-        logo.setPixmap(QPixmap("logo vibia.png").scaledToWidth(200, Qt.SmoothTransformation))
+        logo_path = resource_path("logo vibia.png")
+        logo.setPixmap(QPixmap(logo_path).scaledToWidth(200, Qt.SmoothTransformation))
         logo.setAlignment(Qt.AlignCenter)
         logo.setStyleSheet("margin-bottom: 10px;")
         main_layout.addWidget(logo)
@@ -235,7 +247,7 @@ class UIBuilder:
             "IMAGE1", "TITLE1", "DESC1", "IMAGE2", "DESC2"
         ])
 
-        # 4. ESTABILIZACIÓN TÉRMICA
+        # 4. BILIZACIÓN TÉRMICA
         title_label = QLabel("4. ESTABILIZACIÓN TÉRMICA")
         title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
         self.form_layout.addWidget(title_label)

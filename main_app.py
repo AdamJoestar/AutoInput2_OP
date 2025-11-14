@@ -71,6 +71,13 @@ class DocumentGeneratorApp(QMainWindow):
             QPushButton:hover {
                 background-color: #2980b9;
             }
+            QMessageBox QPushButton {
+                background-color: #808080;
+                color: #FFFFFF;
+            }
+            QMessageBox QPushButton:hover {
+                background-color: #909090;
+            }
         """)
         self.ui_builder = UIBuilder(self)
         self.document_processor = DocumentProcessor(self)
@@ -87,7 +94,28 @@ class DocumentGeneratorApp(QMainWindow):
         Args:
             event (QCloseEvent): The event received when the window is about to close.
         """
-        reply = QMessageBox.question(self, 'Confirmar salida', '¿Estás seguro de que quieres salir?', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        msg_box = QMessageBox(self)
+        msg_box.setWindowTitle('Confirmar salida')
+        msg_box.setText('¿Estás seguro de que quieres salir?')
+        msg_box.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        msg_box.setDefaultButton(QMessageBox.No)
+        msg_box.setStyleSheet("""
+            QMessageBox {
+                background-color: #f5f5f5;
+            }
+            QPushButton {
+                background-color: #808080;
+                color: #FFFFFF;
+                border-radius: 6px;
+                padding: 8px 16px;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                background-color: #909090;
+            }
+        """)
+        reply = msg_box.exec_()
+
         if reply == QMessageBox.Yes:
             # Membersihkan file-file sementara sebelum keluar
             if hasattr(self.ui_builder, 'temp_files'):

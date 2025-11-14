@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import QMessageBox, QFileDialog, QComboBox, QDateEdit
 from docx import Document
 from docx.shared import Inches
 from datetime import date
+from PIL import Image
 from fields import FIELD_DEFINITIONS
 from utils import validate_required_fields
 
@@ -25,6 +26,10 @@ class DocumentProcessor:
         and saving the final document.
         """
         input_widgets = self.parent_app.ui_builder.input_widgets
+
+        # Validate that all image files exist before proceeding
+        if not self._validate_image_paths(input_widgets):
+            return
 
         # Validate required fields
         is_valid, missing_field = validate_required_fields(input_widgets, FIELD_DEFINITIONS)
@@ -50,6 +55,30 @@ class DocumentProcessor:
 
         self.process_document(document, replacement_data)
         self.save_document(document)
+
+    def _validate_image_paths(self, input_widgets):
+        """
+        Validates that all file paths in file input widgets are valid.
+
+        Args:
+            input_widgets (dict): A dictionary of input widgets.
+
+        Returns:
+            bool: True if all paths are valid, False otherwise.
+        """
+        for key, widget in input_widgets.items():
+            definition = FIELD_DEFINITIONS.get(key, {})
+            if definition.get('type') == 'file':
+                path = widget.text().strip()
+                if path and not os.path.exists(path):
+                    QMessageBox.warning(
+                        self.parent_app,
+                        "Archivo no encontrado",
+                        f"La imagen para el campo '{definition['label']}' no se pudo encontrar en la ruta:\n{path}\n\n"
+                        "Por favor, corrija la ruta o elimínela antes de generar el documento."
+                    )
+                    return False
+        return True
 
     def collect_replacement_data(self, input_widgets):
         """
