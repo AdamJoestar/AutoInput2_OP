@@ -5,6 +5,7 @@ import shutil
 import tempfile
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QMessageBox, QMenuBar, QAction, QFileDialog, QMainWindow, QLineEdit, QTextEdit, QDateEdit, QComboBox
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QIcon
 from config import TEMPLATES_DIR, TEMPLATE_FILENAME, TEMPLATE_PATH
 from fields import FIELD_DEFINITIONS
 from ui_builder import UIBuilder
@@ -27,6 +28,7 @@ class DocumentGeneratorApp(QMainWindow):
         self.template_filename = TEMPLATE_FILENAME
         self.template_path = TEMPLATE_PATH
         self.setWindowTitle("Generador de Anexo II al Informe")
+        self.setWindowIcon(QIcon("logo vibia.png"))
         self.setStyleSheet("""
             QWidget {
                 font-size: 14px;

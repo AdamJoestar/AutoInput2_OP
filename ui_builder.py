@@ -2,9 +2,11 @@ from PyQt5.QtWidgets import (
     QLabel, QLineEdit, QPushButton, QScrollArea, QGridLayout, QGroupBox, QFileDialog, QSpinBox, QTextEdit, QHBoxLayout, QWidget, QVBoxLayout, QDateEdit, QComboBox, QDialog
 )
 from PyQt5.QtCore import Qt, QDate
+from PyQt5.QtGui import QPixmap
 from fields import FIELD_DEFINITIONS
 from screenshot import ScreenshotSelector
 import tempfile
+import os
 
 
 class UIBuilder:
@@ -29,6 +31,13 @@ class UIBuilder:
         """
         main_layout = self.parent_app.main_layout
 
+        # --- Logo ---
+        logo = QLabel()
+        logo.setPixmap(QPixmap("logo vibia.png").scaledToWidth(200, Qt.SmoothTransformation))
+        logo.setAlignment(Qt.AlignCenter)
+        logo.setStyleSheet("margin-bottom: 10px;")
+        main_layout.addWidget(logo)
+
         # --- Judul ---
         title = QLabel("Ingresar Datos Para el Anexo II")
         title.setAlignment(Qt.AlignCenter)
@@ -36,11 +45,10 @@ class UIBuilder:
             font-size: 24px;
             font-weight: bold;
             margin-bottom: 15px;
-            color: #2c3e50;
-            background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #ffffff, stop:1 #f0f0f0);
-            padding: 10px;
-            border-radius: 10px;
-            border: 1px solid #ddd;
+            color: #808080;
+            font-family: 'Gotham', sans-serif;
+            italic;
+            font-style: italic;
         """)
         main_layout.addWidget(title)
 
@@ -91,7 +99,7 @@ class UIBuilder:
         self.generate_button = QPushButton("GENERAR DOCUMENTO DE WORD (.docx)")
         self.generate_button.setStyleSheet("""
             QPushButton {
-                background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #3498db, stop:1 #2980b9);
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #C7C7C7, stop:1 #9E9E9E);
                 color: white;
                 padding: 12px;
                 border-radius: 8px;
@@ -99,10 +107,10 @@ class UIBuilder:
                 border: none;
             }
             QPushButton:hover {
-                background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #2980b9, stop:1 #21618c);
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #9E9E9E, stop:1 #D9D9D9);
             }
             QPushButton:pressed {
-                background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #21618c, stop:1 #1b4f72);
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #D9D9D9, stop:1 #B0B0B0);
             }
         """)
         self.generate_button.clicked.connect(self.parent_app.generate_document)
@@ -449,7 +457,7 @@ class UIBuilder:
                 screenshot_button = QPushButton("Screenshot")
                 screenshot_button.setStyleSheet("""
                     QPushButton {
-                        background-color: #3498db;
+                        background-color: #D9D9D9;
                         color: white;
                         border: none;
                         border-radius: 4px;
@@ -457,7 +465,7 @@ class UIBuilder:
                         font-size: 10px;
                     }
                     QPushButton:hover {
-                        background-color: #2980b9;
+                        background-color: #B0B0B0;
                     }
                 """)
                 screenshot_button.clicked.connect(lambda _, field=input_field: self.take_screenshot(field))
