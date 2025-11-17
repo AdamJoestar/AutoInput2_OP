@@ -361,6 +361,9 @@ class UIBuilder:
                     if index >= 0:
                         widget.setCurrentIndex(index)
 
+        # Sync related fields
+        self.sync_related_fields(num_sonda)
+
         # Reconnect signals after rebuild
         if hasattr(self, 'spin_equipment'):
             self.spin_equipment.valueChanged.connect(self.rebuild_form)
@@ -576,6 +579,50 @@ class UIBuilder:
             selected_image.save(temp_file.name, 'PNG')
             self.temp_files.append(temp_file.name)  # Tambahkan path ke daftar pelacakan
             field.setText(temp_file.name)
+
+    def sync_related_fields(self, num_sonda):
+        """
+        Syncs related fields between TEMPERATURAS REGISTRADAS, ESTABILIZACIÓN TÉRMICA, and RESULTADOS.
+
+        - Punto de Medición (PUNTO, MEDICI, PUNTODE) should be the same for each row.
+        - Temperatura Medida (TEMP) and Temperatura final (TEMPE) should be the same.
+        """
+        for i in range(1, num_sonda + 1):
+            # Sync Punto de Medición
+            punto_key = f"PUNTO{i}"
+            medici_key = f"MEDICI{i}"
+            puntode_key = f"PUNTODE{i}"
+
+            if punto_key in self.input_widgets and medici_key in self.input_widgets and puntode_key in self.input_widgets:
+                punto_widget = self.input_widgets[punto_key]
+                medici_widget = self.input_widgets[medici_key]
+                puntode_widget = self.input_widgets[puntode_key]
+
+                # Connect signals to sync changes
+                punto_widget.currentTextChanged.connect(lambda text, mw=medici_widget, pw=puntode_widget: self.sync_punto(text, mw, pw))
+                medici_widget.currentTextChanged.connect(lambda text, pw=punto_widget, pw2=puntode_widget: self.sync_punto(text, pw, pw2))
+                puntode_widget.currentTextChanged.connect(lambda text, pw=punto_widget, mw=medici_widget: self.sync_punto(text, pw, mw))
+
+            # Sync Temperatura Medida and Temperatura final
+            temp_key = f"TEMP{i}"
+            tempe_key = f"TEMPE{i}"
+
+            if temp_key in self.input_widgets and tempe_key in self.input_widgets:
+                temp_widget = self.input_widgets[temp_key]
+                tempe_widget = self.input_widgets[tempe_key]
+
+                # Connect signals to sync changes
+                temp_widget.textChanged.connect(lambda text, tw=tempe_widget: tw.setText(text))
+                tempe_widget.textChanged.connect(lambda text, tw=temp_widget: tw.setText(text))
+
+    def sync_punto(self, text, widget1, widget2):
+        """Sync the Punto de Medición dropdowns."""
+        widget1.blockSignals(True)
+        widget2.blockSignals(True)
+        widget1.setCurrentText(text)
+        widget2.setCurrentText(text)
+        widget1.blockSignals(False)
+        widget2.blockSignals(False)
 
     def auto_fill_marca_tipo(self, equipo_text, marca_widget, tipo_widget):
         """Auto-fill 'Marca/Modelo' and 'Tipo/Aplicación' fields based on 'Equipo' selection."""

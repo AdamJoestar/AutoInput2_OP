@@ -1,4 +1,13 @@
-- [ ] Add additional photos section with choice for number of photos (max 4), placeholders IMAGE13-16, TITLE13-16
-- [ ] Remove number 6 from conclusions section, make fotografias number 6, add number 7 for foto montaje final
-- [ ] Remove NOTA section
-- [ ] In GRAFICA GENERADA, remove DESC1 and DESC2, keep only IMAGE1, TITLE1, IMAGE2
+# TODO Progress
+
+## Completed Tasks
+- [x] ada bagian modifikasi dimana temperaturas registradas , estabilization termica dan resultados itu saling terkait ,
+    1. kolom punti de medicion pada temperatur registradas , estabilization termica dan resultados itu selalu sama misal di row 1 punto de medicion nya carcasa maka di ketiga tabel pada row 1 ini pun sama semua
+    2. ini hanya berlaku pada temperaturas regtradas dan resultados dimana pada bagian temperatur medida dan temperatur final itu sama jadi misal temperatur medida di row 1 isinya 10 maka di temperatur final pada row 1 pun isinya 10 jadi saling terkait bisa diisi yang mana saja jawabannya selalu sama
+
+## In Progress
+- Testing the synchronization functionality to ensure it works correctly.
+
+## Pending Tasks
+- Test the application to verify that the field synchronization works as expected.
+- Ensure that saving and loading projects preserves the synchronized values.
