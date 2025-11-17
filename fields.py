@@ -87,8 +87,10 @@ FIELD_DEFINITIONS = {
 
     # 1. INFORMACIÓN GENERAL DEL PRODUCTO
     "TEXT6": {"placeholder": "[TEXT6]", "label": "Referencia del modelo ensayado", "type": "text"},
+    "TEXT12": {"placeholder": "[TEXT12]", "label": "Método de ensayo", "type": "text"},
     "TEXT7": {"placeholder": "[TEXT7]", "label": "Aplicación", "type": "text"},
     "TEXT8": {"placeholder": "[TEXT8]", "label": "Fuente de luz", "type": "text"},
+    "TEXT13": {"placeholder": "[TEXT13]", "label": "Fuente de alimentación ", "type": "text"},
 
     # 1.1. CONDICIONES DEL ENSAYO
     "TEXT9": {"placeholder": "[TEXT9]", "label": "Ensayo térmico realizado en", "type": "text"},
@@ -156,7 +158,6 @@ FIELD_DEFINITIONS = {
     "TIPO12": {"placeholder": "[TIPO12]", "label": "Tipo/Aplicación 12", "type": "dropdown", "options": TIPO_OPTIONS},
     "FECHA12": {"placeholder": "[FECHA12]", "label": "Fecha de calibración 12", "type": "date"},
     "OBSER12": {"placeholder": "[OBSER12]", "label": "Observaciones 12", "type": "text"},
-    "TEXT12": {"placeholder": "[TEXT12]", "label": "Método de ensayo", "type": "text"},
 
     # 3. TEMPERATURAS REGISTRADAS (up to 10)
     "PUNTO1": {"placeholder": "[PUNTO1]", "label": "Punto de Medición 1", "type": "dropdown", "options": PUNTO_OPTIONS},
