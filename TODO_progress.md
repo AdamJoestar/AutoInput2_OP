@@ -1,0 +1,4 @@
+- [ ] Add additional photos section with choice for number of photos (max 4), placeholders IMAGE13-16, TITLE13-16
+- [ ] Remove number 6 from conclusions section, make fotografias number 6, add number 7 for foto montaje final
+- [ ] Remove NOTA section
+- [ ] In GRAFICA GENERADA, remove DESC1 and DESC2, keep only IMAGE1, TITLE1, IMAGE2

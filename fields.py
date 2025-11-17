@@ -199,16 +199,13 @@ FIELD_DEFINITIONS = {
     "UNIDAD10": {"placeholder": "[UNIDAD10]", "label": "Unidad 10", "type": "dropdown", "options": UNIDAD_OPTIONS},
     "LIMITE10": {"placeholder": "[LIMITE10]", "label": "Límite Máximo 10", "type": "dropdown", "options": LIMITE_OPTIONS},
     "TEMP10": {"placeholder": "[TEMP10]", "label": "Temperatura Medida 10", "type": "text"},
-    "TEXT13": {"placeholder": "[TEXT13]", "label": "NOTA", "type": "text"},
     "TEXT14": {"placeholder": "[TEXT14]", "label": "Description", "type": "text"},
     "TEXT15": {"placeholder": "[TEXT15]", "label": "Conclusions", "type": "text"},
 
     # 3.1. GRÁFICA GENERADA
     "IMAGE1": {"placeholder": "[IMAGE1]", "label": "Imagen 1", "type": "file"},
-    "TITLE1": {"placeholder": "[TITLE1]", "label": "Título 1", "type": "text"},
-    "DESC1": {"placeholder": "[DESC1]", "label": "Descripción 1", "type": "text"},
+    "TITLE1": {"placeholder": "[TITLE1]", "label": "Periodo de estabilización", "type": "text"},
     "IMAGE2": {"placeholder": "[IMAGE2]", "label": "Imagen 2", "type": "file"},
-    "DESC2": {"placeholder": "[DESC2]", "label": "Descripción 2", "type": "text"},
 
     # 4. ESTABILIZACIÓN TÉRMICA (up to 10)
     "MEDICI1": {"placeholder": "[MEDICI1]", "label": "Punto de Medición 1", "type": "dropdown", "options": PUNTO_OPTIONS},
@@ -325,4 +322,14 @@ FIELD_DEFINITIONS = {
     "IMAGE11": {"placeholder": "[IMAGE11]", "label": "Imagen 11", "type": "file"},
     "TITLE12": {"placeholder": "[TITLE12]", "label": "Título 12", "type": "text"},
     "IMAGE12": {"placeholder": "[IMAGE12]", "label": "Imagen 12", "type": "file"},
+
+    # 7. FOTO MONTAJE FINAL (up to 4)
+    "IMAGE13": {"placeholder": "[IMAGE13]", "label": "Imagen 13", "type": "file"},
+    "TITLE13": {"placeholder": "[TITLE13]", "label": "Título 13", "type": "text"},
+    "IMAGE14": {"placeholder": "[IMAGE14]", "label": "Imagen 14", "type": "file"},
+    "TITLE14": {"placeholder": "[TITLE14]", "label": "Título 14", "type": "text"},
+    "IMAGE15": {"placeholder": "[IMAGE15]", "label": "Imagen 15", "type": "file"},
+    "TITLE15": {"placeholder": "[TITLE15]", "label": "Título 15", "type": "text"},
+    "IMAGE16": {"placeholder": "[IMAGE16]", "label": "Imagen 16", "type": "file"},
+    "TITLE16": {"placeholder": "[TITLE16]", "label": "Título 16", "type": "text"},
 }

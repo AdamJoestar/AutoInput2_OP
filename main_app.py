@@ -27,7 +27,7 @@ class DocumentGeneratorApp(QMainWindow):
         self.templates_dir = TEMPLATES_DIR
         self.template_filename = TEMPLATE_FILENAME
         self.template_path = TEMPLATE_PATH
-        self.setWindowTitle("Generador de Anexo II al Informe")
+        self.setWindowTitle("Generador de Anexo al Informe")
         self.setWindowIcon(QIcon("logo vibia.png"))
         self.setStyleSheet("""
             QWidget {

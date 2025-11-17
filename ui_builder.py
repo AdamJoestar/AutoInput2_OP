@@ -33,6 +33,7 @@ class UIBuilder:
         self.equipment_groups = []
         self.spin_boxes = {}
         self.temp_files = []  # List untuk melacak file sementara
+        self.rebuilding = False
 
     def init_ui(self):
         """
@@ -51,7 +52,7 @@ class UIBuilder:
         main_layout.addWidget(logo)
 
         # --- Judul ---
-        title = QLabel("Ingresar Datos Para el Anexo II")
+        title = QLabel("Ingresar Datos Para el Anexo")
         title.setAlignment(Qt.AlignCenter)
         title.setStyleSheet("""
             font-size: 24px;
@@ -85,6 +86,21 @@ class UIBuilder:
         self.spin_sonda.setStyleSheet("QSpinBox { border: 1px solid #bdc3c7; border-radius: 4px; padding: 5px; background-color: #ecf0f1; }")
         self.spin_sonda.valueChanged.connect(self.rebuild_form)
         spin_layout.addWidget(self.spin_sonda)
+
+        # Add a spin box for number of additional photos
+        self.additional_photos_layout = QHBoxLayout()
+        additional_photos_label = QLabel("Número de fotos adicionales (max 4):")
+        additional_photos_label.setStyleSheet("font-weight: bold; color: #34495e; padding: 5px;")
+        self.additional_photos_layout.addWidget(additional_photos_label)
+        self.spin_additional_photos = QSpinBox()
+        self.spin_additional_photos.setRange(0, 4)
+        self.spin_additional_photos.setValue(0)
+        self.spin_additional_photos.setStyleSheet("QSpinBox { border: 1px solid #bdc3c7; border-radius: 4px; padding: 5px; background-color: #ecf0f1; }")
+        self.spin_additional_photos.valueChanged.connect(self.rebuild_form)
+        self.additional_photos_layout.addWidget(self.spin_additional_photos)
+        # Initially hide it, will be added in rebuild_form
+        self.additional_photos_widget = QWidget()
+        self.additional_photos_widget.setLayout(self.additional_photos_layout)
 
         main_layout.addLayout(spin_layout)
 
@@ -147,6 +163,27 @@ class UIBuilder:
         "EQUIPOS" and "SONDA". Afterwards, it attempts to restore the saved values
         to the corresponding widgets.
         """
+        if self.rebuilding:
+            return
+        self.rebuilding = True
+
+        # Disconnect signals to prevent recursive calls during rebuild
+        if hasattr(self, 'spin_equipment'):
+            try:
+                self.spin_equipment.valueChanged.disconnect(self.rebuild_form)
+            except TypeError:
+                pass
+        if hasattr(self, 'spin_sonda'):
+            try:
+                self.spin_sonda.valueChanged.disconnect(self.rebuild_form)
+            except TypeError:
+                pass
+        if hasattr(self, 'spin_additional_photos'):
+            try:
+                self.spin_additional_photos.valueChanged.disconnect(self.rebuild_form)
+            except TypeError:
+                pass
+
         # Save current input values before clearing
         current_values = {}
         for key, widget in self.input_widgets.items():
@@ -158,6 +195,13 @@ class UIBuilder:
                 current_values[key] = widget.date().toString("dd/MM/yyyy")
             elif isinstance(widget, QComboBox):
                 current_values[key] = widget.currentText()
+
+        # Save spin box values
+        saved_equipment = self.spin_equipment.value()
+        saved_sonda = self.spin_sonda.value()
+        saved_additional = 0
+        if hasattr(self, 'spin_additional_photos') and self.spin_additional_photos:
+            saved_additional = self.spin_additional_photos.value()
 
         # Clear existing widgets from form_layout
         for i in reversed(range(self.form_layout.count())):
@@ -238,13 +282,10 @@ class UIBuilder:
             self.create_input_group(self.form_layout, f"Row {i} ", [
                 f"PUNTO{i}", f"UNIDAD{i}", f"LIMITE{i}", f"TEMP{i}"
             ])
-        self.create_input_group(self.form_layout, "NOTA", [
-            "TEXT13"
-        ])
 
         # 3.1. GRÁFICA GENERADA
         self.create_input_group(self.form_layout, "3.1. GRÁFICA GENERADA", [
-            "IMAGE1", "TITLE1", "DESC1", "IMAGE2", "DESC2"
+            "IMAGE1", "TITLE1", "IMAGE2"
         ])
 
         # 4. BILIZACIÓN TÉRMICA
@@ -266,16 +307,8 @@ class UIBuilder:
                 f"PUNTODE{i}", f"UNIC{i}", f"TEMPE{i}", f"RESULT{i}"
             ])
 
-        # 6. CONCLUSIONES DEL LABORATORIO
-        title_label = QLabel("6. CONCLUSIONES DEL LABORATORIO")
-        title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
-        self.form_layout.addWidget(title_label)
-        self.create_input_group(self.form_layout, "CONCLUSIONES", [
-            "TEXT15"
-        ])
-
-        # 7. FOTOGRAFIAS
-        title_label = QLabel("7. FOTOGRAFIAS")
+        # 6. FOTOGRAFIAS
+        title_label = QLabel("6. FOTOGRAFIAS")
         title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
         self.form_layout.addWidget(title_label)
         for i in range(3, 3 + num_sonda):  # IMAGE3 to IMAGE{2+num_sonda}, TITLE3 to TITLE{2+num_sonda}
@@ -286,15 +319,34 @@ class UIBuilder:
                 f"TITLE{i}"
             ])
 
+        # 7. FOTO MONTAJE FINAL
+        title_label = QLabel("7. FOTO MONTAJE FINAL")
+        title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
+        self.form_layout.addWidget(title_label)
+
+        # Add the spinbox for additional photos
+        self.form_layout.addWidget(self.additional_photos_widget)
+        self.spin_additional_photos.blockSignals(True)
+        self.spin_additional_photos.setValue(saved_additional)
+        self.spin_additional_photos.blockSignals(False)
+
+        num_additional = self.spin_additional_photos.value()
+        for i in range(13, 13 + num_additional):  # IMAGE13 to IMAGE{12+num_additional}, TITLE13 to TITLE{12+num_additional}
+            self.create_input_group(self.form_layout, f"Montaje {i-12}", [
+                f"IMAGE{i}", f"TITLE{i}"
+            ])
+
         # Restore saved values
         for key, value in current_values.items():
             if key in self.input_widgets:
                 widget = self.input_widgets[key]
                 if isinstance(widget, QLineEdit):
                     widget.setText(value)
+                    widget.setCursorPosition(0)  # Reset cursor to avoid invalid selection
                     # Set default for OBSER fields if empty
                     if key.startswith("OBSER") and not value.strip():
                         widget.setText("-")
+                        widget.setCursorPosition(0)
                 elif isinstance(widget, QTextEdit):
                     widget.setPlainText(value)
                     # Set default template for TEXT_EST if empty
@@ -308,6 +360,16 @@ class UIBuilder:
                     index = widget.findText(value)
                     if index >= 0:
                         widget.setCurrentIndex(index)
+
+        # Reconnect signals after rebuild
+        if hasattr(self, 'spin_equipment'):
+            self.spin_equipment.valueChanged.connect(self.rebuild_form)
+        if hasattr(self, 'spin_sonda'):
+            self.spin_sonda.valueChanged.connect(self.rebuild_form)
+        if hasattr(self, 'spin_additional_photos'):
+            self.spin_additional_photos.valueChanged.connect(self.rebuild_form)
+
+        self.rebuilding = False
 
     def create_input_group(self, parent_layout, title, keys):
         """
@@ -345,7 +407,7 @@ class UIBuilder:
         
         for key in keys:
             definition = FIELD_DEFINITIONS[key]
-            
+
             label = QLabel(f"{definition['label']}:")
             label.setStyleSheet("color: #34495e; font-weight: bold; font-size: 12px;")
 
@@ -367,8 +429,6 @@ class UIBuilder:
                     """)
                     grid_layout.addWidget(label, row, 0, 1, 2)
                     grid_layout.addWidget(input_field, row + 1, 0, 1, 2)
-                    row += 2
-                    col = 0
                 else:
                     input_field = QLineEdit()
                     input_field.setMinimumHeight(30)
@@ -384,11 +444,8 @@ class UIBuilder:
                             border-color: #3498db;
                         }
                     """)
-                    grid_layout.addWidget(label, row, col)
-                    grid_layout.addWidget(input_field, row + 1, col)
-                    col = 1 - col
-                    if col == 0:
-                        row += 2
+                    grid_layout.addWidget(label, row, 0, 1, 2)
+                    grid_layout.addWidget(input_field, row + 1, 0, 1, 2)
                     if key.startswith("TEMP") or key.startswith("VALMIN") or key.startswith("VALMAX") or key.startswith("DESVI") or key.startswith("TEMPE"):
                         from PyQt5.QtGui import QDoubleValidator
                         input_field.setValidator(QDoubleValidator(0.0, 9999.99, 2))
@@ -409,11 +466,8 @@ class UIBuilder:
                         border-color: #3498db;
                     }
                 """)
-                grid_layout.addWidget(label, row, col)
-                grid_layout.addWidget(input_field, row + 1, col)
-                col = 1 - col
-                if col == 0:
-                    row += 2
+                grid_layout.addWidget(label, row, 0, 1, 2)
+                grid_layout.addWidget(input_field, row + 1, 0, 1, 2)
             elif definition['type'] == "dropdown":
                 input_field = QComboBox()
                 input_field.setMinimumHeight(30)
@@ -431,11 +485,8 @@ class UIBuilder:
                         border-color: #3498db;
                     }
                 """)
-                grid_layout.addWidget(label, row, col)
-                grid_layout.addWidget(input_field, row + 1, col)
-                col = 1 - col
-                if col == 0:
-                    row += 2
+                grid_layout.addWidget(label, row, 0, 1, 2)
+                grid_layout.addWidget(input_field, row + 1, 0, 1, 2)
             elif definition['type'] == "file":
                 input_field = QLineEdit()
                 input_field.setMinimumHeight(30)
@@ -485,10 +536,10 @@ class UIBuilder:
                 grid_layout.addWidget(input_field, row + 1, 0, 1, 2)
                 grid_layout.addWidget(browse_button, row + 1, 2)
                 grid_layout.addWidget(screenshot_button, row + 1, 3)
-                row += 2
-                col = 0
-            
+
             self.input_widgets[key] = input_field
+            row += 2
+            col = 0
 
         group_box.setLayout(grid_layout)
         parent_layout.addWidget(group_box)
