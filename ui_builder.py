@@ -240,7 +240,7 @@ class UIBuilder:
         title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
         self.form_layout.addWidget(title_label)
         self.create_input_group(self.form_layout, "1. INFORMACIÓN GENERAL DEL PRODUCTO", [
-            "TEXT6", "TEXT7", "TEXT8"
+            "TEXT6", "TEXT12", "TEXT7", "TEXT8", "TEXT13"
         ])
 
         # 1.1. CONDICIONES DEL ENSAYO

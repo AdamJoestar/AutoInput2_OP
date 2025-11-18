@@ -87,10 +87,10 @@ FIELD_DEFINITIONS = {
 
     # 1. INFORMACIÓN GENERAL DEL PRODUCTO
     "TEXT6": {"placeholder": "[TEXT6]", "label": "Referencia del modelo ensayado", "type": "text"},
-    "TEXT12": {"placeholder": "[TEXT12]", "label": "Método de ensayo", "type": "text"},
+    "TEXT12": {"placeholder": "[TEXT12]", "label": "Familia", "type": "text"},
     "TEXT7": {"placeholder": "[TEXT7]", "label": "Aplicación", "type": "text"},
     "TEXT8": {"placeholder": "[TEXT8]", "label": "Fuente de luz", "type": "text"},
-    "TEXT13": {"placeholder": "[TEXT13]", "label": "Fuente de alimentación ", "type": "text"},
+    "TEXT13": {"placeholder": "[TEXT13]", "label": "Fuente de alimentación (driver) ", "type": "text"},
 
     # 1.1. CONDICIONES DEL ENSAYO
     "TEXT9": {"placeholder": "[TEXT9]", "label": "Ensayo térmico realizado en", "type": "text"},
