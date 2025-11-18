@@ -1,13 +1,2 @@
-# TODO Progress
-
-## Completed Tasks
-- [x] ada bagian modifikasi dimana temperaturas registradas , estabilization termica dan resultados itu saling terkait ,
-    1. kolom punti de medicion pada temperatur registradas , estabilization termica dan resultados itu selalu sama misal di row 1 punto de medicion nya carcasa maka di ketiga tabel pada row 1 ini pun sama semua
-    2. ini hanya berlaku pada temperaturas regtradas dan resultados dimana pada bagian temperatur medida dan temperatur final itu sama jadi misal temperatur medida di row 1 isinya 10 maka di temperatur final pada row 1 pun isinya 10 jadi saling terkait bisa diisi yang mana saja jawabannya selalu sama
-
-## In Progress
-- Testing the synchronization functionality to ensure it works correctly.
-
-## Pending Tasks
-- Test the application to verify that the field synchronization works as expected.
-- Ensure that saving and loading projects preserves the synchronized values.
+- [x] Bagian foto montaje final ukuran output di dokumennya nanti sama sama kayak yang fotografias
+- [x] Ketika di bagian equipos y metodos ketika milih sonda tipo T tanggal fecha de calibrationnya sama semua ya jadi misal di row 1 tanggalnya 09/09/2025 maka di row 2 dan selanjutnya juga sama selama equiposnya adalah sonda tipo T selain itu tidak

@@ -259,16 +259,19 @@ class UIBuilder:
             ])
 
         # Auto-fill marca and tipo for all rows based on equipment selection
+        # Also sync FECHA for SONDA TIPO T
         for i in range(1, num_equip + 1):
             equipo_key = f"EQUIPO{i}"
             marca_key = f"MARCA{i}"
             tipo_key = f"TIPO{i}"
+            fecha_key = f"FECHA{i}"
             if equipo_key in self.input_widgets:
                 equipo_widget = self.input_widgets[equipo_key]
                 marca_widget = self.input_widgets.get(marca_key)
                 tipo_widget = self.input_widgets.get(tipo_key)
+                fecha_widget = self.input_widgets.get(fecha_key)
                 if marca_widget and tipo_widget:
-                    equipo_widget.currentTextChanged.connect(lambda text, mw=marca_widget, tw=tipo_widget: self.auto_fill_marca_tipo(text, mw, tw))
+                    equipo_widget.currentTextChanged.connect(lambda text, mw=marca_widget, tw=tipo_widget, fw=fecha_widget, num=num_equip: self.auto_fill_marca_tipo(text, mw, tw, fw, num))
 
         # 2.1. MÉTODO DE ENSAYO
         # Removed as per user request
@@ -624,8 +627,8 @@ class UIBuilder:
         widget1.blockSignals(False)
         widget2.blockSignals(False)
 
-    def auto_fill_marca_tipo(self, equipo_text, marca_widget, tipo_widget):
-        """Auto-fill 'Marca/Modelo' and 'Tipo/Aplicación' fields based on 'Equipo' selection."""
+    def auto_fill_marca_tipo(self, equipo_text, marca_widget, tipo_widget, fecha_widget, num_equip):
+        """Auto-fill 'Marca/Modelo' and 'Tipo/Aplicación' fields based on 'Equipo' selection. Also sync FECHA for SONDA TIPO T."""
         if equipo_text == "ALMEMO":
             marca_widget.setCurrentText("MA710")
             tipo_widget.setCurrentText("Registrador de Temperatura")
@@ -635,6 +638,15 @@ class UIBuilder:
         elif equipo_text == "CAMARA ENDURANCIA":
             marca_widget.setCurrentText("CET10/15312")
             tipo_widget.setCurrentText("Dycometal")
+        elif equipo_text == "SONDA TIPO T":
+            # Sync FECHA for all SONDA TIPO T rows
+            if fecha_widget:
+                fecha_value = fecha_widget.date().toString("dd/MM/yyyy")
+                for j in range(1, num_equip + 1):
+                    if f"EQUIPO{j}" in self.input_widgets and self.input_widgets[f"EQUIPO{j}"].currentText() == "SONDA TIPO T":
+                        fecha_key = f"FECHA{j}"
+                        if fecha_key in self.input_widgets:
+                            self.input_widgets[fecha_key].setDate(fecha_widget.date())
         else:
             # Clear if not one of the auto-fill options
             marca_widget.setCurrentIndex(0)

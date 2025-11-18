@@ -39,6 +39,9 @@ TIPO_OPTIONS = [
     "Driver",
     "Tc LED",
     "T. Ambiente",
+    "Reflector",
+    "Tc LED Calido",
+    "Tc LED Frio",
 ]
 
 # Temperature measurement point options
@@ -51,6 +54,9 @@ PUNTO_OPTIONS = [
     "Driver",
     "Tc LED",
     "T. Ambiente",
+    "Reflector",
+    "Tc LED Calido",
+    "Tc LED Frio",
 ]
 
 # Temperature unit options

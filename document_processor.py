@@ -224,6 +224,9 @@ class DocumentProcessor:
                     elif placeholder in ["[IMAGE1]", "[IMAGE2]"]:
                         # Horizontal rectangle size for IMAGE1 and IMAGE2: width 3 inches, height 2 inches
                         paragraph.add_run().add_picture(image_path, width=Inches(3), height=Inches(2))
+                    elif placeholder in ["[IMAGE13]", "[IMAGE14]", "[IMAGE15]", "[IMAGE16]"]:
+                        # Foto montaje final: same size as fotografias (IMAGE3-12), width 2 inches, height 3 inches
+                        paragraph.add_run().add_picture(image_path, width=Inches(2), height=Inches(3))
                     else:
                         # Other images: default size
                         paragraph.add_run().add_picture(image_path)
