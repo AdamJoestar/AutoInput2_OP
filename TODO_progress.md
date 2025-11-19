@@ -1,2 +1,4 @@
-- [x] Bagian foto montaje final ukuran output di dokumennya nanti sama sama kayak yang fotografias
-- [x] Ketika di bagian equipos y metodos ketika milih sonda tipo T tanggal fecha de calibrationnya sama semua ya jadi misal di row 1 tanggalnya 09/09/2025 maka di row 2 dan selanjutnya juga sama selama equiposnya adalah sonda tipo T selain itu tidak
+- [x] Implement automatic calculation for Desviación (DESVI1-10) = VALMAX - VALMIN
+- [x] Implement automatic filling for Resultado (RESULT1-10) = "Pass" if TEMP <= LIMITE else "N/A"
+- [x] Update sync_related_fields in ui_builder.py to add calculation connections
+- [x] Test the automatic calculations

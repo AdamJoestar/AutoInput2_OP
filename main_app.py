@@ -174,7 +174,7 @@ class DocumentGeneratorApp(QMainWindow):
             self.method_template = "Método de ensayo no disponible. Por favor, verifique el archivo method_template.txt."
 
     def load_stabilization_template(self):
-        """Load the stabilization template and set it as default for TEXT_EST."""
+        """Load the stabilization templat2e and set it as default for TEXT_EST."""
         template_path = os.path.join(os.getcwd(), 'stabilization_template.txt')
         if os.path.exists(template_path):
             with open(template_path, 'r', encoding='utf-8') as f:

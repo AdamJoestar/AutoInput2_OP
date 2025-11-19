@@ -601,6 +601,8 @@ class UIBuilder:
 
         - Punto de Medición (PUNTO, MEDICI, PUNTODE) should be the same for each row.
         - Temperatura Medida (TEMP) and Temperatura final (TEMPE) should be the same.
+        - Automatic calculation of Desviación (DESVI) from VALMIN and VALMAX.
+        - Automatic filling of Resultado (RESULT) based on TEMP and LIMITE.
         """
         for i in range(1, num_sonda + 1):
             # Sync Punto de Medición
@@ -630,6 +632,33 @@ class UIBuilder:
                 temp_widget.textChanged.connect(lambda text, tw=tempe_widget: tw.setText(text))
                 tempe_widget.textChanged.connect(lambda text, tw=temp_widget: tw.setText(text))
 
+            # Automatic calculation of Desviación
+            valmin_key = f"VALMIN{i}"
+            valmax_key = f"VALMAX{i}"
+            desvi_key = f"DESVI{i}"
+
+            if valmin_key in self.input_widgets and valmax_key in self.input_widgets and desvi_key in self.input_widgets:
+                valmin_widget = self.input_widgets[valmin_key]
+                valmax_widget = self.input_widgets[valmax_key]
+                desvi_widget = self.input_widgets[desvi_key]
+
+                # Connect signals to calculate Desviación
+                valmin_widget.textChanged.connect(lambda text, vw=valmin_widget, vw2=valmax_widget, dw=desvi_widget: self.calculate_desviacion(vw, vw2, dw))
+                valmax_widget.textChanged.connect(lambda text, vw=valmin_widget, vw2=valmax_widget, dw=desvi_widget: self.calculate_desviacion(vw, vw2, dw))
+
+            # Automatic filling of Resultado
+            limite_key = f"LIMITE{i}"
+            result_key = f"RESULT{i}"
+
+            if temp_key in self.input_widgets and limite_key in self.input_widgets and result_key in self.input_widgets:
+                temp_widget = self.input_widgets[temp_key]
+                limite_widget = self.input_widgets[limite_key]
+                result_widget = self.input_widgets[result_key]
+
+                # Connect signals to fill Resultado
+                temp_widget.textChanged.connect(lambda text, tw=temp_widget, lw=limite_widget, rw=result_widget: self.fill_resultado(tw, lw, rw))
+                limite_widget.currentTextChanged.connect(lambda text, tw=temp_widget, lw=limite_widget, rw=result_widget: self.fill_resultado(tw, lw, rw))
+
     def sync_punto(self, text, widget1, widget2):
         """Sync the Punto de Medición dropdowns."""
         widget1.blockSignals(True)
@@ -638,6 +667,38 @@ class UIBuilder:
         widget2.setCurrentText(text)
         widget1.blockSignals(False)
         widget2.blockSignals(False)
+
+    def calculate_desviacion(self, valmin_widget, valmax_widget, desvi_widget):
+        """Calculate Desviación as VALMAX - VALMIN."""
+        try:
+            valmin_text = valmin_widget.text().strip()
+            valmax_text = valmax_widget.text().strip()
+            if valmin_text and valmax_text:
+                valmin = float(valmin_text)
+                valmax = float(valmax_text)
+                desvi = valmax - valmin
+                desvi_widget.setText(f"{desvi:.2f}")
+            else:
+                desvi_widget.setText("")
+        except ValueError:
+            desvi_widget.setText("")
+
+    def fill_resultado(self, temp_widget, limite_widget, result_widget):
+        """Fill Resultado as 'Pass' if TEMP <= LIMITE, 'Fail' if TEMP > LIMITE, else 'N/A'."""
+        try:
+            temp_text = temp_widget.text().strip()
+            limite_text = limite_widget.currentText().strip()
+            if temp_text and limite_text and limite_text != "N/A":
+                temp = float(temp_text)
+                limite = float(limite_text)
+                if temp <= limite:
+                    result_widget.setCurrentText("Pass")
+                else:
+                    result_widget.setCurrentText("Fail")
+            else:
+                result_widget.setCurrentText("N/A")
+        except ValueError:
+            result_widget.setCurrentText("N/A")
 
     def auto_fill_marca_tipo(self, equipo_text, marca_widget, tipo_widget, fecha_widget, num_equip):
         """Auto-fill 'Marca/Modelo' and 'Tipo/Aplicación' fields based on 'Equipo' selection. Also sync FECHA for SONDA TIPO T."""

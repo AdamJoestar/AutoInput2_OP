@@ -74,6 +74,7 @@ LIMITE_OPTIONS = [
 # Result options
 RESULT_OPTIONS = [
     "Pass",
+    "Fail",
     "N/A"
 ]
 
