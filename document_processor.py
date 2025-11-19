@@ -1,5 +1,5 @@
 import os
-from PyQt5.QtWidgets import QMessageBox, QFileDialog, QComboBox, QDateEdit
+from PyQt5.QtWidgets import QMessageBox, QFileDialog, QComboBox, QDateEdit, QLineEdit, QTextEdit
 from docx import Document
 from docx.shared import Inches
 from datetime import date
@@ -35,6 +35,8 @@ class DocumentProcessor:
         is_valid, missing_field = validate_required_fields(input_widgets, FIELD_DEFINITIONS)
         if not is_valid:
             QMessageBox.warning(self.parent_app, "entrada vacía", f"Campo obligatorio ('{missing_field}') no puede estar vacío.")
+            # Highlight empty required fields with red border
+            self.highlight_empty_fields(input_widgets, FIELD_DEFINITIONS)
             return
 
         replacement_data = self.collect_replacement_data(input_widgets)
@@ -313,3 +315,59 @@ class DocumentProcessor:
             )
         except Exception as e:
             QMessageBox.critical(self.parent_app, "Error al guardar el archivo", f"Error al guardar el documento: {e}")
+
+    def highlight_empty_fields(self, input_widgets, field_definitions):
+        """
+        Highlights empty required fields with a red border.
+
+        Args:
+            input_widgets (dict): A dictionary of input widgets.
+            field_definitions (dict): The field definitions.
+        """
+        for key in input_widgets:
+            definition = field_definitions[key]
+            input_widget = input_widgets[key]
+            if isinstance(input_widget, QLineEdit):
+                value = input_widget.text().strip()
+            elif isinstance(input_widget, QTextEdit):
+                value = input_widget.toPlainText().strip()
+            else:
+                continue
+
+            if key in ["TEXT1", "TEXT4", "TEXT2", "TEXT5", "TEXT3", "TEXT6", "TEXT7", "TEXT8", "TEXT9", "TEXT10", "TEXT11", "TEXT12", "TEXT13", "TEXT14", "TEXT15"] and not value:
+                # Set red border for empty required fields
+                input_widget.setStyleSheet("""
+                    border: 2px solid #e74c3c;
+                    border-radius: 4px;
+                    padding: 5px;
+                    background-color: #ffffff;
+                    font-size: 12px;
+                """)
+            else:
+                # Reset to default style for filled fields
+                if isinstance(input_widget, QLineEdit):
+                    input_widget.setStyleSheet("""
+                        QLineEdit {
+                            border: 1px solid #bdc3c7;
+                            border-radius: 4px;
+                            padding: 5px;
+                            background-color: #ffffff;
+                            font-size: 12px;
+                        }
+                        QLineEdit:focus {
+                            border-color: #3498db;
+                        }
+                    """)
+                elif isinstance(input_widget, QTextEdit):
+                    input_widget.setStyleSheet("""
+                        QTextEdit {
+                            border: 1px solid #bdc3c7;
+                            border-radius: 4px;
+                            padding: 5px;
+                            background-color: #ffffff;
+                            font-size: 12px;
+                        }
+                        QTextEdit:focus {
+                            border-color: #3498db;
+                        }
+                    """)

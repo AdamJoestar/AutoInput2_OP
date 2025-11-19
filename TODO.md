@@ -1,2 +1,1 @@
-- [x] Bagian foto montaje final ukuran output di dokumennya nanti sama sama kayak yang fotografias 
-- [x] Ketika di bagian equipos y metodos ketika milih sonda tipo T tanggal fecha de calibrationnya sama semua ya jadi misal di row 1 tanggalnya 09/09/2025 maka di row 2 dan selanjutnya juga sama selama equiposnya adalah sonda tipo T selain itu tidak
+- [x] Ketika ada input yang belom di isi dan memencet tombol generar documento setelah ada peringatan buat kolom yang masih kosong tersebut bordernya jadi merah agar memudahakan user bagian mana yang belom di isi
