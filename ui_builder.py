@@ -9,6 +9,18 @@ import tempfile
 import os
 import sys
 
+class NoWheelComboBox(QComboBox):
+    def wheelEvent(self, event):
+        event.ignore()
+
+class NoWheelSpinBox(QSpinBox):
+    def wheelEvent(self, event):
+        event.ignore()
+
+class NoWheelDateEdit(QDateEdit):
+    def wheelEvent(self, event):
+        event.ignore()
+
 def resource_path(relative_path):
     """ Mendapatkan path absolut ke resource, berfungsi untuk dev dan PyInstaller """
     try:
@@ -70,7 +82,7 @@ class UIBuilder:
         label1 = QLabel("EQUIPOS Y MÉTODOS UTILIZADOS (max 12):")
         label1.setStyleSheet("font-weight: bold; color: #34495e; padding: 5px;")
         spin_layout.addWidget(label1)
-        self.spin_equipment = QSpinBox()
+        self.spin_equipment = NoWheelSpinBox()
         self.spin_equipment.setRange(1, 12)
         self.spin_equipment.setValue(12)
         self.spin_equipment.setStyleSheet("QSpinBox { border: 1px solid #bdc3c7; border-radius: 4px; padding: 5px; background-color: #ecf0f1; }")
@@ -80,7 +92,7 @@ class UIBuilder:
         label2 = QLabel("SONDA TOTAL (max 10):")
         label2.setStyleSheet("font-weight: bold; color: #34495e; padding: 5px;")
         spin_layout.addWidget(label2)
-        self.spin_sonda = QSpinBox()
+        self.spin_sonda = NoWheelSpinBox()
         self.spin_sonda.setRange(1, 10)
         self.spin_sonda.setValue(10)
         self.spin_sonda.setStyleSheet("QSpinBox { border: 1px solid #bdc3c7; border-radius: 4px; padding: 5px; background-color: #ecf0f1; }")
@@ -92,7 +104,7 @@ class UIBuilder:
         additional_photos_label = QLabel("Número de fotos adicionales (max 4):")
         additional_photos_label.setStyleSheet("font-weight: bold; color: #34495e; padding: 5px;")
         self.additional_photos_layout.addWidget(additional_photos_label)
-        self.spin_additional_photos = QSpinBox()
+        self.spin_additional_photos = NoWheelSpinBox()
         self.spin_additional_photos.setRange(0, 4)
         self.spin_additional_photos.setValue(0)
         self.spin_additional_photos.setStyleSheet("QSpinBox { border: 1px solid #bdc3c7; border-radius: 4px; padding: 5px; background-color: #ecf0f1; }")
@@ -475,7 +487,7 @@ class UIBuilder:
                 grid_layout.addWidget(label, row, 0, 1, 2)
                 grid_layout.addWidget(input_field, row + 1, 0, 1, 2)
             elif definition['type'] == "dropdown":
-                input_field = QComboBox()
+                input_field = NoWheelComboBox()
                 input_field.setMinimumHeight(30)
                 options = definition.get('options', [])
                 input_field.addItems(options)
