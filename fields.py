@@ -42,6 +42,7 @@ TIPO_OPTIONS = [
     "Reflector",
     "Tc LED Calido",
     "Tc LED Frio",
+    "Lente",
 ]
 
 # Temperature measurement point options
@@ -57,6 +58,7 @@ PUNTO_OPTIONS = [
     "Reflector",
     "Tc LED Calido",
     "Tc LED Frio",
+    "Lente"
 ]
 
 # Temperature unit options

@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import (
-    QLabel, QLineEdit, QPushButton, QScrollArea, QGridLayout, QGroupBox, QFileDialog, QSpinBox, QTextEdit, QHBoxLayout, QWidget, QVBoxLayout, QDateEdit, QComboBox, QDialog
+    QLabel, QLineEdit, QPushButton, QScrollArea, QGridLayout, QGroupBox, QFileDialog, QSpinBox, QTextEdit, QHBoxLayout, QWidget, QVBoxLayout, QDateEdit, QComboBox, QDialog, QDateTimeEdit
 )
-from PyQt5.QtCore import Qt, QDate
+from PyQt5.QtCore import Qt, QDate, QDateTime
 from PyQt5.QtGui import QPixmap
 from fields import FIELD_DEFINITIONS
 from screenshot import ScreenshotSelector
@@ -116,6 +116,30 @@ class UIBuilder:
 
         main_layout.addLayout(spin_layout)
 
+        # --- DateTime Selectors for Excel Data Filtering ---
+        datetime_layout = QHBoxLayout()
+        start_label = QLabel("Fecha y Hora Inicio para Datos Excel:")
+        start_label.setStyleSheet("font-weight: bold; color: #34495e; padding: 5px;")
+        datetime_layout.addWidget(start_label)
+        self.start_datetime = QDateTimeEdit()
+        self.start_datetime.setCalendarPopup(True)
+        self.start_datetime.setDateTime(QDateTime.currentDateTime().addDays(-1))  # Default to yesterday
+        self.start_datetime.setDisplayFormat("dd/MM/yyyy HH:mm:ss")  # Include seconds for precision
+        self.start_datetime.setStyleSheet("QDateTimeEdit { border: 1px solid #bdc3c7; border-radius: 4px; padding: 5px; background-color: #ecf0f1; }")
+        datetime_layout.addWidget(self.start_datetime)
+
+        end_label = QLabel("Fecha y Hora Fin para Datos Excel:")
+        end_label.setStyleSheet("font-weight: bold; color: #34495e; padding: 5px;")
+        datetime_layout.addWidget(end_label)
+        self.end_datetime = QDateTimeEdit()
+        self.end_datetime.setCalendarPopup(True)
+        self.end_datetime.setDateTime(QDateTime.currentDateTime())  # Default to now
+        self.end_datetime.setDisplayFormat("dd/MM/yyyy HH:mm:ss")  # Include seconds for precision
+        self.end_datetime.setStyleSheet("QDateTimeEdit { border: 1px solid #bdc3c7; border-radius: 4px; padding: 5px; background-color: #ecf0f1; }")
+        datetime_layout.addWidget(self.end_datetime)
+
+        main_layout.addLayout(datetime_layout)
+
         # --- Scroll Area untuk banyak input ---
         self.scroll = QScrollArea()
         self.scroll.setWidgetResizable(True)
@@ -134,6 +158,27 @@ class UIBuilder:
         self.form_layout.setSpacing(15)
         self.scroll.setWidget(self.content_widget)
         main_layout.addWidget(self.scroll)
+
+        # --- Tombol Load Excel ---
+        self.load_excel_button = QPushButton("CARGAR DATOS DE EXCEL")
+        self.load_excel_button.setStyleSheet("""
+            QPushButton {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #4CAF50, stop:1 #45a049);
+                color: white;
+                padding: 12px;
+                border-radius: 8px;
+                font-weight: bold;
+                border: none;
+            }
+            QPushButton:hover {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #45a049, stop:1 #4CAF50);
+            }
+            QPushButton:pressed {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #4CAF50, stop:1 #3e8e41);
+            }
+        """)
+        self.load_excel_button.clicked.connect(self.parent_app.load_excel_data)
+        main_layout.addWidget(self.load_excel_button)
 
         # --- Tombol Generate ---
         self.generate_button = QPushButton("GENERAR DOCUMENTO DE WORD (.docx)")

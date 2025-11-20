@@ -3,6 +3,7 @@ import os
 import json
 import shutil
 import tempfile
+import pandas as pd
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QMessageBox, QMenuBar, QAction, QFileDialog, QMainWindow, QLineEdit, QTextEdit, QDateEdit, QComboBox
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
@@ -305,6 +306,158 @@ class DocumentGeneratorApp(QMainWindow):
 
             except Exception as e:
                 QMessageBox.critical(self, "Error", f"Error al cargar el proyecto: {e}")
+
+    def load_excel_data(self):
+        """Loads temperature data from an Excel file and populates the form fields, filtering by selected time range."""
+        file_path, _ = QFileDialog.getOpenFileName(
+            self, "Seleccionar archivo Excel con datos de temperatura", "", "Archivos Excel (*.xlsx *.xls);;Todos los archivos (*)"
+        )
+
+        if not file_path:
+            return
+
+        try:
+            # Read Excel file
+            df = pd.read_excel(file_path)
+
+            # Check if 'Waktu' column exists, if not, rename first column
+            if 'Waktu' not in df.columns:
+                df = df.rename(columns={df.columns[0]: 'Waktu'})
+
+            # Convert 'Waktu' to datetime
+            df['Waktu'] = pd.to_datetime(df['Waktu'])
+
+            # Set 'Waktu' as index
+            df = df.set_index('Waktu')
+
+            # Ensure index is timezone-naive for comparison
+            if df.index.tz is not None:
+                df.index = df.index.tz_localize(None)
+
+            # Get selected time range from UI
+            start_datetime = self.ui_builder.start_datetime.dateTime().toPyDateTime()
+            end_datetime = self.ui_builder.end_datetime.dateTime().toPyDateTime()
+
+            # Ensure datetime objects are timezone-naive for comparison
+            start_datetime = start_datetime.replace(tzinfo=None)
+            end_datetime = end_datetime.replace(tzinfo=None)
+
+            # Use exact selected datetime for precise filtering
+
+            # Debug: Print time range and sample data
+            print(f"Start datetime: {start_datetime}")
+            print(f"End datetime: {end_datetime}")
+            print(f"Data index type: {type(df.index[0])}")
+            print(f"Sample index values: {df.index[:5].tolist()}")
+            print(f"Total records before filter: {len(df)}")
+
+            # Filter data by time range (inclusive)
+            df_filtered = df.loc[(df.index >= start_datetime) & (df.index <= end_datetime)]
+
+            print(f"Total records after filter: {len(df_filtered)}")
+            if not df_filtered.empty:
+                print(f"Filtered index range: {df_filtered.index.min()} to {df_filtered.index.max()}")
+
+            if df_filtered.empty:
+                QMessageBox.warning(self, "Advertencia", f"No se encontraron datos en el rango de tiempo seleccionado:\nDe {start_datetime} a {end_datetime}\n\nTotal registros en archivo: {len(df)}")
+                return
+
+            # Get the last row (final temperature) from filtered data
+            final_temps = df_filtered.iloc[-1]
+
+            # Populate TEMPERATURAS REGISTRADAS fields
+            num_sensors = min(len(final_temps), 10)  # Max 10 sensors
+            self.ui_builder.spin_sonda.setValue(num_sensors)
+            self.ui_builder.rebuild_form()
+
+            # Auto-fill Punto de Medición based on column names
+            column_names = df_filtered.columns.tolist()
+            for i in range(1, num_sensors + 1):
+                punto_key = f"PUNTO{i}"
+                temp_key = f"TEMP{i}"
+                if punto_key in self.ui_builder.input_widgets and i-1 < len(column_names):
+                    column_name = column_names[i-1]
+                    mapped_punto = self.map_column_to_punto(column_name)
+                    if mapped_punto:
+                        self.ui_builder.input_widgets[punto_key].setCurrentText(mapped_punto)
+
+                if temp_key in self.ui_builder.input_widgets:
+                    temp_value = str(final_temps.iloc[i-1])
+                    self.ui_builder.input_widgets[temp_key].setText(temp_value)
+
+            # Calculate min, max, and deviation for ESTABILIZACIÓN TÉRMICA from filtered data
+            if len(df_filtered) > 1:
+                for i in range(1, num_sensors + 1):
+                    sensor_data = df_filtered.iloc[:, i-1]
+                    valmin_key = f"VALMIN{i}"
+                    valmax_key = f"VALMAX{i}"
+                    desvi_key = f"DESVI{i}"
+
+                    if valmin_key in self.ui_builder.input_widgets:
+                        min_val = sensor_data.min()
+                        self.ui_builder.input_widgets[valmin_key].setText(f"{min_val:.2f}")
+
+                    if valmax_key in self.ui_builder.input_widgets:
+                        max_val = sensor_data.max()
+                        self.ui_builder.input_widgets[valmax_key].setText(f"{max_val:.2f}")
+
+                    if desvi_key in self.ui_builder.input_widgets:
+                        desvi_val = max_val - min_val
+                        self.ui_builder.input_widgets[desvi_key].setText(f"{desvi_val:.2f}")
+
+            # Populate RESULTADOS with final temperatures
+            for i in range(1, num_sensors + 1):
+                tempe_key = f"TEMPE{i}"
+                if tempe_key in self.ui_builder.input_widgets:
+                    temp_value = str(final_temps.iloc[i-1])
+                    self.ui_builder.input_widgets[tempe_key].setText(temp_value)
+
+            QMessageBox.information(self, "Éxito", f"Datos cargados exitosamente desde:\n{file_path}\n\nRango de tiempo: {start_datetime} - {end_datetime}\nSe encontraron {num_sensors} sensores de temperatura.\nTotal registros filtrados: {len(df_filtered)}")
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"Error al cargar el archivo Excel: {e}")
+
+    def map_column_to_punto(self, column_name):
+        """Maps Excel column names to Punto de Medición options using fuzzy matching."""
+        import re
+        from difflib import get_close_matches
+
+        # Normalize column name: remove numbers, dots, and extra spaces
+        normalized = re.sub(r'[0-9\.\s]+', '', column_name.lower())
+
+        # Define mapping patterns
+        mappings = {
+            'tcled': 'Tc LED',
+            'tc led': 'Tc LED',
+            'tcledcalido': 'Tc LED Calido',
+            'tc led calido': 'Tc LED Calido',
+            'tcledfrio': 'Tc LED Frio',
+            'tc led frio': 'Tc LED Frio',
+            'carcasaint': 'Carcasa int.',
+            'carcasa int': 'Carcasa int.',
+            'carcasaext': 'Carcasa ext.',
+            'carcasa ext': 'Carcasa ext.',
+            'disipador': 'Disipador',
+            'difusor': 'Difusor',
+            'pcb': 'PCB',
+            'driver': 'Driver',
+            'tambiente': 'T. Ambiente',
+            't ambiente': 'T. Ambiente',
+            'tamb': 'T. Ambiente',
+            'reflector': 'Reflector',
+            'lente': 'Lente'
+        }
+
+        # Try exact match first
+        if normalized in mappings:
+            return mappings[normalized]
+
+        # Try fuzzy matching
+        close_matches = get_close_matches(normalized, mappings.keys(), n=1, cutoff=0.6)
+        if close_matches:
+            return mappings[close_matches[0]]
+
+        # If no match found, return None
+        return None
 
     def generate_document(self):
         """Delegates the document generation task to the document processor."""
