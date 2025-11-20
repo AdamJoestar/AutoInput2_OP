@@ -375,11 +375,15 @@ class DocumentGeneratorApp(QMainWindow):
             for i in range(1, num_sensors + 1):
                 punto_key = f"PUNTO{i}"
                 temp_key = f"TEMP{i}"
+                title_key = f"TITLE{i+2}"  # TITLE3 for sensor 1, TITLE4 for sensor 2, etc.
                 if punto_key in self.ui_builder.input_widgets and i-1 < len(column_names):
                     column_name = column_names[i-1]
                     mapped_punto = self.map_column_to_punto(column_name)
                     if mapped_punto:
                         self.ui_builder.input_widgets[punto_key].setCurrentText(mapped_punto)
+                        # Auto-fill corresponding TITLE field in Fotografías section
+                        if title_key in self.ui_builder.input_widgets:
+                            self.ui_builder.input_widgets[title_key].setText(mapped_punto)
 
                 if temp_key in self.ui_builder.input_widgets:
                     temp_value = str(final_temps.iloc[i-1])
