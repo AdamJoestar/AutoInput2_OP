@@ -80,6 +80,20 @@ RESULT_OPTIONS = [
     "N/A"
 ]
 
+# Title options for montage photos
+TITLE_OPTIONS = [
+   "Montaje Final 1",
+    "Montaje Final 2",
+    "Montaje Final 3",
+    "Montaje Final 4",
+    "Montaje Final 5",
+    "Montaje Final 6",
+    "Montaje Final 7",
+    "Termohigrometro Temperatura",
+    "Termohigrometro Humedad",
+    "Termohigrometro Presión Atmosférica",
+]
+
 # --- Definisi Placeholders & Input Fields ---
 FIELD_DEFINITIONS = {
     # Header fields
@@ -333,13 +347,25 @@ FIELD_DEFINITIONS = {
     "TITLE12": {"placeholder": "[TITLE12]", "label": "Título 12", "type": "text"},
     "IMAGE12": {"placeholder": "[IMAGE12]", "label": "Imagen 12", "type": "file"},
 
-    # 7. FOTO MONTAJE FINAL (up to 4)
+    # 7. FOTO MONTAJE FINAL (up to 10)
     "IMAGE13": {"placeholder": "[IMAGE13]", "label": "Imagen 13", "type": "file"},
-    "TITLE13": {"placeholder": "[TITLE13]", "label": "Título 13", "type": "text"},
+    "TITLE13": {"placeholder": "[TITLE13]", "label": "Título 13", "type": "dropdown", "options": TITLE_OPTIONS},
     "IMAGE14": {"placeholder": "[IMAGE14]", "label": "Imagen 14", "type": "file"},
-    "TITLE14": {"placeholder": "[TITLE14]", "label": "Título 14", "type": "text"},
+    "TITLE14": {"placeholder": "[TITLE14]", "label": "Título 14", "type": "dropdown", "options": TITLE_OPTIONS},
     "IMAGE15": {"placeholder": "[IMAGE15]", "label": "Imagen 15", "type": "file"},
-    "TITLE15": {"placeholder": "[TITLE15]", "label": "Título 15", "type": "text"},
+    "TITLE15": {"placeholder": "[TITLE15]", "label": "Título 15", "type": "dropdown", "options": TITLE_OPTIONS},
     "IMAGE16": {"placeholder": "[IMAGE16]", "label": "Imagen 16", "type": "file"},
-    "TITLE16": {"placeholder": "[TITLE16]", "label": "Título 16", "type": "text"},
+    "TITLE16": {"placeholder": "[TITLE16]", "label": "Título 16", "type": "dropdown", "options": TITLE_OPTIONS},
+    "IMAGE17": {"placeholder": "[IMAGE17]", "label": "Imagen 17", "type": "file"},
+    "TITLE17": {"placeholder": "[TITLE17]", "label": "Título 17", "type": "dropdown", "options": TITLE_OPTIONS},
+    "IMAGE18": {"placeholder": "[IMAGE18]", "label": "Imagen 18", "type": "file"},
+    "TITLE18": {"placeholder": "[TITLE18]", "label": "Título 18", "type": "dropdown", "options": TITLE_OPTIONS},
+    "IMAGE19": {"placeholder": "[IMAGE19]", "label": "Imagen 19", "type": "file"},
+    "TITLE19": {"placeholder": "[TITLE19]", "label": "Título 19", "type": "dropdown", "options": TITLE_OPTIONS},
+    "IMAGE20": {"placeholder": "[IMAGE20]", "label": "Imagen 20", "type": "file"},
+    "TITLE20": {"placeholder": "[TITLE20]", "label": "Título 20", "type": "dropdown", "options": TITLE_OPTIONS},
+    "IMAGE21": {"placeholder": "[IMAGE21]", "label": "Imagen 21", "type": "file"},
+    "TITLE21": {"placeholder": "[TITLE21]", "label": "Título 21", "type": "dropdown", "options": TITLE_OPTIONS},
+    "IMAGE22": {"placeholder": "[IMAGE22]", "label": "Imagen 22", "type": "file"},
+    "TITLE22": {"placeholder": "[TITLE22]", "label": "Título 22", "type": "dropdown", "options": TITLE_OPTIONS},
 }

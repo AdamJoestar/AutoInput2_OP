@@ -101,11 +101,11 @@ class UIBuilder:
 
         # Add a spin box for number of additional photos
         self.additional_photos_layout = QHBoxLayout()
-        additional_photos_label = QLabel("Número de fotos adicionales (max 4):")
+        additional_photos_label = QLabel("Número de fotos adicionales (max 10):")
         additional_photos_label.setStyleSheet("font-weight: bold; color: #34495e; padding: 5px;")
         self.additional_photos_layout.addWidget(additional_photos_label)
         self.spin_additional_photos = NoWheelSpinBox()
-        self.spin_additional_photos.setRange(0, 4)
+        self.spin_additional_photos.setRange(0, 10)
         self.spin_additional_photos.setValue(0)
         self.spin_additional_photos.setStyleSheet("QSpinBox { border: 1px solid #bdc3c7; border-radius: 4px; padding: 5px; background-color: #ecf0f1; }")
         self.spin_additional_photos.valueChanged.connect(self.rebuild_form)
