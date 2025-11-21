@@ -389,6 +389,10 @@ class DocumentGeneratorApp(QMainWindow):
                     temp_value = str(final_temps.iloc[i-1])
                     self.ui_builder.input_widgets[temp_key].setText(temp_value)
 
+                unidad_key = f"UNIDAD{i}"
+                if unidad_key in self.ui_builder.input_widgets:
+                    self.ui_builder.input_widgets[unidad_key].setText("°C")
+
             # Calculate min, max, and deviation for ESTABILIZACIÓN TÉRMICA from filtered data
             if len(df_filtered) > 1:
                 for i in range(1, num_sensors + 1):
@@ -396,6 +400,7 @@ class DocumentGeneratorApp(QMainWindow):
                     valmin_key = f"VALMIN{i}"
                     valmax_key = f"VALMAX{i}"
                     desvi_key = f"DESVI{i}"
+                    unidad_key = f"UNIDAD_EST{i}"
 
                     if valmin_key in self.ui_builder.input_widgets:
                         min_val = sensor_data.min()
@@ -408,6 +413,9 @@ class DocumentGeneratorApp(QMainWindow):
                     if desvi_key in self.ui_builder.input_widgets:
                         desvi_val = max_val - min_val
                         self.ui_builder.input_widgets[desvi_key].setText(f"{desvi_val:.2f}")
+
+                    if unidad_key in self.ui_builder.input_widgets:
+                        self.ui_builder.input_widgets[unidad_key].setText("°C")
 
             # Populate RESULTADOS with final temperatures
             for i in range(1, num_sensors + 1):

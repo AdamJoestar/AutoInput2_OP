@@ -113,6 +113,11 @@ class DocumentProcessor:
         for key, definition in FIELD_DEFINITIONS.items():
             if key not in input_widgets:
                 replacement_data[definition['placeholder']] = ""
+
+        # Automatically set units for ESTABILIZACIÓN TÉRMICA to °C
+        for i in range(1, self.parent_app.ui_builder.num_sonda + 1):
+            replacement_data[f"[UNIDAD_EST{i}]"] = "°C"
+
         return replacement_data
 
     def process_document(self, document, replacement_data):
