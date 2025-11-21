@@ -11,6 +11,7 @@ from config import TEMPLATES_DIR, TEMPLATE_FILENAME, TEMPLATE_PATH
 from fields import FIELD_DEFINITIONS
 from ui_builder import UIBuilder
 from document_processor import DocumentProcessor
+from styles import LIGHT_THEME # Impor stylesheet
 import os
 
 
@@ -29,57 +30,7 @@ class DocumentGeneratorApp(QMainWindow):
         self.template_filename = TEMPLATE_FILENAME
         self.template_path = TEMPLATE_PATH
         self.setWindowTitle("Generador de Anexo al Informe")
-        self.setWindowIcon(QIcon("logo vibia.png"))
-        self.setStyleSheet("""
-            QWidget {
-                font-size: 14px;
-                font-family: 'Segoe UI', Arial, sans-serif;
-                background-color: #f5f5f5;
-                color: #333;
-            }
-            QGroupBox {
-                font-weight: bold;
-                border: 2px solid #ddd;
-                border-radius: 8px;
-                margin-top: 10px;
-                background-color: #ffffff;
-                padding: 10px;
-            }
-            QGroupBox::title {
-                subcontrol-origin: margin;
-                left: 10px;
-                padding: 0 5px 0 5px;
-                color: #2c3e50;
-                font-size: 16px;
-            }
-            QLabel {
-                color: #555;
-            }
-            QLineEdit, QTextEdit, QDateEdit, QComboBox {
-                border: 1px solid #ccc;
-                border-radius: 4px;
-                padding: 5px;
-                background-color: #fff;
-            }
-            QLineEdit:focus, QTextEdit:focus, QDateEdit:focus, QComboBox:focus {
-                border-color: #3498db;
-            }
-            QPushButton {
-                border-radius: 6px;
-                padding: 8px 16px;
-                font-weight: bold;
-            }
-            QPushButton:hover {
-                background-color: #2980b9;
-            }
-            QMessageBox QPushButton {
-                background-color: #808080;
-                color: #FFFFFF;
-            }
-            QMessageBox QPushButton:hover {
-                background-color: #909090;
-            }
-        """)
+        self.setStyleSheet(LIGHT_THEME) # Terapkan stylesheet dari file terpisah
         self.ui_builder = UIBuilder(self)
         self.document_processor = DocumentProcessor(self)
         self.load_stabilization_template()
