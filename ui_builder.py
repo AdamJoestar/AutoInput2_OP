@@ -79,6 +79,7 @@ class UIBuilder:
         main_layout.addWidget(title)
 
         # --- Spin Boxes for Row Selection ---
+        # Widget untuk spinbox equipment, akan ditambahkan di dalam scroll area nanti
         spin_layout = QHBoxLayout()
         label1 = QLabel("EQUIPOS Y MÉTODOS UTILIZADOS (max 12):")
         label1.setStyleSheet("font-weight: bold; color: #34495e; padding: 5px;")
@@ -86,12 +87,16 @@ class UIBuilder:
         self.spin_equipment = NoWheelSpinBox()
         self.spin_equipment.setRange(1, 12)
         self.spin_equipment.setValue(12)
+        self.spin_equipment.setValue(12) # Nilai default
         self.spin_equipment.setStyleSheet("QSpinBox { border: 1px solid #bdc3c7; border-radius: 4px; padding: 5px; background-color: #ecf0f1; }")
         self.spin_equipment.valueChanged.connect(self.rebuild_form)
         spin_layout.addWidget(self.spin_equipment)
 
 
 
+        self.equipment_spin_widget = QWidget()
+        self.equipment_spin_widget.setLayout(spin_layout)
+        
         # Add a spin box for number of additional photos
         self.additional_photos_layout = QHBoxLayout()
         additional_photos_label = QLabel("Número de fotos adicionales (max 10):")
@@ -106,8 +111,6 @@ class UIBuilder:
         # Initially hide it, will be added in rebuild_form
         self.additional_photos_widget = QWidget()
         self.additional_photos_widget.setLayout(self.additional_photos_layout)
-
-        main_layout.addLayout(spin_layout)
 
         # --- DateTime Selectors for Excel Data Filtering ---
         datetime_layout = QHBoxLayout()
@@ -131,7 +134,8 @@ class UIBuilder:
         self.end_datetime.setStyleSheet("QDateTimeEdit { border: 1px solid #bdc3c7; border-radius: 4px; padding: 5px; background-color: #ecf0f1; }")
         datetime_layout.addWidget(self.end_datetime)
 
-        main_layout.addLayout(datetime_layout)
+        self.datetime_widget = QWidget()
+        self.datetime_widget.setLayout(datetime_layout)
 
         # --- Scroll Area untuk banyak input ---
         self.scroll = QScrollArea()
@@ -151,6 +155,9 @@ class UIBuilder:
         self.form_layout.setSpacing(15)
         self.scroll.setWidget(self.content_widget)
         main_layout.addWidget(self.scroll)
+
+        # Tambahkan widget datetime di atas tombol load excel
+        main_layout.addWidget(self.datetime_widget)
 
         # --- Tombol Load Excel ---
         self.load_excel_button = QPushButton("CARGAR DATOS DE EXCEL")
@@ -297,6 +304,7 @@ class UIBuilder:
         title_label = QLabel("2. EQUIPOS Y MÉTODOS UTILIZADOS")
         title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
         self.form_layout.addWidget(title_label)
+        self.form_layout.addWidget(self.equipment_spin_widget) # Tambahkan spinbox di sini
         num_equip = self.spin_equipment.value()
         for i in range(1, num_equip + 1):
             self.create_input_group(self.form_layout, f"Row {i}", [
