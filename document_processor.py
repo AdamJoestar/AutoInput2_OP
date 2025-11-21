@@ -109,14 +109,28 @@ class DocumentProcessor:
                 continue
             replacement_data[definition['placeholder']] = value
 
-        # Replace unused placeholders with empty strings
-        for key, definition in FIELD_DEFINITIONS.items():
-            if key not in input_widgets:
-                replacement_data[definition['placeholder']] = ""
+        num_sonda = self.parent_app.ui_builder.num_sonda
 
-        # Automatically set units for ESTABILIZACIÓN TÉRMICA to °C
-        for i in range(1, self.parent_app.ui_builder.num_sonda + 1):
+        # Replace all placeholders with their values, or with an empty string if not in UI
+        for key, definition in FIELD_DEFINITIONS.items():
+            placeholder = definition['placeholder']
+            # If the placeholder already has a value from the UI, skip it.
+            if placeholder in replacement_data:
+                continue
+            
+            # Otherwise, replace any remaining placeholders with an empty string.
+            # This ensures that unused rows in tables become truly empty.
+            replacement_data[placeholder] = ""
+
+        # Automatically set all temperature units to °C
+        for i in range(1, num_sonda + 1):
+            # TEMPERATURAS REGISTRADAS
+            # This will overwrite the empty string set above for the used rows.
+            replacement_data[f"[UNIDAD{i}]"] = "°C"
+            # ESTABILIZACIÓN TÉRMICA
             replacement_data[f"[UNIDAD_EST{i}]"] = "°C"
+            # RESULTADOS
+            replacement_data[f"[UNIDAD_RES{i}]"] = "°C"
 
         return replacement_data
 
