@@ -1,1 +1,4 @@
-- [x] Ketika ada input yang belom di isi dan memencet tombol generar documento setelah ada peringatan buat kolom yang masih kosong tersebut bordernya jadi merah agar memudahakan user bagian mana yang belom di isi
+- [] Remove "SONDA TOTAL" label and spin_sonda from UI in ui_builder.py init_ui (keep spin_sonda variable for Excel loading)
+- [] Remove UNIDAD{i} from FIELD_DEFINITIONS in fields.py
+- [] Remove f"UNIDAD{i}" from create_input_group in ui_builder.py for TEMPERATURAS REGISTRADAS
+- [] Update TODO.md to mark completed items

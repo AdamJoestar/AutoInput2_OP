@@ -46,6 +46,7 @@ class UIBuilder:
         self.spin_boxes = {}
         self.temp_files = []  # List untuk melacak file sementara
         self.rebuilding = False
+        self.num_sonda = 10  # Default number of sensors
 
     def init_ui(self):
         """
@@ -89,15 +90,7 @@ class UIBuilder:
         self.spin_equipment.valueChanged.connect(self.rebuild_form)
         spin_layout.addWidget(self.spin_equipment)
 
-        label2 = QLabel("SONDA TOTAL (max 10):")
-        label2.setStyleSheet("font-weight: bold; color: #34495e; padding: 5px;")
-        spin_layout.addWidget(label2)
-        self.spin_sonda = NoWheelSpinBox()
-        self.spin_sonda.setRange(1, 10)
-        self.spin_sonda.setValue(10)
-        self.spin_sonda.setStyleSheet("QSpinBox { border: 1px solid #bdc3c7; border-radius: 4px; padding: 5px; background-color: #ecf0f1; }")
-        self.spin_sonda.valueChanged.connect(self.rebuild_form)
-        spin_layout.addWidget(self.spin_sonda)
+
 
         # Add a spin box for number of additional photos
         self.additional_photos_layout = QHBoxLayout()
@@ -222,17 +215,13 @@ class UIBuilder:
         """
         if self.rebuilding:
             return
+        print(f"Rebuilding form with num_sonda = {self.num_sonda}")
         self.rebuilding = True
 
         # Disconnect signals to prevent recursive calls during rebuild
         if hasattr(self, 'spin_equipment'):
             try:
                 self.spin_equipment.valueChanged.disconnect(self.rebuild_form)
-            except TypeError:
-                pass
-        if hasattr(self, 'spin_sonda'):
-            try:
-                self.spin_sonda.valueChanged.disconnect(self.rebuild_form)
             except TypeError:
                 pass
         if hasattr(self, 'spin_additional_photos'):
@@ -255,7 +244,6 @@ class UIBuilder:
 
         # Save spin box values
         saved_equipment = self.spin_equipment.value()
-        saved_sonda = self.spin_sonda.value()
         saved_additional = 0
         if hasattr(self, 'spin_additional_photos') and self.spin_additional_photos:
             saved_additional = self.spin_additional_photos.value()
@@ -337,10 +325,9 @@ class UIBuilder:
         title_label = QLabel("3. TEMPERATURAS REGISTRADAS")
         title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
         self.form_layout.addWidget(title_label)
-        num_sonda = self.spin_sonda.value()
-        for i in range(1, num_sonda + 1):
+        for i in range(1, self.num_sonda + 1):
             self.create_input_group(self.form_layout, f"Row {i} ", [
-                f"PUNTO{i}", f"UNIDAD{i}", f"LIMITE{i}", f"TEMP{i}"
+                f"PUNTO{i}", f"LIMITE{i}", f"TEMP{i}"
             ])
 
         # 3.1. GRÁFICA GENERADA
@@ -353,25 +340,25 @@ class UIBuilder:
         title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
         self.form_layout.addWidget(title_label)
         # Removed TEXT14 as per user request
-        for i in range(1, num_sonda + 1):
+        for i in range(1, self.num_sonda + 1):
             self.create_input_group(self.form_layout, f"Row {i}", [
-                f"MEDICI{i}", f"UNI{i}", f"VALMIN{i}", f"VALMAX{i}", f"DESVI{i}"
+                f"MEDICI{i}", f"VALMIN{i}", f"VALMAX{i}", f"DESVI{i}"
             ])
 
         # 5. RESULTADOS
         title_label = QLabel("5. RESULTADOS")
         title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
         self.form_layout.addWidget(title_label)
-        for i in range(1, num_sonda + 1):
+        for i in range(1, self.num_sonda + 1):
             self.create_input_group(self.form_layout, f"Row {i}", [
-                f"PUNTODE{i}", f"UNIC{i}", f"TEMPE{i}", f"RESULT{i}"
+                f"PUNTODE{i}", f"TEMPE{i}", f"RESULT{i}"
             ])
 
         # 6. FOTOGRAFIAS
         title_label = QLabel("6. FOTOGRAFIAS")
         title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
         self.form_layout.addWidget(title_label)
-        for i in range(3, 3 + num_sonda):  # IMAGE3 to IMAGE{2+num_sonda}, TITLE3 to TITLE{2+num_sonda}
+        for i in range(3, 3 + self.num_sonda):  # IMAGE3 to IMAGE{2+num_sonda}, TITLE3 to TITLE{2+num_sonda}
             self.create_input_group(self.form_layout, f"Fotografía {i-2}", [
                 f"IMAGE{i}"
             ])
@@ -422,13 +409,11 @@ class UIBuilder:
                         widget.setCurrentIndex(index)
 
         # Sync related fields
-        self.sync_related_fields(num_sonda)
+        self.sync_related_fields(self.num_sonda)
 
         # Reconnect signals after rebuild
         if hasattr(self, 'spin_equipment'):
             self.spin_equipment.valueChanged.connect(self.rebuild_form)
-        if hasattr(self, 'spin_sonda'):
-            self.spin_sonda.valueChanged.connect(self.rebuild_form)
         if hasattr(self, 'spin_additional_photos'):
             self.spin_additional_photos.valueChanged.connect(self.rebuild_form)
 

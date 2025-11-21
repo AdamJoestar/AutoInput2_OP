@@ -212,7 +212,7 @@ class DocumentGeneratorApp(QMainWindow):
             # Collect all input data
             project_data = {
                 'spin_equipment': self.ui_builder.spin_equipment.value(),
-                'spin_sonda': self.ui_builder.spin_sonda.value(),
+                'num_sonda': self.ui_builder.num_sonda,
                 'input_data': {},
                 'saved_files': {} # Stores relative paths
             }
@@ -264,10 +264,10 @@ class DocumentGeneratorApp(QMainWindow):
                 # Set spin box values
                 if 'spin_equipment' in project_data:
                     self.ui_builder.spin_equipment.setValue(project_data['spin_equipment'])
-                if 'spin_sonda' in project_data:
-                    self.ui_builder.spin_sonda.setValue(project_data['spin_sonda'])
+                if 'num_sonda' in project_data:
+                    self.ui_builder.num_sonda = project_data['num_sonda']
 
-                # Rebuild form with loaded spin values
+                # Rebuild form with loaded values
                 self.ui_builder.rebuild_form()
 
                 # Load input data
@@ -367,7 +367,7 @@ class DocumentGeneratorApp(QMainWindow):
 
             # Populate TEMPERATURAS REGISTRADAS fields
             num_sensors = min(len(final_temps), 10)  # Max 10 sensors
-            self.ui_builder.spin_sonda.setValue(num_sensors)
+            self.ui_builder.num_sonda = num_sensors  # Update num_sonda to match detected sensors
             self.ui_builder.rebuild_form()
 
             # Auto-fill Punto de Medición based on column names
