@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtCore import Qt, QDate, QDateTime
 from PyQt5.QtGui import QPixmap
-from fields import FIELD_DEFINITIONS
+from fields import FIELD_DEFINITIONS, EQUIPO_AUTOFILL_DATA
 from screenshot import ScreenshotSelector
 import tempfile
 import os
@@ -712,25 +712,31 @@ class UIBuilder:
 
     def auto_fill_marca_tipo(self, equipo_text, marca_widget, tipo_widget, fecha_widget, num_equip):
         """Auto-fill 'Marca/Modelo' and 'Tipo/Aplicación' fields based on 'Equipo' selection. Also sync FECHA for SONDA TIPO T."""
-        if equipo_text == "ALMEMO":
-            marca_widget.setCurrentText("MA710")
-            tipo_widget.setCurrentText("Registrador de Temperatura")
-        elif equipo_text == "TERMOHIGRÓMETRO":
-            marca_widget.setCurrentText("MA24702S")
-            tipo_widget.setCurrentText("Medición Temperatura Ambiente")
-        elif equipo_text == "CAMARA ENDURANCIA":
-            marca_widget.setCurrentText("CET10/15312")
-            tipo_widget.setCurrentText("Dycometal")
-        elif equipo_text == "SONDA TIPO T":
-            # Sync FECHA for all SONDA TIPO T rows
+        if equipo_text == "SONDA TIPO T":
+            # Untuk SONDA TIPO T, hanya sinkronkan tanggal dan jangan sentuh field lain.
             if fecha_widget:
-                fecha_value = fecha_widget.date().toString("dd/MM/yyyy")
+                # Pertama, atur tanggal baris saat ini dari data auto-fill jika ada
+                if equipo_text in EQUIPO_AUTOFILL_DATA and "fecha" in EQUIPO_AUTOFILL_DATA[equipo_text]:
+                    date = QDate.fromString(EQUIPO_AUTOFILL_DATA[equipo_text]["fecha"], "dd/MM/yyyy")
+                    if date.isValid():
+                        fecha_widget.setDate(date)
+                
+                # Kemudian, sinkronkan tanggal ini ke semua baris SONDA TIPO T lainnya
                 for j in range(1, num_equip + 1):
                     if f"EQUIPO{j}" in self.input_widgets and self.input_widgets[f"EQUIPO{j}"].currentText() == "SONDA TIPO T":
                         fecha_key = f"FECHA{j}"
                         if fecha_key in self.input_widgets:
                             self.input_widgets[fecha_key].setDate(fecha_widget.date())
+        elif equipo_text in EQUIPO_AUTOFILL_DATA:
+            # Untuk equipo lain, isi semua field seperti biasa.
+            data = EQUIPO_AUTOFILL_DATA[equipo_text]
+            marca_widget.setCurrentText(data["marca"])
+            tipo_widget.setCurrentText(data["tipo"])
+            if fecha_widget and "fecha" in data:
+                date = QDate.fromString(data["fecha"], "dd/MM/yyyy")
+                if date.isValid():
+                    fecha_widget.setDate(date)
         else:
-            # Clear if not one of the auto-fill options
+            # Hapus isian jika bukan salah satu opsi auto-fill
             marca_widget.setCurrentIndex(0)
             tipo_widget.setCurrentIndex(0)

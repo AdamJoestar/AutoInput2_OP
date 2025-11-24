@@ -1,4 +1,26 @@
 # --- Dropdown Options ---
+
+# --- Data untuk auto-fill ---
+EQUIPO_AUTOFILL_DATA = {
+    "ALMEMO": {
+        "marca": "MA710",
+        "tipo": "Registrador de Temperatura",
+        "fecha": "05/11/2014"  # Contoh tanggal, silakan diubah
+    },
+    "TERMOHIGRÓMETRO": {
+        "marca": "MA24702S",
+        "tipo": "Medición Temperatura Ambiente",
+        "fecha": "31/10/2024"  # Contoh tanggal, silakan diubah
+    },
+    "CAMARA ENDURANCIA": {
+        "marca": "CET10/15312",
+        "tipo": "Dycometal" 
+    },
+    "SONDA TIPO T": {
+        "fecha": "23/09/2025"  # Contoh tanggal, silakan diubah
+    },
+}
+
 # TODO: Add more equipment options here
 EQUIPMENT_OPTIONS = [
     "ALMEMO",
