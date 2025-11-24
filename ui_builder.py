@@ -21,6 +21,10 @@ class NoWheelDateEdit(QDateEdit):
     def wheelEvent(self, event):
         event.ignore()
 
+class NoWheelDateEdit(QDateEdit):
+    def wheelEvent(self, event):
+        event.ignore()
+
 def resource_path(relative_path):
     """ Mendapatkan path absolut ke resource, berfungsi untuk dev dan PyInstaller """
     try:
@@ -480,7 +484,7 @@ class UIBuilder:
                         from PyQt5.QtGui import QDoubleValidator
                         input_field.setValidator(QDoubleValidator(0.0, 9999.99, 2))
             elif definition['type'] == "date":
-                input_field = QDateEdit()
+                input_field = NoWheelDateEdit()
                 input_field.setCalendarPopup(True)
                 input_field.setMinimumHeight(30)
                 input_field.setDate(QDate.currentDate())  # Set default to today's date
