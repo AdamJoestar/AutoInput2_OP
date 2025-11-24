@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtCore import Qt, QDate, QDateTime
 from PyQt5.QtGui import QPixmap
-from fields import FIELD_DEFINITIONS, EQUIPO_AUTOFILL_DATA
+from fields import FIELD_DEFINITIONS, EQUIPO_AUTOFILL_DATA, CODIGO_OPTIONS_BY_EQUIPO
 from screenshot import ScreenshotSelector
 import tempfile
 import os
@@ -290,13 +290,15 @@ class UIBuilder:
             marca_key = f"MARCA{i}"
             tipo_key = f"TIPO{i}"
             fecha_key = f"FECHA{i}"
+            codigo_key = f"OBSER{i}"
             if equipo_key in self.input_widgets:
                 equipo_widget = self.input_widgets[equipo_key]
                 marca_widget = self.input_widgets.get(marca_key)
                 tipo_widget = self.input_widgets.get(tipo_key)
                 fecha_widget = self.input_widgets.get(fecha_key)
+                codigo_widget = self.input_widgets.get(codigo_key)
                 if marca_widget and tipo_widget:
-                    equipo_widget.currentTextChanged.connect(lambda text, mw=marca_widget, tw=tipo_widget, fw=fecha_widget, num=num_equip: self.auto_fill_marca_tipo(text, mw, tw, fw, num))
+                    equipo_widget.currentTextChanged.connect(lambda text, mw=marca_widget, tw=tipo_widget, fw=fecha_widget, cw=codigo_widget, num=num_equip: self.auto_fill_marca_tipo(text, mw, tw, fw, cw, num))
 
         # 2.1. MÉTODO DE ENSAYO
         # Removed as per user request
@@ -710,9 +712,22 @@ class UIBuilder:
         except ValueError:
             result_widget.setCurrentText("N/A")
 
-    def auto_fill_marca_tipo(self, equipo_text, marca_widget, tipo_widget, fecha_widget, num_equip):
-        """Auto-fill 'Marca/Modelo' and 'Tipo/Aplicación' fields based on 'Equipo' selection. Also sync FECHA for SONDA TIPO T."""
-        if equipo_text == "SONDA TIPO T":
+    def auto_fill_marca_tipo(self, equipo_text, marca_widget, tipo_widget, fecha_widget, codigo_widget, num_equip):
+        """Auto-fill fields based on 'Equipo' selection. Also sync FECHA for SONDA TIPO T."""
+        # --- Filter Código Dropdown ---
+        if codigo_widget:
+            current_code = codigo_widget.currentText()
+            codigo_widget.blockSignals(True)
+            codigo_widget.clear()
+            options = CODIGO_OPTIONS_BY_EQUIPO.get(equipo_text, [])
+            codigo_widget.addItems(options)
+            # Coba atur kembali ke nilai sebelumnya jika masih ada di opsi baru
+            if current_code in options:
+                codigo_widget.setCurrentText(current_code)
+            codigo_widget.blockSignals(False)
+
+        # --- Auto-fill other fields ---
+        if equipo_text == "SONDA TIPO T": # Kasus khusus untuk SONDA TIPO T
             # Untuk SONDA TIPO T, hanya sinkronkan tanggal dan jangan sentuh field lain.
             if fecha_widget:
                 # Pertama, atur tanggal baris saat ini dari data auto-fill jika ada
@@ -727,16 +742,18 @@ class UIBuilder:
                         fecha_key = f"FECHA{j}"
                         if fecha_key in self.input_widgets:
                             self.input_widgets[fecha_key].setDate(fecha_widget.date())
-        elif equipo_text in EQUIPO_AUTOFILL_DATA:
+        elif equipo_text in EQUIPO_AUTOFILL_DATA: # Kasus untuk equipo lain di auto-fill
             # Untuk equipo lain, isi semua field seperti biasa.
             data = EQUIPO_AUTOFILL_DATA[equipo_text]
-            marca_widget.setCurrentText(data["marca"])
-            tipo_widget.setCurrentText(data["tipo"])
+            if "marca" in data:
+                marca_widget.setCurrentText(data["marca"])
+            if "tipo" in data:
+                tipo_widget.setCurrentText(data["tipo"])
             if fecha_widget and "fecha" in data:
                 date = QDate.fromString(data["fecha"], "dd/MM/yyyy")
                 if date.isValid():
                     fecha_widget.setDate(date)
-        else:
+        else: # Jika equipo tidak ada di daftar auto-fill
             # Hapus isian jika bukan salah satu opsi auto-fill
             marca_widget.setCurrentIndex(0)
             tipo_widget.setCurrentIndex(0)
