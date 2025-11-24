@@ -387,9 +387,9 @@ class DocumentGeneratorApp(QMainWindow):
             QMessageBox.information(
                 self, "Éxito",
                 f"Datos cargados y analizados con éxito dari:\n{file_path}\n\n"
-                f"Periode stabil ditemukan dari {best_window.index.min().strftime('%Y-%m-%d %H:%M:%S')} "
-                f"sampai {best_window.index.max().strftime('%Y-%m-%d %H:%M:%S')}.\n"
-                f"Ditemukan {num_sensors} sensor suhu."
+                f"Se encontró un período estable desde {best_window.index.min().strftime('%Y-%m-%d %H:%M:%S')} "
+                f"hasta {best_window.index.max().strftime('%Y-%m-%d %H:%M:%S')}.\n"
+                f"Encontrado {num_sensors} sensor de temperatura."
             )
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Error al cargar el archivo Excel: {e}")
