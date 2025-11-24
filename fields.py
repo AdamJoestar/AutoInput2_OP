@@ -94,6 +94,19 @@ TITLE_OPTIONS = [
     "Termohigrometro Presión Atmosférica",
 ]
 
+# Ensayo type options
+ENSAYO_OPTIONS = [
+    "Funcional normalmiento",
+    "Funcional anormalmiento",
+]
+
+# Código options
+CODIGO_OPTIONS = [
+    "Dummy1",
+    "Dummy2",
+    "Dummy3",
+    "Dummy4",
+]
 # --- Definisi Placeholders & Input Fields ---
 FIELD_DEFINITIONS = {
     # Header fields
@@ -116,7 +129,7 @@ FIELD_DEFINITIONS = {
     "TEXT13": {"placeholder": "[TEXT13]", "label": "Fuente de alimentación (driver) ", "type": "text"},
 
     # 1.1. CONDICIONES DEL ENSAYO
-    "TEXT9": {"placeholder": "[TEXT9]", "label": "Ensayo térmico realizado en", "type": "dropdown", "options": []},
+    "TEXT9": {"placeholder": "[TEXT9]", "label": "Ensayo térmico realizado en", "type": "dropdown", "options": ENSAYO_OPTIONS},
     "TEXT10": {"placeholder": "[TEXT10]", "label": "Temperatura de color ensayada (CCT)", "type": "text"},
     "TEXT11": {"placeholder": "[TEXT11]", "label": "Luminaria alimentada a", "type": "text"},
 
@@ -125,62 +138,62 @@ FIELD_DEFINITIONS = {
     "MARCA1": {"placeholder": "[MARCA1]", "label": "Marca/Modelo 1", "type": "dropdown", "options": MARCA_OPTIONS},
     "TIPO1": {"placeholder": "[TIPO1]", "label": "Tipo/Aplicación 1", "type": "dropdown", "options": TIPO_OPTIONS},
     "FECHA1": {"placeholder": "[FECHA1]", "label": "Fecha de calibración 1", "type": "date"},
-    "OBSER1": {"placeholder": "[OBSER1]", "label": "Código 1", "type": "dropdown", "options": []},
+    "OBSER1": {"placeholder": "[OBSER1]", "label": "Código 1", "type": "dropdown", "options": CODIGO_OPTIONS},
     "EQUIPO2": {"placeholder": "[EQUIPO2]", "label": "Equipo 2", "type": "dropdown", "options": EQUIPMENT_OPTIONS},
     "MARCA2": {"placeholder": "[MARCA2]", "label": "Marca/Modelo 2", "type": "dropdown", "options": MARCA_OPTIONS},
     "TIPO2": {"placeholder": "[TIPO2]", "label": "Tipo/Aplicación 2", "type": "dropdown", "options": TIPO_OPTIONS},
     "FECHA2": {"placeholder": "[FECHA2]", "label": "Fecha de calibración 2", "type": "date"},
-    "OBSER2": {"placeholder": "[OBSER2]", "label": "Código 2", "type": "dropdown", "options": []},
+    "OBSER2": {"placeholder": "[OBSER2]", "label": "Código 2", "type": "dropdown", "options": CODIGO_OPTIONS},
     "EQUIPO3": {"placeholder": "[EQUIPO3]", "label": "Equipo 3", "type": "dropdown", "options": EQUIPMENT_OPTIONS},
     "MARCA3": {"placeholder": "[MARCA3]", "label": "Marca/Modelo 3", "type": "dropdown", "options": MARCA_OPTIONS},
     "TIPO3": {"placeholder": "[TIPO3]", "label": "Tipo/Aplicación 3", "type": "dropdown", "options": TIPO_OPTIONS},
     "FECHA3": {"placeholder": "[FECHA3]", "label": "Fecha de calibración 3", "type": "date"},
-    "OBSER3": {"placeholder": "[OBSER3]", "label": "Código 3", "type": "dropdown", "options": []},
+    "OBSER3": {"placeholder": "[OBSER3]", "label": "Código 3", "type": "dropdown", "options": CODIGO_OPTIONS},
     "EQUIPO4": {"placeholder": "[EQUIPO4]", "label": "Equipo 4", "type": "dropdown", "options": EQUIPMENT_OPTIONS},
     "MARCA4": {"placeholder": "[MARCA4]", "label": "Marca/Modelo 4", "type": "dropdown", "options": MARCA_OPTIONS},
     "TIPO4": {"placeholder": "[TIPO4]", "label": "Tipo/Aplicación 4", "type": "dropdown", "options": TIPO_OPTIONS},
     "FECHA4": {"placeholder": "[FECHA4]", "label": "Fecha de calibración 4", "type": "date"},
-    "OBSER4": {"placeholder": "[OBSER4]", "label": "Código 4", "type": "dropdown", "options": []},
+    "OBSER4": {"placeholder": "[OBSER4]", "label": "Código 4", "type": "dropdown", "options": CODIGO_OPTIONS},
     "EQUIPO5": {"placeholder": "[EQUIPO5]", "label": "Equipo 5", "type": "dropdown", "options": EQUIPMENT_OPTIONS},
     "MARCA5": {"placeholder": "[MARCA5]", "label": "Marca/Modelo 5", "type": "dropdown", "options": MARCA_OPTIONS},
     "TIPO5": {"placeholder": "[TIPO5]", "label": "Tipo/Aplicación 5", "type": "dropdown", "options": TIPO_OPTIONS},
     "FECHA5": {"placeholder": "[FECHA5]", "label": "Fecha de calibración 5", "type": "date"},
-    "OBSER5": {"placeholder": "[OBSER5]", "label": "Código 5", "type": "dropdown", "options": []},
+    "OBSER5": {"placeholder": "[OBSER5]", "label": "Código 5", "type": "dropdown", "options": CODIGO_OPTIONS},
     "EQUIPO6": {"placeholder": "[EQUIPO6]", "label": "Equipo 6", "type": "dropdown", "options": EQUIPMENT_OPTIONS},
     "MARCA6": {"placeholder": "[MARCA6]", "label": "Marca/Modelo 6", "type": "dropdown", "options": MARCA_OPTIONS},
     "TIPO6": {"placeholder": "[TIPO6]", "label": "Tipo/Aplicación 6", "type": "dropdown", "options": TIPO_OPTIONS},
     "FECHA6": {"placeholder": "[FECHA6]", "label": "Fecha de calibración 6", "type": "date"},
-    "OBSER6": {"placeholder": "[OBSER6]", "label": "Código 6", "type": "dropdown", "options": []},
+    "OBSER6": {"placeholder": "[OBSER6]", "label": "Código 6", "type": "dropdown", "options": CODIGO_OPTIONS},
     "EQUIPO7": {"placeholder": "[EQUIPO7]", "label": "Equipo 7", "type": "dropdown", "options": EQUIPMENT_OPTIONS},
     "MARCA7": {"placeholder": "[MARCA7]", "label": "Marca/Modelo 7", "type": "dropdown", "options": MARCA_OPTIONS},
     "TIPO7": {"placeholder": "[TIPO7]", "label": "Tipo/Aplicación 7", "type": "dropdown", "options": TIPO_OPTIONS},
     "FECHA7": {"placeholder": "[FECHA7]", "label": "Fecha de calibración 7", "type": "date"},
-    "OBSER7": {"placeholder": "[OBSER7]", "label": "Código 7", "type": "dropdown", "options": []},
+    "OBSER7": {"placeholder": "[OBSER7]", "label": "Código 7", "type": "dropdown", "options": CODIGO_OPTIONS},
     "EQUIPO8": {"placeholder": "[EQUIPO8]", "label": "Equipo 8", "type": "dropdown", "options": EQUIPMENT_OPTIONS},
     "MARCA8": {"placeholder": "[MARCA8]", "label": "Marca/Modelo 8", "type": "dropdown", "options": MARCA_OPTIONS},
     "TIPO8": {"placeholder": "[TIPO8]", "label": "Tipo/Aplicación 8", "type": "dropdown", "options": TIPO_OPTIONS},
     "FECHA8": {"placeholder": "[FECHA8]", "label": "Fecha de calibración 8", "type": "date"},
-    "OBSER8": {"placeholder": "[OBSER8]", "label": "Código 8", "type": "dropdown", "options": []},
+    "OBSER8": {"placeholder": "[OBSER8]", "label": "Código 8", "type": "dropdown", "options": CODIGO_OPTIONS},
     "EQUIPO9": {"placeholder": "[EQUIPO9]", "label": "Equipo 9", "type": "dropdown", "options": EQUIPMENT_OPTIONS},
     "MARCA9": {"placeholder": "[MARCA9]", "label": "Marca/Modelo 9", "type": "dropdown", "options": MARCA_OPTIONS},
     "TIPO9": {"placeholder": "[TIPO9]", "label": "Tipo/Aplicación 9", "type": "dropdown", "options": TIPO_OPTIONS},
     "FECHA9": {"placeholder": "[FECHA9]", "label": "Fecha de calibración 9", "type": "date"},
-    "OBSER9": {"placeholder": "[OBSER9]", "label": "Código 9", "type": "dropdown", "options": []},
+    "OBSER9": {"placeholder": "[OBSER9]", "label": "Código 9", "type": "dropdown", "options": CODIGO_OPTIONS},
     "EQUIPO10": {"placeholder": "[EQUIPO10]", "label": "Equipo 10", "type": "dropdown", "options": EQUIPMENT_OPTIONS},
     "MARCA10": {"placeholder": "[MARCA10]", "label": "Marca/Modelo 10", "type": "dropdown", "options": MARCA_OPTIONS},
     "TIPO10": {"placeholder": "[TIPO10]", "label": "Tipo/Aplicación 10", "type": "dropdown", "options": TIPO_OPTIONS},
     "FECHA10": {"placeholder": "[FECHA10]", "label": "Fecha de calibración 10", "type": "date"},
-    "OBSER10": {"placeholder": "[OBSER10]", "label": "Código 10", "type": "dropdown", "options": []},
+    "OBSER10": {"placeholder": "[OBSER10]", "label": "Código 10", "type": "dropdown", "options": CODIGO_OPTIONS},
     "EQUIPO11": {"placeholder": "[EQUIPO11]", "label": "Equipo 11", "type": "dropdown", "options": EQUIPMENT_OPTIONS},
     "MARCA11": {"placeholder": "[MARCA11]", "label": "Marca/Modelo 11", "type": "dropdown", "options": MARCA_OPTIONS},
     "TIPO11": {"placeholder": "[TIPO11]", "label": "Tipo/Aplicación 11", "type": "dropdown", "options": TIPO_OPTIONS},
     "FECHA11": {"placeholder": "[FECHA11]", "label": "Fecha de calibración 11", "type": "date"},
-    "OBSER11": {"placeholder": "[OBSER11]", "label": "Código 11", "type": "dropdown", "options": []},
+    "OBSER11": {"placeholder": "[OBSER11]", "label": "Código 11", "type": "dropdown", "options": CODIGO_OPTIONS},
     "EQUIPO12": {"placeholder": "[EQUIPO12]", "label": "Equipo 12", "type": "dropdown", "options": EQUIPMENT_OPTIONS},
     "MARCA12": {"placeholder": "[MARCA12]", "label": "Marca/Modelo 12", "type": "dropdown", "options": MARCA_OPTIONS},
     "TIPO12": {"placeholder": "[TIPO12]", "label": "Tipo/Aplicación 12", "type": "dropdown", "options": TIPO_OPTIONS},
     "FECHA12": {"placeholder": "[FECHA12]", "label": "Fecha de calibración 12", "type": "date"},
-    "OBSER12": {"placeholder": "[OBSER12]", "label": "Código 12", "type": "dropdown", "options": []},
+    "OBSER12": {"placeholder": "[OBSER12]", "label": "Código 12", "type": "dropdown", "options": CODIGO_OPTIONS},
 
     # 3. TEMPERATURAS REGISTRADAS (up to 10)
     "PUNTO1": {"placeholder": "[PUNTO1]", "label": "Punto de Medición 1", "type": "dropdown", "options": PUNTO_OPTIONS},
