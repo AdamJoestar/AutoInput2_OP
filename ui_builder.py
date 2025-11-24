@@ -112,31 +112,6 @@ class UIBuilder:
         self.additional_photos_widget = QWidget()
         self.additional_photos_widget.setLayout(self.additional_photos_layout)
 
-        # --- DateTime Selectors for Excel Data Filtering ---
-        datetime_layout = QHBoxLayout()
-        start_label = QLabel("Fecha y Hora Inicio para Datos Excel:")
-        start_label.setStyleSheet("font-weight: bold; color: #34495e; padding: 5px;")
-        datetime_layout.addWidget(start_label)
-        self.start_datetime = QDateTimeEdit()
-        self.start_datetime.setCalendarPopup(True)
-        self.start_datetime.setDateTime(QDateTime.currentDateTime().addDays(-1))  # Default to yesterday
-        self.start_datetime.setDisplayFormat("dd/MM/yyyy HH:mm:ss")  # Include seconds for precision
-        self.start_datetime.setStyleSheet("QDateTimeEdit { border: 1px solid #bdc3c7; border-radius: 4px; padding: 5px; background-color: #ecf0f1; }")
-        datetime_layout.addWidget(self.start_datetime)
-
-        end_label = QLabel("Fecha y Hora Fin para Datos Excel:")
-        end_label.setStyleSheet("font-weight: bold; color: #34495e; padding: 5px;")
-        datetime_layout.addWidget(end_label)
-        self.end_datetime = QDateTimeEdit()
-        self.end_datetime.setCalendarPopup(True)
-        self.end_datetime.setDateTime(QDateTime.currentDateTime())  # Default to now
-        self.end_datetime.setDisplayFormat("dd/MM/yyyy HH:mm:ss")  # Include seconds for precision
-        self.end_datetime.setStyleSheet("QDateTimeEdit { border: 1px solid #bdc3c7; border-radius: 4px; padding: 5px; background-color: #ecf0f1; }")
-        datetime_layout.addWidget(self.end_datetime)
-
-        self.datetime_widget = QWidget()
-        self.datetime_widget.setLayout(datetime_layout)
-
         # --- Scroll Area untuk banyak input ---
         self.scroll = QScrollArea()
         self.scroll.setWidgetResizable(True)
@@ -155,9 +130,6 @@ class UIBuilder:
         self.form_layout.setSpacing(15)
         self.scroll.setWidget(self.content_widget)
         main_layout.addWidget(self.scroll)
-
-        # Tambahkan widget datetime di atas tombol load excel
-        main_layout.addWidget(self.datetime_widget)
 
         # --- Tombol Load Excel ---
         self.load_excel_button = QPushButton("CARGAR DATOS DE EXCEL")
