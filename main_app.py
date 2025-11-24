@@ -259,7 +259,7 @@ class DocumentGeneratorApp(QMainWindow):
                 QMessageBox.critical(self, "Error", f"Error al cargar el proyecto: {e}")
 
     def load_excel_data(self):
-        """Loads temperature data from an Excel file and populates the form fields, filtering by selected time range."""
+        """Loads temperature data from an Excel file and populates the form fields, filtering by selected time range."""  
         file_path, _ = QFileDialog.getOpenFileName(
             self, "Seleccionar archivo Excel con datos de temperatura", "", "Archivos Excel (*.xlsx *.xls);;Todos los archivos (*)"
         )
@@ -316,6 +316,15 @@ class DocumentGeneratorApp(QMainWindow):
             # Get the last row (final temperature) from filtered data
             final_temps = df_filtered.iloc[-1]
 
+            # Reset existing highlighting styles of input widgets
+            default_style = """
+                QLineEdit, QTextEdit, QComboBox {
+                    background-color: #ffffff;
+                }
+            """
+            for widget in self.ui_builder.input_widgets.values():
+                widget.setStyleSheet(default_style)
+
             # Populate TEMPERATURAS REGISTRADAS fields
             num_sensors = min(len(final_temps), 10)  # Max 10 sensors
             self.ui_builder.num_sonda = num_sensors  # Update num_sonda to match detected sensors
@@ -323,6 +332,7 @@ class DocumentGeneratorApp(QMainWindow):
 
             # Auto-fill Punto de Medición based on column names
             column_names = df_filtered.columns.tolist()
+            highlight_style = "background-color: #fff9c4;"  # light yellow
             for i in range(1, num_sensors + 1):
                 punto_key = f"PUNTO{i}"
                 temp_key = f"TEMP{i}"
@@ -331,14 +341,20 @@ class DocumentGeneratorApp(QMainWindow):
                     column_name = column_names[i-1]
                     mapped_punto = self.map_column_to_punto(column_name)
                     if mapped_punto:
-                        self.ui_builder.input_widgets[punto_key].setCurrentText(mapped_punto)
+                        widget = self.ui_builder.input_widgets[punto_key]
+                        widget.setCurrentText(mapped_punto)
+                        widget.setStyleSheet(highlight_style)
                         # Auto-fill corresponding TITLE field in Fotografías section
                         if title_key in self.ui_builder.input_widgets:
-                            self.ui_builder.input_widgets[title_key].setText(mapped_punto)
+                            title_widget = self.ui_builder.input_widgets[title_key]
+                            title_widget.setText(mapped_punto)
+                            title_widget.setStyleSheet(highlight_style)
 
                 if temp_key in self.ui_builder.input_widgets:
                     temp_value = str(final_temps.iloc[i-1])
-                    self.ui_builder.input_widgets[temp_key].setText(temp_value)
+                    widget = self.ui_builder.input_widgets[temp_key]
+                    widget.setText(temp_value)
+                    widget.setStyleSheet(highlight_style)
 
             # Calculate min, max, and deviation for ESTABILIZACIÓN TÉRMICA from filtered data
             if len(df_filtered) > 1:
@@ -350,22 +366,37 @@ class DocumentGeneratorApp(QMainWindow):
 
                     if valmin_key in self.ui_builder.input_widgets:
                         min_val = sensor_data.min()
-                        self.ui_builder.input_widgets[valmin_key].setText(f"{min_val:.2f}")
+                        widget = self.ui_builder.input_widgets[valmin_key]
+                        widget.setText(f"{min_val:.2f}")
+                        widget.setStyleSheet(highlight_style)
 
                     if valmax_key in self.ui_builder.input_widgets:
                         max_val = sensor_data.max()
-                        self.ui_builder.input_widgets[valmax_key].setText(f"{max_val:.2f}")
+                        widget = self.ui_builder.input_widgets[valmax_key]
+                        widget.setText(f"{max_val:.2f}")
+                        widget.setStyleSheet(highlight_style)
 
                     if desvi_key in self.ui_builder.input_widgets:
                         desvi_val = max_val - min_val
-                        self.ui_builder.input_widgets[desvi_key].setText(f"{desvi_val:.2f}")
+                        widget = self.ui_builder.input_widgets[desvi_key]
+                        widget.setText(f"{desvi_val:.2f}")
+                        widget.setStyleSheet(highlight_style)
 
             # Populate RESULTADOS with final temperatures
             for i in range(1, num_sensors + 1):
                 tempe_key = f"TEMPE{i}"
+                result_key = f"RESULT{i}"
                 if tempe_key in self.ui_builder.input_widgets:
                     temp_value = str(final_temps.iloc[i-1])
-                    self.ui_builder.input_widgets[tempe_key].setText(temp_value)
+                    widget = self.ui_builder.input_widgets[tempe_key]
+                    widget.setText(temp_value)
+                    widget.setStyleSheet(highlight_style)
+
+                if result_key in self.ui_builder.input_widgets:
+                    # Optionally highlight RESULT field (depends on existing logic)
+                    widget = self.ui_builder.input_widgets[result_key]
+                    # Do not set text here because current code does not set it explicitly in the original function.
+                    widget.setStyleSheet(highlight_style)
 
             QMessageBox.information(self, "Éxito", f"Datos cargados exitosamente desde:\n{file_path}\n\nRango de tiempo: {start_datetime} - {end_datetime}\nSe encontraron {num_sensors} sensores de temperatura.\nTotal registros filtrados: {len(df_filtered)}")
         except Exception as e:
