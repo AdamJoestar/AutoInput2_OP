@@ -269,11 +269,15 @@ class DocumentGeneratorApp(QMainWindow):
         if not file_path:
             return
 
+        QApplication.setOverrideCursor(Qt.WaitCursor)
+
         try:
             # 1. Baca dan Bersihkan Data
             df = pd.read_excel(file_path, header=0)
             if 'Waktu' not in df.columns:
                 df = df.rename(columns={df.columns[0]: 'Waktu'})
+
+            QApplication.processEvents() # Allow GUI to update
 
             df['Waktu'] = pd.to_datetime(df['Waktu'], errors='coerce')
             df.dropna(subset=['Waktu'], inplace=True)
@@ -282,6 +286,8 @@ class DocumentGeneratorApp(QMainWindow):
             for col in df.columns:
                 if df[col].dtype == 'object':
                     df[col] = df[col].str.replace(',', '.', regex=False).astype(float)
+
+            QApplication.processEvents() # Allow GUI to update
 
             # 2. Cari Jendela Waktu 1 Jam
             one_hour = pd.Timedelta(hours=1)
@@ -296,6 +302,8 @@ class DocumentGeneratorApp(QMainWindow):
             if not candidates:
                 QMessageBox.warning(self, "Tidak Ditemukan", "Tidak ada periode data berdurasi 1 jam yang ditemukan di file Excel.")
                 return
+
+            QApplication.processEvents() # Allow GUI to update
 
             # 3. Cari Jendela Paling Stabil
             best_window = None
@@ -393,6 +401,8 @@ class DocumentGeneratorApp(QMainWindow):
             )
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Error al cargar el archivo Excel: {e}")
+        finally:
+            QApplication.restoreOverrideCursor()
 
     def map_column_to_punto(self, column_name):
         """Maps Excel column names to Punto de Medición options using fuzzy matching."""
