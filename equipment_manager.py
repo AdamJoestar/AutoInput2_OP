@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import (
     QDialog, QVBoxLayout, QTableWidget, QTableWidgetItem, QPushButton, QHBoxLayout,
     QMessageBox, QDialogButtonBox, QLineEdit, QFormLayout, QLabel, QHeaderView
 )
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QEvent
 from fields import EQUIPO_AUTOFILL_DATA, CODIGO_OPTIONS_BY_EQUIPO
 
 EQUIPMENT_CONFIG_FILE = 'equipment_config.json'
@@ -104,6 +104,9 @@ class EquipmentManagerDialog(QDialog):
         self.dialog_buttons = QDialogButtonBox(QDialogButtonBox.Save | QDialogButtonBox.Cancel)
         self.layout.addWidget(self.dialog_buttons)
 
+        # Pastikan tombol bantuan (?) muncul di title bar
+        self.setWindowFlags(self.windowFlags() | Qt.WindowContextHelpButtonHint)
+
         # Koneksi sinyal
         self.add_button.clicked.connect(self.add_item)
         self.edit_button.clicked.connect(self.edit_item)
@@ -184,3 +187,34 @@ class EquipmentManagerDialog(QDialog):
             self.accept() # Tutup dialog setelah menyimpan
         except Exception as e:
             QMessageBox.critical(self, "Error", f"No se pudo guardar la configuración: {e}")
+
+    def event(self, event):
+        """Menangkap event untuk menampilkan bantuan saat tombol '?' diklik."""
+        # QEvent.WhatsThis dipicu saat tombol bantuan konteks (?) di title bar diklik.
+        if event.type() == QEvent.WhatsThis:
+            self.show_help_popup()
+            event.accept() # Tandai bahwa kita sudah menangani event ini
+            return True
+        return super().event(event)
+
+    def show_help_popup(self):
+        """Menampilkan pop-up dengan instruksi bantuan."""
+        help_title = "Cómo Usar el Gestor de Equipos"
+        help_text = """
+<b>Guía para gestionar la lista de equipos:</b>
+<br><br>
+<ul>
+    <li><b>Añadir:</b> Haga clic para abrir una ventana y añadir un nuevo equipo a la lista. Rellene todos los campos necesarios.</li>
+    <br>
+    <li><b>Editar:</b> Seleccione una fila de la tabla y haga clic en este botón para modificar la información de un equipo existente.</li>
+    <br>
+    <li><b>Eliminar:</b> Seleccione una fila de la tabla y haga clic para eliminar permanentemente un equipo de la lista. Se le pedirá confirmación.</li>
+    <br>
+    <li><b>Guardar:</b> Después de realizar todos los cambios (añadir, editar, eliminar), haga clic en 'Save' para guardar la configuración en el archivo <code>equipment_config.json</code>. Los cambios se aplicarán en la aplicación principal.</li>
+    <br>
+    <li><b>Cancel:</b> Cierra esta ventana sin guardar los cambios que no se hayan guardado con el botón 'Save'.</li>
+</ul>
+<br>
+<i>Nota: Los cambios solo serán permanentes después de hacer clic en 'Save'.</i>
+"""
+        QMessageBox.information(self, help_title, help_text)
