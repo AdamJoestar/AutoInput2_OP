@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import (
     QLabel, QLineEdit, QPushButton, QScrollArea, QGridLayout, QGroupBox, QFileDialog, QSpinBox, QTextEdit, QHBoxLayout, QWidget, QVBoxLayout, QDateEdit, QComboBox, QDialog, QDateTimeEdit
-)
+, QTabWidget)
 from PyQt5.QtCore import Qt, QDate, QDateTime
 from PyQt5.QtGui import QPixmap
 from fields import FIELD_DEFINITIONS, EQUIPO_AUTOFILL_DATA, CODIGO_OPTIONS_BY_EQUIPO
@@ -115,25 +115,11 @@ class UIBuilder:
         # Initially hide it, will be added in rebuild_form
         self.additional_photos_widget = QWidget()
         self.additional_photos_widget.setLayout(self.additional_photos_layout)
-
-        # --- Scroll Area untuk banyak input ---
-        self.scroll = QScrollArea()
-        self.scroll.setWidgetResizable(True)
-        self.scroll.setStyleSheet("""
-            QScrollArea {
-                border: 1px solid #ddd;
-                border-radius: 8px;
-                background-color: #fafafa;
-            }
-            QScrollArea QWidget {
-                background-color: #fafafa;
-            }
-        """)
-        self.content_widget = QWidget()
-        self.form_layout = QVBoxLayout(self.content_widget)
-        self.form_layout.setSpacing(15)
-        self.scroll.setWidget(self.content_widget)
-        main_layout.addWidget(self.scroll)
+        
+        # --- Tab Widget untuk Navigasi Formulir ---
+        self.tab_widget = QTabWidget()
+        self.tab_widget.setStyleSheet("QTabBar::tab { padding: 10px 15px; }") # Beri padding pada judul tab
+        main_layout.addWidget(self.tab_widget)
 
         # --- Tombol Load Excel ---
         self.load_excel_button = QPushButton("CARGAR DATOS DE EXCEL")
@@ -201,6 +187,9 @@ class UIBuilder:
         print(f"Rebuilding form with num_sonda = {self.num_sonda}")
         self.rebuilding = True
 
+        # Simpan indeks tab yang sedang aktif sebelum membangun ulang
+        saved_tab_index = self.tab_widget.currentIndex()
+
         # Disconnect signals to prevent recursive calls during rebuild
         if hasattr(self, 'spin_equipment'):
             try:
@@ -231,59 +220,34 @@ class UIBuilder:
         if hasattr(self, 'spin_additional_photos') and self.spin_additional_photos:
             saved_additional = self.spin_additional_photos.value()
 
-        # Clear existing widgets from form_layout
-        for i in reversed(range(self.form_layout.count())):
-            item = self.form_layout.itemAt(i)
-            if item.widget():
-                item.widget().setParent(None)
-            elif item.layout():
-                # If it's a layout, remove it
-                sub_layout = item.layout()
-                while sub_layout.count():
-                    sub_item = sub_layout.takeAt(0)
-                    if sub_item.widget():
-                        sub_item.widget().setParent(None)
-                self.form_layout.removeItem(item)
-
+        # Hapus semua tab yang ada
+        self.tab_widget.clear()
         self.input_widgets = {}
 
-        # Header
-        title_label = QLabel("Encabezado - Información del documento")
-        title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
-        self.form_layout.addWidget(title_label)
-        self.create_input_group(self.form_layout, "Encabezado - Información del documento", [
+        # --- Tab 1: Header & Solicitante ---
+        header_solicitante_layout = self._create_tab_and_get_layout("0. Encabezado y Solicitante")
+        self.create_input_group(header_solicitante_layout, "Encabezado - Información del documento", [
             "NO_TEST", "REV", "DATE"
         ])
-
-        # 0. INFORMACIÓN DEL SOLICITANTE DEL ENSAYO
-        title_label = QLabel("0. INFORMACIÓN DEL SOLICITANTE DEL ENSAYO")
-        title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
-        self.form_layout.addWidget(title_label)
-        self.create_input_group(self.form_layout, "0. INFORMACIÓN DEL SOLICITANTE DEL ENSAYO", [
+        self.create_input_group(header_solicitante_layout, "0. INFORMACIÓN DEL SOLICITANTE DEL ENSAYO", [
             "TEXT1", "TEXT4", "TEXT2", "TEXT5", "TEXT3"
         ])
 
-        # 1. INFORMACIÓN GENERAL DEL PRODUCTO
-        title_label = QLabel("1. INFORMACIÓN GENERAL DEL PRODUCTO")
-        title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
-        self.form_layout.addWidget(title_label)
-        self.create_input_group(self.form_layout, "1. INFORMACIÓN GENERAL DEL PRODUCTO", [
+        # --- Tab 2: Producto & Condiciones ---
+        producto_layout = self._create_tab_and_get_layout("1. Producto y Condiciones")
+        self.create_input_group(producto_layout, "1. INFORMACIÓN GENERAL DEL PRODUCTO", [
             "TEXT6", "TEXT12", "TEXT7", "TEXT8", "TEXT13"
         ])
-
-        # 1.1. CONDICIONES DEL ENSAYO
-        self.create_input_group(self.form_layout, "1.1. CONDICIONES DEL ENSAYO", [
+        self.create_input_group(producto_layout, "1.1. CONDICIONES DEL ENSAYO", [
             "TEXT9", "TEXT10", "TEXT11"
         ])
 
-        # 2. EQUIPOS Y MÉTODOS UTILIZADOS
-        title_label = QLabel("2. EQUIPOS Y MÉTODOS UTILIZADOS")
-        title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
-        self.form_layout.addWidget(title_label)
-        self.form_layout.addWidget(self.equipment_spin_widget) # Tambahkan spinbox di sini
+        # --- Tab 3: Equipos ---
+        equipos_layout = self._create_tab_and_get_layout("2. Equipos Utilizados")
+        equipos_layout.addWidget(self.equipment_spin_widget) # Tambahkan spinbox di sini
         num_equip = self.spin_equipment.value()
         for i in range(1, num_equip + 1):
-            self.create_input_group(self.form_layout, f"Row {i}", [
+            self.create_input_group(equipos_layout, f"Equipo {i}", [
                 f"EQUIPO{i}", f"MARCA{i}", f"TIPO{i}", f"FECHA{i}", f"OBSER{i}"
             ])
 
@@ -304,68 +268,52 @@ class UIBuilder:
                 if marca_widget and tipo_widget:
                     equipo_widget.currentTextChanged.connect(lambda text, mw=marca_widget, tw=tipo_widget, fw=fecha_widget, cw=codigo_widget, num=num_equip: self.auto_fill_marca_tipo(text, mw, tw, fw, cw, num))
 
-        # 2.1. MÉTODO DE ENSAYO
-        # Removed as per user request
-
-        # 3. TEMPERATURAS REGISTRADAS
-        title_label = QLabel("3. TEMPERATURAS REGISTRADAS")
-        title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
-        self.form_layout.addWidget(title_label)
+        # --- Tab 4: Temperaturas & Gráfica ---
+        temperaturas_layout = self._create_tab_and_get_layout("3. Temperaturas y Gráfica")
         for i in range(1, self.num_sonda + 1):
-            self.create_input_group(self.form_layout, f"Row {i} ", [
+            self.create_input_group(temperaturas_layout, f"Temperatura Punto {i}", [
                 f"PUNTO{i}", f"LIMITE{i}", f"TEMP{i}"
             ])
-
-        # 3.1. GRÁFICA GENERADA
-        self.create_input_group(self.form_layout, "3.1. GRÁFICA GENERADA", [
+        self.create_input_group(temperaturas_layout, "3.1. GRÁFICA GENERADA", [
             "IMAGE1", "TITLE1", "IMAGE2"
         ])
 
-        # 4. BILIZACIÓN TÉRMICA
-        title_label = QLabel("4. ESTABILIZACIÓN TÉRMICA")
-        title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
-        self.form_layout.addWidget(title_label)
-        # Removed TEXT14 as per user request
+        # --- Tab 5: Estabilización Térmica ---
+        estabilizacion_layout = self._create_tab_and_get_layout("4. Estabilización Térmica")
         for i in range(1, self.num_sonda + 1):
-            self.create_input_group(self.form_layout, f"Row {i}", [
+            self.create_input_group(estabilizacion_layout, f"Estabilización Punto {i}", [
                 f"MEDICI{i}", f"VALMIN{i}", f"VALMAX{i}", f"DESVI{i}"
             ])
 
-        # 5. RESULTADOS
-        title_label = QLabel("5. RESULTADOS")
-        title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
-        self.form_layout.addWidget(title_label)
+        # --- Tab 6: Resultados ---
+        resultados_layout = self._create_tab_and_get_layout("5. Resultados")
         for i in range(1, self.num_sonda + 1):
-            self.create_input_group(self.form_layout, f"Row {i}", [
+            self.create_input_group(resultados_layout, f"Resultado Punto {i}", [
                 f"PUNTODE{i}", f"TEMPE{i}", f"RESULT{i}"
             ])
 
-        # 6. FOTOGRAFIAS
-        title_label = QLabel("6. FOTOGRAFIAS")
-        title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
-        self.form_layout.addWidget(title_label)
+        # --- Tab 7: Fotografías ---
+        fotografias_layout = self._create_tab_and_get_layout("6. Fotografías")
         for i in range(3, 3 + self.num_sonda):  # IMAGE3 to IMAGE{2+num_sonda}, TITLE3 to TITLE{2+num_sonda}
-            self.create_input_group(self.form_layout, f"Fotografía {i-2}", [
+            self.create_input_group(fotografias_layout, f"Fotografía {i-2}", [
                 f"IMAGE{i}"
             ])
-            self.create_input_group(self.form_layout, f"Titulo {i-2}", [
+            self.create_input_group(fotografias_layout, f"Titulo {i-2}", [
                 f"TITLE{i}"
             ])
 
-        # 7. FOTO MONTAJE FINAL
-        title_label = QLabel("7. FOTO MONTAJE FINAL")
-        title_label.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
-        self.form_layout.addWidget(title_label)
+        # --- Tab 8: Montaje Final ---
+        montaje_layout = self._create_tab_and_get_layout("7. Montaje Final")
 
         # Add the spinbox for additional photos
-        self.form_layout.addWidget(self.additional_photos_widget)
+        montaje_layout.addWidget(self.additional_photos_widget)
         self.spin_additional_photos.blockSignals(True)
         self.spin_additional_photos.setValue(saved_additional)
         self.spin_additional_photos.blockSignals(False)
 
         num_additional = self.spin_additional_photos.value()
         for i in range(13, 13 + num_additional):  # IMAGE13 to IMAGE{12+num_additional}, TITLE13 to TITLE{12+num_additional}
-            self.create_input_group(self.form_layout, f"Montaje {i-12}", [
+            self.create_input_group(montaje_layout, f"Montaje {i-12}", [
                 f"IMAGE{i}", f"TITLE{i}"
             ])
 
@@ -397,6 +345,13 @@ class UIBuilder:
         # Sync related fields
         self.sync_related_fields(self.num_sonda)
 
+        # Re-apply highlights from Excel load
+        self._apply_highlights()
+
+        # Pulihkan tab yang sebelumnya aktif
+        if saved_tab_index >= 0 and saved_tab_index < self.tab_widget.count():
+            self.tab_widget.setCurrentIndex(saved_tab_index)
+
         # Reconnect signals after rebuild
         if hasattr(self, 'spin_equipment'):
             self.spin_equipment.valueChanged.connect(self.rebuild_form)
@@ -404,6 +359,40 @@ class UIBuilder:
             self.spin_additional_photos.valueChanged.connect(self.rebuild_form)
 
         self.rebuilding = False
+
+    def _apply_highlights(self):
+        """
+        Menerapkan kembali sorotan kuning ke field yang diisi dari Excel
+        setelah form dibangun ulang.
+        """
+        highlight_style = "background-color: #fff9c4;"
+        for key in self.parent_app.highlighted_fields:
+            if key in self.input_widgets:
+                self.input_widgets[key].setStyleSheet(highlight_style)
+
+    def _create_tab_and_get_layout(self, title):
+        """
+        Membuat tab baru di QTabWidget, menempatkan QScrollArea di dalamnya,
+        dan mengembalikan layout vertikal untuk konten tab tersebut.
+        """
+        tab = QWidget()
+        scroll_area = QScrollArea()
+        scroll_area.setWidgetResizable(True)
+        scroll_area.setStyleSheet("""
+            QScrollArea { border: none; background-color: #fafafa; }
+            QScrollArea > QWidget > QWidget { background-color: #fafafa; }
+        """)
+
+        content_widget = QWidget()
+        form_layout = QVBoxLayout(content_widget)
+        form_layout.setSpacing(15)
+        form_layout.setContentsMargins(10, 10, 10, 10)
+
+        scroll_area.setWidget(content_widget)
+        tab_layout = QVBoxLayout(tab)
+        tab_layout.addWidget(scroll_area)
+        self.tab_widget.addTab(tab, title)
+        return form_layout
 
     def create_input_group(self, parent_layout, title, keys):
         """

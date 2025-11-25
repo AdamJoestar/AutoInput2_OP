@@ -26,6 +26,7 @@ class DocumentGeneratorApp(QMainWindow):
         from external files.
         """
         super().__init__()
+        self.highlighted_fields = set() # Inisialisasi set untuk field yang disorot
         self.templates_dir = TEMPLATES_DIR
         self.template_filename = TEMPLATE_FILENAME
         self.template_path = TEMPLATE_PATH
@@ -335,6 +336,7 @@ class DocumentGeneratorApp(QMainWindow):
             # 5. Isi Form UI
             column_names = df.columns.tolist()
             highlight_style = "background-color: #fff9c4;"  # light yellow
+            self.highlighted_fields.clear() # Bersihkan set sebelum memuat data baru
 
             for i in range(1, num_sensors + 1):
                 col_name = column_names[i-1]
@@ -351,11 +353,13 @@ class DocumentGeneratorApp(QMainWindow):
                         widget = self.ui_builder.input_widgets[punto_key]
                         widget.setCurrentText(mapped_punto)
                         widget.setStyleSheet(highlight_style)
+                        self.highlighted_fields.add(punto_key)
                         # Auto-fill juga field TITLE di bagian Fotografi
                         if title_key in self.ui_builder.input_widgets:
                             title_widget = self.ui_builder.input_widgets[title_key]
                             title_widget.setText(mapped_punto)
                             title_widget.setStyleSheet(highlight_style)
+                            self.highlighted_fields.add(title_key)
 
                 # Isi Temperatur Medida (nilai akhir)
                 if temp_key in self.ui_builder.input_widgets:
@@ -363,6 +367,7 @@ class DocumentGeneratorApp(QMainWindow):
                     widget = self.ui_builder.input_widgets[temp_key]
                     widget.setText(temp_value)
                     widget.setStyleSheet(highlight_style)
+                    self.highlighted_fields.add(temp_key)
 
                 # --- Mengisi Bagian 4: ESTABILIZACIÓN TÉRMICA ---
                 valmin_key = f"VALMIN{i}"
@@ -373,16 +378,19 @@ class DocumentGeneratorApp(QMainWindow):
                     widget = self.ui_builder.input_widgets[valmin_key]
                     widget.setText(f"{min_vals[col_name]:.2f}")
                     widget.setStyleSheet(highlight_style)
+                    self.highlighted_fields.add(valmin_key)
 
                 if valmax_key in self.ui_builder.input_widgets:
                     widget = self.ui_builder.input_widgets[valmax_key]
                     widget.setText(f"{max_vals[col_name]:.2f}")
                     widget.setStyleSheet(highlight_style)
+                    self.highlighted_fields.add(valmax_key)
 
                 if desvi_key in self.ui_builder.input_widgets:
                     widget = self.ui_builder.input_widgets[desvi_key]
                     widget.setText(f"{deviations[col_name]:.2f}")
                     widget.setStyleSheet(highlight_style)
+                    self.highlighted_fields.add(desvi_key)
 
                 # --- Mengisi Bagian 5: RESULTADOS ---
                 tempe_key = f"TEMPE{i}"
@@ -391,6 +399,7 @@ class DocumentGeneratorApp(QMainWindow):
                     widget = self.ui_builder.input_widgets[tempe_key]
                     widget.setText(temp_value)
                     widget.setStyleSheet(highlight_style)
+                    self.highlighted_fields.add(tempe_key)
 
             QMessageBox.information(
                 self, "Éxito",
