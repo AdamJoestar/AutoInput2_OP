@@ -268,32 +268,20 @@ class UIBuilder:
                 if marca_widget and tipo_widget:
                     equipo_widget.currentTextChanged.connect(lambda text, mw=marca_widget, tw=tipo_widget, fw=fecha_widget, cw=codigo_widget, num=num_equip: self.auto_fill_marca_tipo(text, mw, tw, fw, cw, num))
 
-        # --- Tab 4: Temperaturas & Gráfica ---
-        temperaturas_layout = self._create_tab_and_get_layout("3. Temperaturas y Gráfica")
+        # --- Tab 4: Temperaturas (Gabungan) ---
+        temperaturas_layout = self._create_tab_and_get_layout("3. Temperaturas")
         for i in range(1, self.num_sonda + 1):
-            self.create_input_group(temperaturas_layout, f"Temperatura Punto {i}", [
-                f"PUNTO{i}", f"LIMITE{i}", f"TEMP{i}"
+            self.create_input_group(temperaturas_layout, f"Punto de Medición {i}", [
+                f"PUNTO{i}", f"LIMITE{i}", f"TEMP{i}",
+                f"VALMIN{i}", f"VALMAX{i}", f"DESVI{i}",
+                f"RESULT{i}"
             ])
         self.create_input_group(temperaturas_layout, "3.1. GRÁFICA GENERADA", [
             "IMAGE1", "TITLE1", "IMAGE2"
         ])
 
-        # --- Tab 5: Estabilización Térmica ---
-        estabilizacion_layout = self._create_tab_and_get_layout("4. Estabilización Térmica")
-        for i in range(1, self.num_sonda + 1):
-            self.create_input_group(estabilizacion_layout, f"Estabilización Punto {i}", [
-                f"MEDICI{i}", f"VALMIN{i}", f"VALMAX{i}", f"DESVI{i}"
-            ])
-
-        # --- Tab 6: Resultados ---
-        resultados_layout = self._create_tab_and_get_layout("5. Resultados")
-        for i in range(1, self.num_sonda + 1):
-            self.create_input_group(resultados_layout, f"Resultado Punto {i}", [
-                f"PUNTODE{i}", f"TEMPE{i}", f"RESULT{i}"
-            ])
-
-        # --- Tab 7: Fotografías ---
-        fotografias_layout = self._create_tab_and_get_layout("6. Fotografías")
+        # --- Tab 5: Fotografías ---
+        fotografias_layout = self._create_tab_and_get_layout("4. Fotografías")
         for i in range(3, 3 + self.num_sonda):  # IMAGE3 to IMAGE{2+num_sonda}, TITLE3 to TITLE{2+num_sonda}
             self.create_input_group(fotografias_layout, f"Fotografía {i-2}", [
                 f"IMAGE{i}"
@@ -302,8 +290,8 @@ class UIBuilder:
                 f"TITLE{i}"
             ])
 
-        # --- Tab 8: Montaje Final ---
-        montaje_layout = self._create_tab_and_get_layout("7. Montaje Final")
+        # --- Tab 6: Montaje Final ---
+        montaje_layout = self._create_tab_and_get_layout("5. Montaje Final")
 
         # Add the spinbox for additional photos
         montaje_layout.addWidget(self.additional_photos_widget)

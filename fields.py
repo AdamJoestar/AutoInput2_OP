@@ -118,8 +118,8 @@ TITLE_OPTIONS = [
 
 # Ensayo type options
 ENSAYO_OPTIONS = [
-    "Funcional normalmiento",
-    "Funcional anormalmiento",
+    "funcionamiento normal",
+    "funcionamiento anormal",
 ]
 
 # Opsi Código berdasarkan Equipo
