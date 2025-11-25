@@ -1,0 +1,53 @@
+[
+    {
+        "equipo": "ALMEMO",
+        "marca": "MA710",
+        "tipo": "Registrador de Temperatura",
+        "fecha": "05/11/2014",
+        "codigos": [
+            "ALM-001",
+            "ALM-002",
+            "ALM-003"
+        ]
+    },
+    {
+        "equipo": "CAMARA ENDURANCIA",
+        "marca": "CET10/15312",
+        "tipo": "Dycometal",
+        "fecha": "",
+        "codigos": [
+            "CE-201",
+            "CE-202"
+        ]
+    },
+    {
+        "equipo": "SONDA TIPO T",
+        "marca": "",
+        "tipo": "",
+        "fecha": "23/09/2025",
+        "codigos": [
+            "STT-A-01",
+            "STT-A-02",
+            "STT-A-03",
+            "STT-A-04",
+            "STT-B-01",
+            "STT-B-02",
+            "STT-B-03",
+            "STT-B-04",
+            "STT-C-01",
+            "STT-C-02",
+            "STT-C-03",
+            "STT-C-04"
+        ]
+    },
+    {
+        "equipo": "TERMOHIGRÓMETRO",
+        "marca": "MA24702S",
+        "tipo": "Medición Temperatura Ambiente",
+        "fecha": "31/10/2024",
+        "codigos": [
+            "TH-101",
+            "TH-102"
+        ]
+    }
+]

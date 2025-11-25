@@ -21,51 +21,11 @@ EQUIPO_AUTOFILL_DATA = {
     },
 }
 
-# TODO: Add more equipment options here
-EQUIPMENT_OPTIONS = [
-    "ALMEMO",
-    "TERMOHIGRÓMETRO",
-    "CAMARA ENDURANCIA",
-    "SONDA TIPO T",
-]
-
-# TODO: Add more brand/model options here
-MARCA_OPTIONS = [
-    "MA710",
-    "MA24702S",
-    "CET10/15312",
-    "2024103000",
-    "2024103001",
-    "2024103002",
-    "2024103003",
-    "2024103004",
-    "2024103005",
-    "2024103006",
-    "2024103007",
-    "2024103008",
-    "2024103009",
-    "2024103010",
-    "2024103011",
-]
-
-# TODO: Add more type/application options here
-TIPO_OPTIONS = [
-    "Registrador de Temperatura",
-    "Medición Temperatura Ambiente",
-    "Dycometal",
-    "Carcasa int.",
-    "Carcasa ext.",
-    "Disipador",
-    "Difusor",
-    "PCB",
-    "Driver",
-    "Tc LED",
-    "T. Ambiente",
-    "Reflector",
-    "Tc LED Calido",
-    "Tc LED Frio",
-    "Lente",
-]
+# Opsi-opsi di bawah ini sekarang hanya digunakan sebagai fallback atau untuk
+# field yang tidak terkait dengan manajemen peralatan dinamis.
+EQUIPMENT_OPTIONS = []
+MARCA_OPTIONS = []
+TIPO_OPTIONS = []
 
 # Temperature measurement point options
 PUNTO_OPTIONS = [
@@ -134,9 +94,7 @@ CODIGO_OPTIONS_BY_EQUIPO = {
     ],
     # Tambahkan equipo dan kode lainnya di sini
 }
-
-# Gabungkan semua kode untuk inisialisasi dropdown awal
-ALL_CODIGO_OPTIONS = sorted(list(set(code for codes in CODIGO_OPTIONS_BY_EQUIPO.values() for code in codes)))
+ALL_CODIGO_OPTIONS = [] # Akan diisi secara dinamis
 
 # --- Definisi Placeholders & Input Fields ---
 FIELD_DEFINITIONS = {

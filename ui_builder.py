@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import (
 , QTabWidget)
 from PyQt5.QtCore import Qt, QDate, QDateTime
 from PyQt5.QtGui import QPixmap
-from fields import FIELD_DEFINITIONS, EQUIPO_AUTOFILL_DATA, CODIGO_OPTIONS_BY_EQUIPO
+from fields import FIELD_DEFINITIONS
 from screenshot import ScreenshotSelector
 import tempfile
 import os
@@ -245,10 +245,22 @@ class UIBuilder:
         # --- Tab 3: Equipos ---
         equipos_layout = self._create_tab_and_get_layout("2. Equipos Utilizados")
         equipos_layout.addWidget(self.equipment_spin_widget) # Tambahkan spinbox di sini
+
+        # Dapatkan opsi dinamis dari konfigurasi yang dimuat
+        equipment_config = self.parent_app.equipment_config
+        equipment_options = sorted([item['equipo'] for item in equipment_config])
+        marca_options = sorted(list(set(item['marca'] for item in equipment_config if item.get('marca'))))
+        tipo_options = sorted(list(set(item['tipo'] for item in equipment_config if item.get('tipo'))))
+        all_codigo_options = sorted(list(set(code for item in equipment_config for code in item.get('codigos', []))))
+
         num_equip = self.spin_equipment.value()
         for i in range(1, num_equip + 1):
             self.create_input_group(equipos_layout, f"Equipo {i}", [
-                f"EQUIPO{i}", f"MARCA{i}", f"TIPO{i}", f"FECHA{i}", f"OBSER{i}"
+                (f"EQUIPO{i}", {'options': equipment_options}),
+                (f"MARCA{i}", {'options': marca_options}),
+                (f"TIPO{i}", {'options': tipo_options}),
+                f"FECHA{i}",
+                (f"OBSER{i}", {'options': all_codigo_options})
             ])
 
         # Auto-fill marca and tipo for all rows based on equipment selection
@@ -326,9 +338,12 @@ class UIBuilder:
                     date = QDate.fromString(value, "dd/MM/yyyy")
                     widget.setDate(date)
                 elif isinstance(widget, QComboBox):
-                    index = widget.findText(value)
-                    if index >= 0:
-                        widget.setCurrentIndex(index)
+                    # Cek apakah nilai yang disimpan masih ada di opsi dropdown yang baru
+                    # Ini mencegah crash jika item (misalnya, nama equipo) telah diubah atau dihapus.
+                    if widget.findText(value) != -1:
+                        widget.setCurrentText(value)
+                    else:
+                        widget.setCurrentIndex(0) # Atur ke item pertama jika nilai lama tidak ditemukan
 
         # Sync related fields
         self.sync_related_fields(self.num_sonda)
@@ -416,8 +431,14 @@ class UIBuilder:
         row = 0
         col = 0
         
-        for key in keys:
-            definition = FIELD_DEFINITIONS[key]
+        for key_item in keys:
+            dynamic_options = {}
+            if isinstance(key_item, tuple):
+                key = key_item[0]
+                dynamic_options = key_item[1]
+            else:
+                key = key_item
+            definition = FIELD_DEFINITIONS.get(key)
 
             label = QLabel(f"{definition['label']}:")
             label.setStyleSheet("color: #34495e; font-weight: bold; font-size: 12px;")
@@ -482,7 +503,7 @@ class UIBuilder:
             elif definition['type'] == "dropdown":
                 input_field = NoWheelComboBox()
                 input_field.setMinimumHeight(30)
-                options = definition.get('options', [])
+                options = dynamic_options.get('options', definition.get('options', []))
                 input_field.addItems(options)
                 input_field.setStyleSheet("""
                     QComboBox {
@@ -658,45 +679,48 @@ class UIBuilder:
 
     def auto_fill_marca_tipo(self, equipo_text, marca_widget, tipo_widget, fecha_widget, codigo_widget, num_equip):
         """Auto-fill fields based on 'Equipo' selection. Also sync FECHA for SONDA TIPO T."""
+        equipment_config = self.parent_app.equipment_config
+        
+        # Cari data untuk equipo yang dipilih
+        selected_data = next((item for item in equipment_config if item['equipo'] == equipo_text), None)
+
         # --- Filter Código Dropdown ---
-        if codigo_widget:
+        if codigo_widget and selected_data:
             current_code = codigo_widget.currentText()
             codigo_widget.blockSignals(True)
             codigo_widget.clear()
-            options = CODIGO_OPTIONS_BY_EQUIPO.get(equipo_text, [])
+            options = selected_data.get('codigos', [])
             codigo_widget.addItems(options)
             # Coba atur kembali ke nilai sebelumnya jika masih ada di opsi baru
             if current_code in options:
                 codigo_widget.setCurrentText(current_code)
             codigo_widget.blockSignals(False)
 
-        # --- Auto-fill other fields ---
-        if equipo_text == "SONDA TIPO T": # Kasus khusus untuk SONDA TIPO T
-            # Untuk SONDA TIPO T, hanya sinkronkan tanggal dan jangan sentuh field lain.
-            if fecha_widget:
-                # Pertama, atur tanggal baris saat ini dari data auto-fill jika ada
-                if equipo_text in EQUIPO_AUTOFILL_DATA and "fecha" in EQUIPO_AUTOFILL_DATA[equipo_text]:
-                    date = QDate.fromString(EQUIPO_AUTOFILL_DATA[equipo_text]["fecha"], "dd/MM/yyyy")
+        if selected_data:
+            # --- Auto-fill other fields ---
+            if equipo_text == "SONDA TIPO T": # Kasus khusus untuk SONDA TIPO T
+                # Untuk SONDA TIPO T, hanya sinkronkan tanggal dan jangan sentuh field lain.
+                if fecha_widget and selected_data.get("fecha"):
+                    date = QDate.fromString(selected_data["fecha"], "dd/MM/yyyy")
                     if date.isValid():
                         fecha_widget.setDate(date)
-                
-                # Kemudian, sinkronkan tanggal ini ke semua baris SONDA TIPO T lainnya
-                for j in range(1, num_equip + 1):
-                    if f"EQUIPO{j}" in self.input_widgets and self.input_widgets[f"EQUIPO{j}"].currentText() == "SONDA TIPO T":
-                        fecha_key = f"FECHA{j}"
-                        if fecha_key in self.input_widgets:
-                            self.input_widgets[fecha_key].setDate(fecha_widget.date())
-        elif equipo_text in EQUIPO_AUTOFILL_DATA: # Kasus untuk equipo lain di auto-fill
-            # Untuk equipo lain, isi semua field seperti biasa.
-            data = EQUIPO_AUTOFILL_DATA[equipo_text]
-            if "marca" in data:
-                marca_widget.setCurrentText(data["marca"])
-            if "tipo" in data:
-                tipo_widget.setCurrentText(data["tipo"])
-            if fecha_widget and "fecha" in data:
-                date = QDate.fromString(data["fecha"], "dd/MM/yyyy")
-                if date.isValid():
-                    fecha_widget.setDate(date)
+                    
+                    # Kemudian, sinkronkan tanggal ini ke semua baris SONDA TIPO T lainnya
+                    for j in range(1, num_equip + 1):
+                        if f"EQUIPO{j}" in self.input_widgets and self.input_widgets[f"EQUIPO{j}"].currentText() == "SONDA TIPO T":
+                            fecha_key = f"FECHA{j}"
+                            if fecha_key in self.input_widgets:
+                                self.input_widgets[fecha_key].setDate(fecha_widget.date())
+            else: # Kasus untuk equipo lain
+                # Isi semua field seperti biasa dari data konfigurasi.
+                if marca_widget and selected_data.get("marca"):
+                    marca_widget.setCurrentText(selected_data["marca"])
+                if tipo_widget and selected_data.get("tipo"):
+                    tipo_widget.setCurrentText(selected_data["tipo"])
+                if fecha_widget and selected_data.get("fecha"):
+                    date = QDate.fromString(selected_data["fecha"], "dd/MM/yyyy")
+                    if date.isValid():
+                        fecha_widget.setDate(date)
         else: # Jika equipo tidak ada di daftar auto-fill
             # Hapus isian jika bukan salah satu opsi auto-fill
             marca_widget.setCurrentIndex(0)

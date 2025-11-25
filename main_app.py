@@ -4,13 +4,14 @@ import json
 import shutil
 import tempfile
 import pandas as pd
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QMessageBox, QMenuBar, QAction, QFileDialog, QMainWindow, QLineEdit, QTextEdit, QDateEdit, QComboBox
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QMessageBox, QMenuBar, QAction, QFileDialog, QMainWindow, QLineEdit, QTextEdit, QDateEdit, QComboBox, QDialog
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
 from config import TEMPLATES_DIR, TEMPLATE_FILENAME, TEMPLATE_PATH
 from fields import FIELD_DEFINITIONS
 from ui_builder import UIBuilder
 from document_processor import DocumentProcessor
+from equipment_manager import EquipmentManagerDialog, get_default_config, EQUIPMENT_CONFIG_FILE
 from styles import LIGHT_THEME # Impor stylesheet
 import os
 
@@ -32,6 +33,7 @@ class DocumentGeneratorApp(QMainWindow):
         self.template_path = TEMPLATE_PATH
         self.setWindowTitle("Generador de Anexo al Informe")
         self.setStyleSheet(LIGHT_THEME) # Terapkan stylesheet dari file terpisah
+        self.load_equipment_config() # Muat konfigurasi peralatan
         self.ui_builder = UIBuilder(self)
         self.document_processor = DocumentProcessor(self)
         self.load_stabilization_template()
@@ -107,6 +109,14 @@ class DocumentGeneratorApp(QMainWindow):
         exit_action.triggered.connect(self.close)
         file_menu.addAction(exit_action)
 
+        # Menu Configuración
+        settings_menu = self.menu_bar.addMenu('Configuración')
+        manage_equipment_action = QAction('Gestionar Equipos', self)
+        manage_equipment_action.triggered.connect(self.open_equipment_manager)
+        settings_menu.addAction(manage_equipment_action)
+
+
+
     def init_ui(self):
         """Initializes and builds the main user interface."""
         # Create central widget
@@ -116,6 +126,27 @@ class DocumentGeneratorApp(QMainWindow):
         self.main_layout = QVBoxLayout(central_widget)
         central_widget.setLayout(self.main_layout)
         self.ui_builder.init_ui()
+
+    def load_equipment_config(self):
+        """Memuat konfigurasi peralatan dari JSON, atau membuatnya jika tidak ada."""
+        if not os.path.exists(EQUIPMENT_CONFIG_FILE):
+            try:
+                default_config = get_default_config()
+                with open(EQUIPMENT_CONFIG_FILE, 'w', encoding='utf-8') as f:
+                    json.dump(default_config, f, ensure_ascii=False, indent=4)
+                self.equipment_config = default_config
+            except Exception as e:
+                QMessageBox.critical(self, "Error", f"Gagal membuat file konfigurasi default: {e}")
+                self.equipment_config = [] # Fallback
+        
+        try:
+            with open(EQUIPMENT_CONFIG_FILE, 'r', encoding='utf-8') as f:
+                self.equipment_config = json.load(f)
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"Gagal memuat {EQUIPMENT_CONFIG_FILE}: {e}")
+            self.equipment_config = [] # Fallback
+
+
 
     def load_method_template(self):
         """Load the method template and set it as default for TEXT12."""
@@ -258,6 +289,15 @@ class DocumentGeneratorApp(QMainWindow):
 
             except Exception as e:
                 QMessageBox.critical(self, "Error", f"Error al cargar el proyecto: {e}")
+
+    def open_equipment_manager(self):
+        """Abre el diálogo de gestión de equipos."""
+        dialog = EquipmentManagerDialog(parent=self)
+        result = dialog.exec_()
+        if result == QDialog.Accepted:
+            # Jika ada perubahan, muat ulang konfigurasi dan bangun ulang form
+            self.load_equipment_config()
+            self.ui_builder.rebuild_form()
 
     def load_excel_data(self):
         """
