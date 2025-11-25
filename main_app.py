@@ -392,15 +392,6 @@ class DocumentGeneratorApp(QMainWindow):
                     widget.setStyleSheet(highlight_style)
                     self.highlighted_fields.add(desvi_key)
 
-                # --- Mengisi Bagian 5: RESULTADOS ---
-                tempe_key = f"TEMPE{i}"
-                if tempe_key in self.ui_builder.input_widgets:
-                    temp_value = str(round(final_temps[col_name], 2))
-                    widget = self.ui_builder.input_widgets[tempe_key]
-                    widget.setText(temp_value)
-                    widget.setStyleSheet(highlight_style)
-                    self.highlighted_fields.add(tempe_key)
-
             QMessageBox.information(
                 self, "Éxito",
                 f"Datos cargados y analizados con éxito dari:\n{file_path}\n\n"

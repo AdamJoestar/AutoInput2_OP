@@ -590,42 +590,14 @@ class UIBuilder:
 
     def sync_related_fields(self, num_sonda):
         """
-        Syncs related fields between TEMPERATURAS REGISTRADAS, ESTABILIZACIÓN TÉRMICA, and RESULTADOS.
+        Sets up automatic calculations and field interactions within the temperature tab.
 
-        - Punto de Medición (PUNTO, MEDICI, PUNTODE) should be the same for each row.
-        - Temperatura Medida (TEMP) and Temperatura final (TEMPE) should be the same.
         - Automatic calculation of Desviación (DESVI) from VALMIN and VALMAX.
         - Automatic filling of Resultado (RESULT) based on TEMP and LIMITE.
         """
         for i in range(1, num_sonda + 1):
-            # Sync Punto de Medición
-            punto_key = f"PUNTO{i}"
-            medici_key = f"MEDICI{i}"
-            puntode_key = f"PUNTODE{i}"
-
-            if punto_key in self.input_widgets and medici_key in self.input_widgets and puntode_key in self.input_widgets:
-                punto_widget = self.input_widgets[punto_key]
-                medici_widget = self.input_widgets[medici_key]
-                puntode_widget = self.input_widgets[puntode_key]
-
-                # Connect signals to sync changes
-                punto_widget.currentTextChanged.connect(lambda text, mw=medici_widget, pw=puntode_widget: self.sync_punto(text, mw, pw))
-                medici_widget.currentTextChanged.connect(lambda text, pw=punto_widget, pw2=puntode_widget: self.sync_punto(text, pw, pw2))
-                puntode_widget.currentTextChanged.connect(lambda text, pw=punto_widget, mw=medici_widget: self.sync_punto(text, pw, mw))
-
-            # Sync Temperatura Medida and Temperatura final
-            temp_key = f"TEMP{i}"
-            tempe_key = f"TEMPE{i}"
-
-            if temp_key in self.input_widgets and tempe_key in self.input_widgets:
-                temp_widget = self.input_widgets[temp_key]
-                tempe_widget = self.input_widgets[tempe_key]
-
-                # Connect signals to sync changes
-                temp_widget.textChanged.connect(lambda text, tw=tempe_widget: tw.setText(text))
-                tempe_widget.textChanged.connect(lambda text, tw=temp_widget: tw.setText(text))
-
             # Automatic calculation of Desviación
+            temp_key = f"TEMP{i}"
             valmin_key = f"VALMIN{i}"
             valmax_key = f"VALMAX{i}"
             desvi_key = f"DESVI{i}"
@@ -651,15 +623,6 @@ class UIBuilder:
                 # Connect signals to fill Resultado
                 temp_widget.textChanged.connect(lambda text, tw=temp_widget, lw=limite_widget, rw=result_widget: self.fill_resultado(tw, lw, rw))
                 limite_widget.currentTextChanged.connect(lambda text, tw=temp_widget, lw=limite_widget, rw=result_widget: self.fill_resultado(tw, lw, rw))
-
-    def sync_punto(self, text, widget1, widget2):
-        """Sync the Punto de Medición dropdowns."""
-        widget1.blockSignals(True)
-        widget2.blockSignals(True)
-        widget1.setCurrentText(text)
-        widget2.setCurrentText(text)
-        widget1.blockSignals(False)
-        widget2.blockSignals(False)
 
     def calculate_desviacion(self, valmin_widget, valmax_widget, desvi_widget):
         """Calculate Desviación as VALMAX - VALMIN."""

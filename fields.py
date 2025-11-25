@@ -273,90 +273,58 @@ FIELD_DEFINITIONS = {
     "IMAGE2": {"placeholder": "[IMAGE2]", "label": "Imagen 2", "type": "file"},
 
     # 4. ESTABILIZACIÓN TÉRMICA (up to 10)
-    "MEDICI1": {"placeholder": "[MEDICI1]", "label": "Punto de Medición 1", "type": "dropdown", "options": PUNTO_OPTIONS},
+
     "VALMIN1": {"placeholder": "[VALMIN1]", "label": "Valor Mínimo 1", "type": "text"},
     "VALMAX1": {"placeholder": "[VALMAX1]", "label": "Valor Máximo 1", "type": "text"},
     "DESVI1": {"placeholder": "[DESVI1]", "label": "Desviación 1", "type": "text"},
-    "MEDICI2": {"placeholder": "[MEDICI2]", "label": "Punto de Medición 2", "type": "dropdown", "options": PUNTO_OPTIONS},
+
     "VALMIN2": {"placeholder": "[VALMIN2]", "label": "Valor Mínimo 2", "type": "text"},
     "VALMAX2": {"placeholder": "[VALMAX2]", "label": "Valor Máximo 2", "type": "text"},
     "DESVI2": {"placeholder": "[DESVI2]", "label": "Desviación 2", "type": "text"},
-    "MEDICI3": {"placeholder": "[MEDICI3]", "label": "Punto de Medición 3", "type": "dropdown", "options": PUNTO_OPTIONS},
+
     "VALMIN3": {"placeholder": "[VALMIN3]", "label": "Valor Mínimo 3", "type": "text"},
     "VALMAX3": {"placeholder": "[VALMAX3]", "label": "Valor Máximo 3", "type": "text"},
     "DESVI3": {"placeholder": "[DESVI3]", "label": "Desviación 3", "type": "text"},
-    "MEDICI4": {"placeholder": "[MEDICI4]", "label": "Punto de Medición 4", "type": "dropdown", "options": PUNTO_OPTIONS},
+
     "VALMIN4": {"placeholder": "[VALMIN4]", "label": "Valor Mínimo 4", "type": "text"},
     "VALMAX4": {"placeholder": "[VALMAX4]", "label": "Valor Máximo 4", "type": "text"},
     "DESVI4": {"placeholder": "[DESVI4]", "label": "Desviación 4", "type": "text"},
-    "MEDICI5": {"placeholder": "[MEDICI5]", "label": "Punto de Medición 5", "type": "dropdown", "options": PUNTO_OPTIONS},
+
     "VALMIN5": {"placeholder": "[VALMIN5]", "label": "Valor Mínimo 5", "type": "text"},
     "VALMAX5": {"placeholder": "[VALMAX5]", "label": "Valor Máximo 5", "type": "text"},
     "DESVI5": {"placeholder": "[DESVI5]", "label": "Desviación 5", "type": "text"},
-    "MEDICI6": {"placeholder": "[MEDICI6]", "label": "Punto de Medición 6", "type": "dropdown", "options": PUNTO_OPTIONS},
+    
     "VALMIN6": {"placeholder": "[VALMIN6]", "label": "Valor Mínimo 6", "type": "text"},
     "VALMAX6": {"placeholder": "[VALMAX6]", "label": "Valor Máximo 6", "type": "text"},
     "DESVI6": {"placeholder": "[DESVI6]", "label": "Desviación 6", "type": "text"},
-    "MEDICI7": {"placeholder": "[MEDICI7]", "label": "Punto de Medición 7", "type": "dropdown", "options": PUNTO_OPTIONS},
+
     "VALMIN7": {"placeholder": "[VALMIN7]", "label": "Valor Mínimo 7", "type": "text"},
     "VALMAX7": {"placeholder": "[VALMAX7]", "label": "Valor Máximo 7", "type": "text"},
     "DESVI7": {"placeholder": "[DESVI7]", "label": "Desviación 7", "type": "text"},
-    "MEDICI8": {"placeholder": "[MEDICI8]", "label": "Punto de Medición 8", "type": "dropdown", "options": PUNTO_OPTIONS},
+    
     "VALMIN8": {"placeholder": "[VALMIN8]", "label": "Valor Mínimo 8", "type": "text"},
     "VALMAX8": {"placeholder": "[VALMAX8]", "label": "Valor Máximo 8", "type": "text"},
     "DESVI8": {"placeholder": "[DESVI8]", "label": "Desviación 8", "type": "text"},
-    "MEDICI9": {"placeholder": "[MEDICI9]", "label": "Punto de Medición 9", "type": "dropdown", "options": PUNTO_OPTIONS},
+
     "VALMIN9": {"placeholder": "[VALMIN9]", "label": "Valor Mínimo 9", "type": "text"},
     "VALMAX9": {"placeholder": "[VALMAX9]", "label": "Valor Máximo 9", "type": "text"},
     "DESVI9": {"placeholder": "[DESVI9]", "label": "Desviación 9", "type": "text"},
-    "MEDICI10": {"placeholder": "[MEDICI10]", "label": "Punto de Medición 10", "type": "dropdown", "options": PUNTO_OPTIONS},
+
     "VALMIN10": {"placeholder": "[VALMIN10]", "label": "Valor Mínimo 10", "type": "text"},
     "VALMAX10": {"placeholder": "[VALMAX10]", "label": "Valor Máximo 10", "type": "text"},
     "DESVI10": {"placeholder": "[DESVI10]", "label": "Desviación 10", "type": "text"},
     # Placeholders for stabilization units (no UI element)
-    "UNIDAD_EST1": {"placeholder": "[UNIDAD_EST1]"}, "UNIDAD_EST2": {"placeholder": "[UNIDAD_EST2]"},
-    "UNIDAD_EST3": {"placeholder": "[UNIDAD_EST3]"}, "UNIDAD_EST4": {"placeholder": "[UNIDAD_EST4]"},
-    "UNIDAD_EST5": {"placeholder": "[UNIDAD_EST5]"}, "UNIDAD_EST6": {"placeholder": "[UNIDAD_EST6]"},
-    "UNIDAD_EST7": {"placeholder": "[UNIDAD_EST7]"}, "UNIDAD_EST8": {"placeholder": "[UNIDAD_EST8]"},
-    "UNIDAD_EST9": {"placeholder": "[UNIDAD_EST9]"}, "UNIDAD_EST10": {"placeholder": "[UNIDAD_EST10]"},
-
-    # 5. RESULTADOS (up to 10)
-    "PUNTODE1": {"placeholder": "[PUNTODE1]", "label": "Punto de Medición 1", "type": "dropdown", "options": PUNTO_OPTIONS},
-    "TEMPE1": {"placeholder": "[TEMPE1]", "label": "Temperatura final 1", "type": "text"},
+    # 5. RESULTADOS (sekarang bagian dari tab Temperatur)
     "RESULT1": {"placeholder": "[RESULT1]", "label": "Resultado 1", "type": "dropdown", "options": RESULT_OPTIONS},
-    "PUNTODE2": {"placeholder": "[PUNTODE2]", "label": "Punto de Medición 2", "type": "dropdown", "options": PUNTO_OPTIONS},
-    "TEMPE2": {"placeholder": "[TEMPE2]", "label": "Temperatura final 2", "type": "text"},
     "RESULT2": {"placeholder": "[RESULT2]", "label": "Resultado 2", "type": "dropdown", "options": RESULT_OPTIONS},
-    "PUNTODE3": {"placeholder": "[PUNTODE3]", "label": "Punto de Medición 3", "type": "dropdown", "options": PUNTO_OPTIONS},
-    "TEMPE3": {"placeholder": "[TEMPE3]", "label": "Temperatura final 3", "type": "text"},
     "RESULT3": {"placeholder": "[RESULT3]", "label": "Resultado 3", "type": "dropdown", "options": RESULT_OPTIONS},
-    "PUNTODE4": {"placeholder": "[PUNTODE4]", "label": "Punto de Medición 4", "type": "dropdown", "options": PUNTO_OPTIONS},
-    "TEMPE4": {"placeholder": "[TEMPE4]", "label": "Temperatura final 4", "type": "text"},
     "RESULT4": {"placeholder": "[RESULT4]", "label": "Resultado 4", "type": "dropdown", "options": RESULT_OPTIONS},
-    "PUNTODE5": {"placeholder": "[PUNTODE5]", "label": "Punto de Medición 5", "type": "dropdown", "options": PUNTO_OPTIONS},
-    "TEMPE5": {"placeholder": "[TEMPE5]", "label": "Temperatura final 5", "type": "text"},
     "RESULT5": {"placeholder": "[RESULT5]", "label": "Resultado 5", "type": "dropdown", "options": RESULT_OPTIONS},
-    "PUNTODE6": {"placeholder": "[PUNTODE6]", "label": "Punto de Medición 6", "type": "dropdown", "options": PUNTO_OPTIONS},
-    "TEMPE6": {"placeholder": "[TEMPE6]", "label": "Temperatura final 6", "type": "text"},
     "RESULT6": {"placeholder": "[RESULT6]", "label": "Resultado 6", "type": "dropdown", "options": RESULT_OPTIONS},
-    "PUNTODE7": {"placeholder": "[PUNTODE7]", "label": "Punto de Medición 7", "type": "dropdown", "options": PUNTO_OPTIONS},
-    "TEMPE7": {"placeholder": "[TEMPE7]", "label": "Temperatura final 7", "type": "text"},
     "RESULT7": {"placeholder": "[RESULT7]", "label": "Resultado 7", "type": "dropdown", "options": RESULT_OPTIONS},
-    "PUNTODE8": {"placeholder": "[PUNTODE8]", "label": "Punto de Medición 8", "type": "dropdown", "options": PUNTO_OPTIONS},
-    "TEMPE8": {"placeholder": "[TEMPE8]", "label": "Temperatura final 8", "type": "text"},
     "RESULT8": {"placeholder": "[RESULT8]", "label": "Resultado 8", "type": "dropdown", "options": RESULT_OPTIONS},
-    "PUNTODE9": {"placeholder": "[PUNTODE9]", "label": "Punto de Medición 9", "type": "dropdown", "options": PUNTO_OPTIONS},
-    "TEMPE9": {"placeholder": "[TEMPE9]", "label": "Temperatura final 9", "type": "text"},
     "RESULT9": {"placeholder": "[RESULT9]", "label": "Resultado 9", "type": "dropdown", "options": RESULT_OPTIONS},
-    "PUNTODE10": {"placeholder": "[PUNTODE10]", "label": "Punto de Medición 10", "type": "dropdown", "options": PUNTO_OPTIONS},
-    "TEMPE10": {"placeholder": "[TEMPE10]", "label": "Temperatura final 10", "type": "text"},
     "RESULT10": {"placeholder": "[RESULT10]", "label": "Resultado 10", "type": "dropdown", "options": RESULT_OPTIONS},
-    # Placeholders for result units (no UI element)
-    "UNIDAD_RES1": {"placeholder": "[UNIDAD_RES1]"}, "UNIDAD_RES2": {"placeholder": "[UNIDAD_RES2]"},
-    "UNIDAD_RES3": {"placeholder": "[UNIDAD_RES3]"}, "UNIDAD_RES4": {"placeholder": "[UNIDAD_RES4]"},
-    "UNIDAD_RES5": {"placeholder": "[UNIDAD_RES5]"}, "UNIDAD_RES6": {"placeholder": "[UNIDAD_RES6]"},
-    "UNIDAD_RES7": {"placeholder": "[UNIDAD_RES7]"}, "UNIDAD_RES8": {"placeholder": "[UNIDAD_RES8]"},
-    "UNIDAD_RES9": {"placeholder": "[UNIDAD_RES9]"}, "UNIDAD_RES10": {"placeholder": "[UNIDAD_RES10]"},
 
     # 7. FOTOGRAFIAS (up to 10)
     "IMAGE3": {"placeholder": "[IMAGE3]", "label": "Imagen 3", "type": "file"},

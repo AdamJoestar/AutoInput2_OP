@@ -111,26 +111,30 @@ class DocumentProcessor:
 
         num_sonda = self.parent_app.ui_builder.num_sonda
 
-        # Replace all placeholders with their values, or with an empty string if not in UI
+        # Ganti semua placeholder dengan nilainya, atau dengan string kosong jika tidak ada di UI
         for key, definition in FIELD_DEFINITIONS.items():
             placeholder = definition['placeholder']
-            # If the placeholder already has a value from the UI, skip it.
+            # Jika placeholder sudah memiliki nilai dari UI, lewati.
             if placeholder in replacement_data:
                 continue
             
-            # Otherwise, replace any remaining placeholders with an empty string.
-            # This ensures that unused rows in tables become truly empty.
+            # Jika tidak, ganti placeholder yang tersisa dengan string kosong.
+            # Ini memastikan baris yang tidak terpakai di tabel menjadi benar-benar kosong.
             replacement_data[placeholder] = ""
 
-        # Automatically set all temperature units to °C
+        # Logika Kunci: Atur unit atau kosongkan seluruh baris berdasarkan Punto de Medición
         for i in range(1, num_sonda + 1):
-            # TEMPERATURAS REGISTRADAS
-            # This will overwrite the empty string set above for the used rows.
-            replacement_data[f"[UNIDAD{i}]"] = "°C"
-            # ESTABILIZACIÓN TÉRMICA
-            replacement_data[f"[UNIDAD_EST{i}]"] = "°C"
-            # RESULTADOS
-            replacement_data[f"[UNIDAD_RES{i}]"] = "°C"
+            punto_placeholder = f"[PUNTO{i}]"
+            # Periksa apakah Punto de Medición diisi
+            if punto_placeholder in replacement_data and replacement_data[punto_placeholder]:
+                # Jika diisi, atur unit untuk baris ini menjadi °C
+                replacement_data[f"[UNIDAD{i}]"] = "°C"
+            else:
+                # Jika Punto kosong, pastikan semua placeholder untuk baris `i` ini benar-benar kosong.
+                for key, definition in FIELD_DEFINITIONS.items():
+                    if key.endswith(str(i)):
+                        placeholder_to_clear = definition['placeholder']
+                        replacement_data[placeholder_to_clear] = ""
 
         return replacement_data
 
