@@ -160,7 +160,7 @@ class UIBuilder:
         self.generate_button = QPushButton("GENERAR DOCUMENTO DE WORD (.docx)")
         self.generate_button.setStyleSheet("""
             QPushButton {
-                background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #C7C7C7, stop:1 #9E9E9E);
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #0078D4, stop:1 #005A9E);
                 color: white;
                 padding: 12px;
                 border-radius: 8px;
@@ -168,10 +168,10 @@ class UIBuilder:
                 border: none;
             }
             QPushButton:hover {
-                background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #9E9E9E, stop:1 #D9D9D9);
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #0084E6, stop:1 #006AB1);
             }
             QPushButton:pressed {
-                background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #D9D9D9, stop:1 #B0B0B0);
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #006AB1, stop:1 #004C87);
             }
         """)
         self.generate_button.clicked.connect(self.parent_app.generate_document)
