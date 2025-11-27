@@ -1,4 +1,7 @@
 from PyQt5.QtWidgets import QLineEdit, QTextEdit
+import os
+import sys
+
 
 # Utility functions for the application
 
@@ -18,4 +21,13 @@ def validate_required_fields(input_widgets, field_definitions):
             return False, definition['label']
     return True, None
 
+def resource_path(relative_path):
+    """ Mendapatkan path absolut ke resource, berfungsi untuk dev dan PyInstaller """
+    try:
+        # PyInstaller membuat folder sementara dan menyimpan path di _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
 # Note: Import QLineEdit and QTextEdit if needed, but since this is a utility, we can assume they are imported where used.

@@ -5,7 +5,7 @@ a = Analysis(
     ['main_app.py'],
     pathex=[],
     binaries=[],
-    datas=[('templates', 'templates'), ('logo vibia.png', '.')],
+    datas=[('templates', 'templates'), ('logo vibia.png', '.'), ('serviceAccountKey.json', '.')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},

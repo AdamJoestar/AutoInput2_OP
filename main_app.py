@@ -13,6 +13,7 @@ from config import TEMPLATES_DIR, TEMPLATE_FILENAME, TEMPLATE_PATH
 from fields import FIELD_DEFINITIONS
 from ui_builder import UIBuilder
 from document_processor import DocumentProcessor
+from utils import resource_path
 from equipment_manager import EquipmentManagerDialog, get_default_config, EQUIPMENT_CONFIG_FILE
 from styles import LIGHT_THEME # Impor stylesheet
 import os
@@ -133,7 +134,8 @@ class DocumentGeneratorApp(QMainWindow):
     def init_firebase(self):
         """Initializes the Firebase connection."""
         try:
-            cred = credentials.Certificate("serviceAccountKey.json")
+            key_path = resource_path("serviceAccountKey.json")
+            cred = credentials.Certificate(key_path)
             firebase_admin.initialize_app(cred)
             self.db = firestore.client()
             print("Firebase connection successful.")
@@ -155,15 +157,16 @@ class DocumentGeneratorApp(QMainWindow):
                 QMessageBox.warning(self, "Error de Firestore", f"No se pudo cargar la configuración desde Firestore: {e}. Usando fallback local.")
 
         # Fallback: Jika Firebase gagal, gunakan file JSON lokal seperti sebelumnya
-        if os.path.exists(EQUIPMENT_CONFIG_FILE):
-            with open(EQUIPMENT_CONFIG_FILE, 'r', encoding='utf-8') as f:
+        fallback_path = resource_path(EQUIPMENT_CONFIG_FILE)
+        if os.path.exists(fallback_path):
+            with open(fallback_path, 'r', encoding='utf-8') as f:
                 self.equipment_config = json.load(f)
 
 
 
     def load_method_template(self):
         """Load the method template and set it as default for TEXT12."""
-        template_path = os.path.join(os.getcwd(), 'method_template.txt')
+        template_path = resource_path('method_template.txt')
         if os.path.exists(template_path):
             with open(template_path, 'r', encoding='utf-8') as f:
                 self.method_template = f.read()
@@ -172,7 +175,7 @@ class DocumentGeneratorApp(QMainWindow):
 
     def load_stabilization_template(self):
         """Load the stabilization templat2e and set it as default for TEXT_EST."""
-        template_path = os.path.join(os.getcwd(), 'stabilization_template.txt')
+        template_path = resource_path('stabilization_template.txt')
         if os.path.exists(template_path):
             with open(template_path, 'r', encoding='utf-8') as f:
                 self.stabilization_template = f.read()
@@ -181,7 +184,7 @@ class DocumentGeneratorApp(QMainWindow):
 
     def load_description_template(self):
         """Load the description template and set it as default for TEXT14."""
-        template_path = os.path.join(os.getcwd(), 'description_template.txt')
+        template_path = resource_path('description_template.txt')
         if os.path.exists(template_path):
             with open(template_path, 'r', encoding='utf-8') as f:
                 self.description_template = f.read()

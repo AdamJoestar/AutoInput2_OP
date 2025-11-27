@@ -5,6 +5,7 @@ from PyQt5.QtCore import Qt, QDate, QDateTime
 from PyQt5.QtGui import QPixmap
 from fields import FIELD_DEFINITIONS
 from screenshot import ScreenshotSelector
+from utils import resource_path
 import tempfile
 import os
 import sys
@@ -20,20 +21,6 @@ class NoWheelSpinBox(QSpinBox):
 class NoWheelDateEdit(QDateEdit):
     def wheelEvent(self, event):
         event.ignore()
-
-class NoWheelDateEdit(QDateEdit):
-    def wheelEvent(self, event):
-        event.ignore()
-
-def resource_path(relative_path):
-    """ Mendapatkan path absolut ke resource, berfungsi untuk dev dan PyInstaller """
-    try:
-        # PyInstaller membuat folder sementara dan menyimpan path di _MEIPASS
-        base_path = sys._MEIPASS
-    except Exception:
-        base_path = os.path.abspath(".")
-
-    return os.path.join(base_path, relative_path)
 
 
 class UIBuilder:
