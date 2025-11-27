@@ -1,5 +1,6 @@
 import json
 import os
+from firebase_admin import firestore
 from PyQt5.QtWidgets import (
     QDialog, QVBoxLayout, QTableWidget, QTableWidgetItem, QPushButton, QHBoxLayout,
     QMessageBox, QDialogButtonBox, QLineEdit, QFormLayout, QLabel, QHeaderView
@@ -180,13 +181,25 @@ class EquipmentManagerDialog(QDialog):
 
     def save_config(self):
         """Menyimpan data konfigurasi saat ini ke file JSON."""
-        try:
-            with open(EQUIPMENT_CONFIG_FILE, 'w', encoding='utf-8') as f:
-                json.dump(self.config_data, f, ensure_ascii=False, indent=4)
-            QMessageBox.information(self, "Éxito", "La configuración de equipos se ha guardado correctamente.")
-            self.accept() # Tutup dialog setelah menyimpan
-        except Exception as e:
-            QMessageBox.critical(self, "Error", f"No se pudo guardar la configuración: {e}")
+        # Cek apakah Firebase tersedia
+        if self.parent_app.db:
+            try:
+                # Ini adalah pendekatan sederhana: hapus semua dan tulis ulang.
+                # Untuk aplikasi besar, lebih baik melakukan update/delete/add individual.
+                equip_collection = self.parent_app.db.collection('equipments')
+                # Hapus semua dokumen lama
+                for doc in equip_collection.stream():
+                    doc.reference.delete()
+                # Tambahkan semua dokumen baru dari self.config_data
+                for item in self.config_data:
+                    equip_collection.document(item['equipo']).set(item)
+                
+                QMessageBox.information(self, "Éxito", "La configuración de equipos se ha guardado en Firebase.")
+                self.accept()
+            except Exception as e:
+                QMessageBox.critical(self, "Error de Firebase", f"No se pudo guardar la configuración en Firebase: {e}")
+        else:
+            QMessageBox.warning(self, "Sin Conexión", "No hay conexión a Firebase. Los cambios no se pueden guardar de forma centralizada.")
 
     def event(self, event):
         """Menangkap event untuk menampilkan bantuan saat tombol '?' diklik."""

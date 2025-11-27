@@ -3,6 +3,8 @@ import os
 import json
 import shutil
 import tempfile
+import firebase_admin
+from firebase_admin import credentials, firestore
 import pandas as pd
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QMessageBox, QMenuBar, QAction, QFileDialog, QMainWindow, QLineEdit, QTextEdit, QDateEdit, QComboBox, QDialog
 from PyQt5.QtCore import Qt
@@ -33,6 +35,7 @@ class DocumentGeneratorApp(QMainWindow):
         self.template_path = TEMPLATE_PATH
         self.setWindowTitle("Generador de Anexo al Informe")
         self.setStyleSheet(LIGHT_THEME) # Terapkan stylesheet dari file terpisah
+        self.init_firebase() # Inisialisasi Firebase
         self.load_equipment_config() # Muat konfigurasi peralatan
         self.ui_builder = UIBuilder(self)
         self.document_processor = DocumentProcessor(self)
@@ -127,24 +130,34 @@ class DocumentGeneratorApp(QMainWindow):
         central_widget.setLayout(self.main_layout)
         self.ui_builder.init_ui()
 
-    def load_equipment_config(self):
-        """Memuat konfigurasi peralatan dari JSON, atau membuatnya jika tidak ada."""
-        if not os.path.exists(EQUIPMENT_CONFIG_FILE):
-            try:
-                default_config = get_default_config()
-                with open(EQUIPMENT_CONFIG_FILE, 'w', encoding='utf-8') as f:
-                    json.dump(default_config, f, ensure_ascii=False, indent=4)
-                self.equipment_config = default_config
-            except Exception as e:
-                QMessageBox.critical(self, "Error", f"Gagal membuat file konfigurasi default: {e}")
-                self.equipment_config = [] # Fallback
-        
+    def init_firebase(self):
+        """Initializes the Firebase connection."""
         try:
+            cred = credentials.Certificate("serviceAccountKey.json")
+            firebase_admin.initialize_app(cred)
+            self.db = firestore.client()
+            print("Firebase connection successful.")
+        except Exception as e:
+            QMessageBox.critical(self, "Error de Firebase", f"No se pudo conectar a Firebase: {e}\n\nAsegúrese de que 'serviceAccountKey.json' está en la carpeta correcta. La aplicación funcionará con la configuración local.")
+            self.db = None
+
+    def load_equipment_config(self):
+        """Memuat konfigurasi peralatan dari Firestore, atau dari file lokal jika gagal."""
+        self.equipment_config = []
+        if self.db: # Jika koneksi Firebase berhasil
+            try:
+                equipments_ref = self.db.collection('equipments').stream()
+                for equip in equipments_ref:
+                    self.equipment_config.append(equip.to_dict())
+                print(f"Loaded {len(self.equipment_config)} equipments from Firestore.")
+                return
+            except Exception as e:
+                QMessageBox.warning(self, "Error de Firestore", f"No se pudo cargar la configuración desde Firestore: {e}. Usando fallback local.")
+
+        # Fallback: Jika Firebase gagal, gunakan file JSON lokal seperti sebelumnya
+        if os.path.exists(EQUIPMENT_CONFIG_FILE):
             with open(EQUIPMENT_CONFIG_FILE, 'r', encoding='utf-8') as f:
                 self.equipment_config = json.load(f)
-        except Exception as e:
-            QMessageBox.critical(self, "Error", f"Gagal memuat {EQUIPMENT_CONFIG_FILE}: {e}")
-            self.equipment_config = [] # Fallback
 
 
 

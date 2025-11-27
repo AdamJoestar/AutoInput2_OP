@@ -23,3 +23,10 @@ htmlcov/
 # OS/IDE files
 .DS_Store
 .vscode/
+
+# --- Sensitive Configuration Files ---
+# Firebase service account key - VERY IMPORTANT
+serviceAccountKey.json
+
+# Local equipment config (now managed by Firebase)
+equipment_config.json
